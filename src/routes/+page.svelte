@@ -6,7 +6,9 @@
 
 <div class="flex min-h-screen flex-col items-center gap-10 p-10">
 	<MainMenuHeading>Hra o neslyšících</MainMenuHeading>
-	<Button class="h-12 w-[80%] text-2xl" onclick={() => goto('/levels')}>Úrovně</Button>
-	<Button class="h-12 w-[80%] text-2xl">Profil</Button>
-	<Button class="h-12 w-[80%] text-2xl">Titulky</Button>
+	<Button class="h-12 w-[80%] max-w-100 cursor-pointer text-2xl" onclick={() => goto('/levels')}>
+		Úrovně
+	</Button>
+	<Button class="h-12 w-[80%] max-w-100 cursor-pointer text-2xl">Profil</Button>
+	<Button class="h-12 w-[80%] max-w-100 cursor-pointer text-2xl">Titulky</Button>
 </div>
