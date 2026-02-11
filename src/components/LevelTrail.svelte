@@ -3,7 +3,7 @@
 
 	let {
 		color = 'rgb(217, 119, 6)',
-		strokeWidth = 20,
+		strokeWidth = 12,
 		variant = 3
 	}: { color?: string; strokeWidth?: number; variant?: LevelTrailVariants } = $props();
 
@@ -28,5 +28,6 @@
 		stroke-width={strokeWidth}
 		fill="none"
 		stroke-linecap="round"
+		stroke-dasharray="26"
 	/>
 </svg>

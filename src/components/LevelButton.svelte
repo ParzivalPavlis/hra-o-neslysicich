@@ -39,9 +39,12 @@
 		disabled={locked}
 		onclick={handleClick}
 		class="group relative flex h-40 w-40 cursor-pointer flex-col items-center justify-center overflow-hidden rounded-full border border-white/10
+          bg-foreground
           shadow-lg
-         transition-all hover:-translate-y-0.5 hover:shadow-xl active:translate-y-0
-         disabled:opacity-50 disabled:hover:translate-y-0"
+          transition-all
+          hover:-translate-y-0.5
+         hover:bg-foreground hover:opacity-100 active:translate-y-0
+         disabled:translate-y-0 disabled:opacity-50"
 	>
 		<div class="flex flex-col items-center gap-2">
 			<div class="flex h-11 w-11 items-center justify-center rounded-full bg-white/10 text-white">

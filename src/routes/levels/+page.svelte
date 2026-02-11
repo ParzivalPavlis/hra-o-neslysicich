@@ -19,6 +19,42 @@
 		{
 			stars: 0,
 			locked: false,
+			description: 'Kliknutím znovu pro spuštění',
+			trails: 2
+		},
+		{
+			stars: 0,
+			locked: false,
+			description: 'Kliknutím znovu pro spuštění',
+			trails: 4
+		},
+		{
+			stars: 0,
+			locked: false,
+			description: 'Kliknutím znovu pro spuštění',
+			trails: 1
+		},
+		{
+			stars: 0,
+			locked: false,
+			description: 'Kliknutím znovu pro spuštění',
+			trails: 6
+		},
+		{
+			stars: 0,
+			locked: false,
+			description: 'Kliknutím znovu pro spuštění',
+			trails: 3
+		},
+		{
+			stars: 0,
+			locked: false,
+			description: 'Kliknutím znovu pro spuštění',
+			trails: 5
+		},
+		{
+			stars: 0,
+			locked: false,
 			description: 'Kliknutím znovu pro spuštění'
 		}
 	];
