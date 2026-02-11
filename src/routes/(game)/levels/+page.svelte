@@ -75,7 +75,7 @@
 		window.scrollTo({ top: document.body.scrollHeight, behavior: 'smooth' });
 	}
 
-	function scrollUp25() {
+	function scrollUpClosest() {
 		const currentY = window.scrollY + window.innerHeight / 2;
 		const visibleButtons = levelButtonRefs
 			.filter((ref) => ref && ref.offsetTop + ref.offsetHeight / 2 < currentY - 100)
@@ -86,7 +86,7 @@
 		}
 	}
 
-	function scrollDown25() {
+	function scrollDownClosest() {
 		const currentY = window.scrollY + window.innerHeight / 2;
 		const visibleButtons = levelButtonRefs
 			.filter((ref) => ref && ref.offsetTop > currentY + 100)
@@ -107,7 +107,7 @@
 </div>
 <div class="fixed top-1/2 right-4 flex -translate-y-1/2 transform flex-col gap-2">
 	<Button class="cursor-pointer" onclick={scrollToTop}><ArrowUp /></Button>
-	<Button class="cursor-pointer" onclick={scrollUp25}><ChevronUp /></Button>
-	<Button class="cursor-pointer" onclick={scrollDown25}><ChevronDown /></Button>
+	<Button class="cursor-pointer" onclick={scrollUpClosest}><ChevronUp /></Button>
+	<Button class="cursor-pointer" onclick={scrollDownClosest}><ChevronDown /></Button>
 	<Button class="cursor-pointer" onclick={scrollToBottom}><ArrowDown /></Button>
 </div>
