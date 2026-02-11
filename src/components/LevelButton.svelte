@@ -2,14 +2,16 @@
 	import { onMount } from 'svelte';
 	import { Button } from '$components/ui/button';
 	import LevelTrail from '$components/LevelTrail.svelte';
-	import { Speech, Star } from '@lucide/svelte';
+	import { Star } from '@lucide/svelte';
 	import { goto } from '$app/navigation';
 	import type { LevelButtonType } from '$types/levelButton';
 
-	let { level, stars, locked, description, trails }: LevelButtonType = $props();
+	let { icon, level, stars, locked, description, trails }: LevelButtonType = $props();
 
 	let clickCount = $state(0);
 	let containerRef: HTMLDivElement;
+	// svelte-ignore state_referenced_locally
+	let IconComponent = icon;
 
 	function handleClick() {
 		clickCount++;
@@ -48,7 +50,7 @@
 	>
 		<div class="flex flex-col items-center gap-2">
 			<div class="flex h-11 w-11 items-center justify-center rounded-full bg-white/10 text-white">
-				<Speech color="white" />
+				<IconComponent class="h-5 w-5" />
 			</div>
 			<div class="text-lg font-extrabold text-white uppercase drop-shadow">Úroveň {level}</div>
 			<div class="flex gap-1">

@@ -3,58 +3,97 @@
 	import LevelButton from '$components/LevelButton.svelte';
 	import Button from '$components/ui/button/button.svelte';
 	import type { LevelButtonType } from '$lib/types/levelButton';
-	import { ArrowUp, ArrowDown, ChevronUp, ChevronDown } from '@lucide/svelte';
+	import {
+		ArrowUp,
+		ArrowDown,
+		ChevronUp,
+		ChevronDown,
+		Speech,
+		Stethoscope,
+		Hand,
+		PersonStanding
+	} from '@lucide/svelte';
 
 	const levels: LevelButtonType[] = [
 		{
+			icon: Speech,
 			stars: 0,
 			locked: false,
 			description: 'Kliknutím znovu pro spuštění adad ad aaddada adda a d',
 			trails: 3
 		},
 		{
+			icon: Speech,
 			stars: 0,
 			locked: false,
 			description: 'Kliknutím znovu pro spuštění',
 			trails: 5
 		},
 		{
+			icon: Speech,
 			stars: 0,
 			locked: false,
 			description: 'Kliknutím znovu pro spuštění',
 			trails: 2
 		},
 		{
+			icon: Stethoscope,
 			stars: 0,
 			locked: false,
 			description: 'Kliknutím znovu pro spuštění',
 			trails: 4
 		},
 		{
+			icon: Stethoscope,
 			stars: 0,
 			locked: false,
 			description: 'Kliknutím znovu pro spuštění',
 			trails: 1
 		},
 		{
+			icon: Stethoscope,
 			stars: 0,
 			locked: false,
 			description: 'Kliknutím znovu pro spuštění',
 			trails: 6
 		},
 		{
+			icon: Hand,
 			stars: 0,
 			locked: false,
 			description: 'Kliknutím znovu pro spuštění',
 			trails: 3
 		},
 		{
+			icon: Hand,
 			stars: 0,
 			locked: false,
 			description: 'Kliknutím znovu pro spuštění',
 			trails: 5
 		},
 		{
+			icon: Hand,
+			stars: 0,
+			locked: false,
+			description: 'Kliknutím znovu pro spuštění',
+			trails: 2
+		},
+		{
+			icon: PersonStanding,
+			stars: 0,
+			locked: false,
+			description: 'Kliknutím znovu pro spuštění',
+			trails: 5
+		},
+		{
+			icon: PersonStanding,
+			stars: 0,
+			locked: false,
+			description: 'Kliknutím znovu pro spuštění',
+			trails: 4
+		},
+		{
+			icon: PersonStanding,
 			stars: 0,
 			locked: false,
 			description: 'Kliknutím znovu pro spuštění'
@@ -99,9 +138,9 @@
 </script>
 
 <div class="relative flex min-h-screen flex-col-reverse items-center gap-50 p-10">
-	{#each levels as { stars, locked, description, trails }, index}
+	{#each levels as { icon, stars, locked, description, trails }, index}
 		<div bind:this={levelButtonRefs[index]}>
-			<LevelButton level={index + 1} {stars} {locked} {description} {trails} />
+			<LevelButton level={index + 1} {icon} {stars} {locked} {description} {trails} />
 		</div>
 	{/each}
 </div>
