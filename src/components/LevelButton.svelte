@@ -6,17 +6,26 @@
 	import { goto } from '$app/navigation';
 	import type { LevelButtonType } from '$types/levelButton';
 
-	let { icon, level, stars, locked, description, trails }: LevelButtonType = $props();
+	let {
+		attributes,
+		levelInfoOpen = $bindable(false)
+	}: { attributes: LevelButtonType; levelInfoOpen?: boolean } = $props();
 
 	let clickCount = $state(0);
 	let containerRef: HTMLDivElement;
 	// svelte-ignore state_referenced_locally
-	let IconComponent = icon;
+	let IconComponent = attributes.icon;
 
 	function handleClick() {
-		clickCount++;
-		if (clickCount === 2) {
-			goto(`/levels/${level}`);
+		if (levelInfoOpen) {
+			// If info is open, navigate directly with single click
+			goto(`/levels/${attributes.level}`);
+		} else {
+			// Otherwise require 2 clicks
+			clickCount++;
+			if (clickCount === 2) {
+				goto(`/levels/${attributes.level}`);
+			}
 		}
 	}
 
@@ -33,12 +42,12 @@
 </script>
 
 <div class="relative flex h-80 w-full max-w-50 flex-col items-center" bind:this={containerRef}>
-	{#if trails}
-		<LevelTrail variant={trails} />
+	{#if attributes.trails}
+		<LevelTrail variant={attributes.trails} />
 	{/if}
 	<Button
 		type="button"
-		disabled={locked}
+		disabled={attributes.locked}
 		onclick={handleClick}
 		class="group relative flex h-40 w-40 cursor-pointer flex-col items-center justify-center overflow-hidden rounded-full border border-white/10
           bg-foreground
@@ -52,19 +61,22 @@
 			<div class="flex h-11 w-11 items-center justify-center rounded-full bg-white/10 text-white">
 				<IconComponent class="h-5 w-5" />
 			</div>
-			<div class="text-lg font-extrabold text-white uppercase drop-shadow">Úroveň {level}</div>
+			<div class="text-lg font-extrabold text-white uppercase drop-shadow">
+				Úroveň {attributes.level}
+			</div>
 			<div class="flex gap-1">
 				{#each Array(3) as _, i}
 					<Star
-						class={'h-4 w-4 ' + (i < stars ? 'fill-yellow-300 text-yellow-300' : 'text-white/35')}
+						class={'h-4 w-4 ' +
+							(i < attributes.stars ? 'fill-yellow-300 text-yellow-300' : 'text-white/35')}
 					/>
 				{/each}
 			</div>
 		</div>
 	</Button>
-	{#if clickCount === 1}
+	{#if clickCount === 1 || levelInfoOpen}
 		<div class="chat-bubble mt-2 max-w-xs rounded-lg border border-foreground bg-white px-4 py-3">
-			<p class="text-sm leading-relaxed text-foreground">{description}</p>
+			<p class="text-sm leading-relaxed text-foreground">{attributes.description}</p>
 		</div>
 	{/if}
 </div>
