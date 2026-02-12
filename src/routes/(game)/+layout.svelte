@@ -16,7 +16,7 @@
 	});
 </script>
 
-<nav class="fixed right-0 bottom-0 left-0 z-10 h-13 bg-foreground">
+<nav class="fixed right-0 bottom-0 left-0 z-100 h-13 bg-foreground">
 	<ul class="flex h-full items-end justify-around">
 		<li>
 			<a class="flex w-20 flex-col items-center" href="/">

@@ -73,11 +73,50 @@
 		);
 
 	let selectedCharacter: TalkingPersonType | null = $state(null);
+	let selectedCharacterIndex: number | null = $state(null);
 	let selectedThought: string = $state('');
 	let displayedThought: string = $state('');
 	let typingInterval: number | null = null;
 	let conversationIntervals: Map<number, number> = new Map();
-	let currentlySpeaking: Set<number> = $state(new Set()); // Track which characters are speaking
+	let currentlySpeaking: Set<number> = $state(new Set());
+
+	$effect(() => {
+		if (selectedCharacterIndex !== null) {
+			const isCurrentlySpeaking = currentlySpeaking.has(selectedCharacterIndex);
+			const state = characterStates.get(selectedCharacterIndex);
+
+			if (isCurrentlySpeaking && state && selectedCharacter) {
+				selectedThought = state.currentThought;
+				displayedThought = '';
+
+				if (typingInterval) {
+					clearInterval(typingInterval);
+				}
+
+				let charIndex = 0;
+				typingInterval = window.setInterval(() => {
+					if (charIndex < state.currentThought.length) {
+						displayedThought += state.currentThought[charIndex];
+						charIndex++;
+					} else {
+						if (typingInterval) {
+							clearInterval(typingInterval);
+							typingInterval = null;
+						}
+					}
+				}, 40);
+			} else {
+				// Character stopped speaking, clear the text
+				selectedThought = '';
+				displayedThought = '';
+
+				if (typingInterval) {
+					clearInterval(typingInterval);
+					typingInterval = null;
+				}
+			}
+		}
+	});
 
 	function initializeConversation(groupKey: number, group: TalkingPersonType[]) {
 		// Function to handle each conversation step
@@ -140,27 +179,42 @@
 		const state = characterStates.get(index);
 		if (state) {
 			selectedCharacter = character;
-			selectedThought = state.currentThought;
-			displayedThought = '';
+			selectedCharacterIndex = index;
 
-			// Clear any existing typing animation
-			if (typingInterval) {
-				clearInterval(typingInterval);
-			}
+			// Only show the thought if this character is currently speaking
+			if (currentlySpeaking.has(index)) {
+				selectedThought = state.currentThought;
+				displayedThought = '';
 
-			// Start typing animation
-			let charIndex = 0;
-			typingInterval = window.setInterval(() => {
-				if (charIndex < state.currentThought.length) {
-					displayedThought += state.currentThought[charIndex];
-					charIndex++;
-				} else {
-					if (typingInterval) {
-						clearInterval(typingInterval);
-						typingInterval = null;
-					}
+				// Clear any existing typing animation
+				if (typingInterval) {
+					clearInterval(typingInterval);
 				}
-			}, 40);
+
+				// Start typing animation
+				let charIndex = 0;
+				typingInterval = window.setInterval(() => {
+					if (charIndex < state.currentThought.length) {
+						displayedThought += state.currentThought[charIndex];
+						charIndex++;
+					} else {
+						if (typingInterval) {
+							clearInterval(typingInterval);
+							typingInterval = null;
+						}
+					}
+				}, 40);
+			} else {
+				// Character is not speaking, show empty text
+				selectedThought = '';
+				displayedThought = '';
+
+				// Clear any existing typing animation
+				if (typingInterval) {
+					clearInterval(typingInterval);
+					typingInterval = null;
+				}
+			}
 		}
 	}
 
@@ -170,6 +224,7 @@
 			typingInterval = null;
 		}
 		selectedCharacter = null;
+		selectedCharacterIndex = null;
 		selectedThought = '';
 		displayedThought = '';
 	}
@@ -219,7 +274,7 @@
 
 	{#if selectedCharacter}
 		<div
-			class="bg-opacity-50 fixed inset-0 flex items-center justify-center backdrop-blur-md transition-opacity"
+			class="bg-opacity-50 fixed inset-0 z-50 flex items-center justify-center backdrop-blur-md transition-opacity"
 			role="presentation"
 			onclick={closeModal}
 			onkeydown={(e) => e.key === 'Escape' && closeModal()}
