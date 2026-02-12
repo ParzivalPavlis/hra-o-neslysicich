@@ -40,10 +40,10 @@
 						class="absolute -top-5.25 flex h-10 w-10 rotate-45 transform items-center justify-center rounded"
 						style="background: linear-gradient(135deg, transparent 50%, white 50%)"
 					>
-						<Play class="-rotate-45 transform" />
+						<Play fill="white" class="-rotate-45 transform" />
 					</div>
 				{:else}
-					<Play color="white" />
+					<Play fill="white" color="white" />
 				{/if}
 				<span class="text-white">Úrovně</span>
 			</a>

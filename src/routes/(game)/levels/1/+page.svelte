@@ -38,7 +38,7 @@
 					'To je pravda. Dnes je krásně.',
 					'Super nápad! Kam půjdeme?'
 				],
-				variant: 'man1',
+				variant: 'man2',
 				rotation: 'left'
 			},
 			{
@@ -49,11 +49,34 @@
 					'Počasí se hodně zlepšilo. Měli bychom jít ven.',
 					'Co takhle park? Můžeme si tam dát zmrzlinu.'
 				],
-				variant: 'woman1',
+				variant: 'woman2',
 				rotation: 'right'
 			}
 		]
 	};
+
+	// Timing configuration for each group (in seconds)
+	const groupTimings: {
+		[key: number]: {
+			characterDuration: number; // milliseconds per character
+			pauseBetween: { min: number; max: number };
+		};
+	} = {
+		1: {
+			characterDuration: 200, // 50ms per character
+			pauseBetween: { min: 0.5, max: 1 } // 0.5-1 second pause between speakers
+		},
+		2: {
+			characterDuration: 50,
+			pauseBetween: { min: 0.5, max: 1 }
+		}
+	};
+
+	// Helper function to get random value within range (in seconds, returns milliseconds)
+	function getRandomDuration(min: number, max: number): number {
+		const randomSeconds = Math.random() * (max - min) + min;
+		return randomSeconds * 1000; // Convert to milliseconds
+	}
 
 	let conversationStates: Map<
 		number,
@@ -79,6 +102,7 @@
 	let typingInterval: number | null = null;
 	let conversationIntervals: Map<number, number> = new Map();
 	let currentlySpeaking: Set<number> = $state(new Set());
+	let lastTypingThought: string = $state(''); // Track the last typed thought to avoid re-triggering
 
 	$effect(() => {
 		if (selectedCharacterIndex !== null) {
@@ -86,29 +110,34 @@
 			const state = characterStates.get(selectedCharacterIndex);
 
 			if (isCurrentlySpeaking && state && selectedCharacter) {
-				selectedThought = state.currentThought;
-				displayedThought = '';
+				// Only restart typing if the thought actually changed
+				if (state.currentThought !== lastTypingThought) {
+					selectedThought = state.currentThought;
+					displayedThought = '';
+					lastTypingThought = state.currentThought;
 
-				if (typingInterval) {
-					clearInterval(typingInterval);
-				}
-
-				let charIndex = 0;
-				typingInterval = window.setInterval(() => {
-					if (charIndex < state.currentThought.length) {
-						displayedThought += state.currentThought[charIndex];
-						charIndex++;
-					} else {
-						if (typingInterval) {
-							clearInterval(typingInterval);
-							typingInterval = null;
-						}
+					if (typingInterval) {
+						clearInterval(typingInterval);
 					}
-				}, 40);
+
+					let charIndex = 0;
+					typingInterval = window.setInterval(() => {
+						if (charIndex < state.currentThought.length) {
+							displayedThought += state.currentThought[charIndex];
+							charIndex++;
+						} else {
+							if (typingInterval) {
+								clearInterval(typingInterval);
+								typingInterval = null;
+							}
+						}
+					}, 40);
+				}
 			} else {
 				// Character stopped speaking, clear the text
 				selectedThought = '';
 				displayedThought = '';
+				lastTypingThought = '';
 
 				if (typingInterval) {
 					clearInterval(typingInterval);
@@ -124,6 +153,7 @@
 			const convState = conversationStates.get(groupKey);
 			if (!convState) return;
 
+			const timing = groupTimings[groupKey];
 			const currentSpeaker = group[convState.currentSpeakerIndex];
 
 			// Calculate global index correctly based on the group's position
@@ -145,6 +175,24 @@
 			});
 			characterStates = characterStates;
 
+			// Calculate speaking duration based on thought length
+			const thoughtLength = currentSpeaker.thoughts[convState.currentThoughtIndex].length;
+			const speakingDuration = thoughtLength * timing.characterDuration;
+
+			// Get random pause duration
+			const pauseDuration = getRandomDuration(timing.pauseBetween.min, timing.pauseBetween.max);
+
+			// Total interval is speaking + pause
+			const totalInterval = speakingDuration + pauseDuration;
+
+			// Remove the speaking indicator before next speaker (10% before speaking ends)
+			setTimeout(() => {
+				const newSet = new Set(currentlySpeaking);
+				newSet.delete(globalIndex);
+				currentlySpeaking = newSet;
+			}, speakingDuration * 0.9);
+
+			// Move to next speaker
 			convState.currentSpeakerIndex++;
 
 			if (convState.currentSpeakerIndex >= group.length) {
@@ -156,23 +204,20 @@
 				}
 			}
 
-			// Remove the speaking indicator after a short delay (just before next speaker)
-			setTimeout(() => {
-				const newSet = new Set(currentlySpeaking);
-				newSet.delete(globalIndex);
-				currentlySpeaking = newSet;
-			}, 3900); // Remove indicator 100ms before next person speaks
-
 			conversationStates.set(groupKey, convState);
+
+			// Schedule next speaker with combined interval
+			const nextInterval = window.setTimeout(updateConversation, totalInterval);
+
+			// Replace the interval in the map
+			if (conversationIntervals.has(groupKey)) {
+				clearInterval(conversationIntervals.get(groupKey)!);
+			}
+			conversationIntervals.set(groupKey, nextInterval as unknown as number);
 		}
 
 		// Run immediately on start
 		updateConversation();
-
-		// Then set up interval
-		const interval = window.setInterval(updateConversation, 4000);
-
-		return interval;
 	}
 
 	function handleCharacterClick(character: TalkingPersonType, index: number) {
@@ -233,9 +278,18 @@
 	onMount(() => {
 		Object.entries(characterGroups).forEach(([key, group]) => {
 			const groupKey = parseInt(key);
-			const interval = initializeConversation(groupKey, group);
-			conversationIntervals.set(groupKey, interval);
+			initializeConversation(groupKey, group);
 		});
+
+		// Cleanup on destroy
+		return () => {
+			conversationIntervals.forEach((interval) => {
+				clearTimeout(interval as unknown as NodeJS.Timeout);
+			});
+			if (typingInterval) {
+				clearInterval(typingInterval);
+			}
+		};
 	});
 </script>
 
@@ -249,7 +303,7 @@
 				{@const globalIndex = charactersBeforeThisGroup + charIndex}
 				<div class="relative">
 					{#if currentlySpeaking.has(globalIndex)}
-						<div class="absolute -top-5 left-1/2 z-40 -translate-x-1/2">
+						<div class="absolute -top-1 left-1/2 z-40 -translate-x-1/2">
 							<div class="relative">
 								<div class="rounded-full border-black bg-white px-4 py-2 shadow-lg">
 									<span class="animate-pulse text-xl font-bold text-gray-700">...</span>
@@ -286,7 +340,7 @@
 				onkeydown={(e) => e.stopPropagation()}
 				tabindex="0"
 			>
-				<div class="animate-zoom-image h-80 w-64 overflow-hidden rounded-lg shadow-2xl">
+				<div class="animate-zoom-image h-80 w-64 overflow-hidden rounded-lg bg-white shadow-2xl">
 					<img
 						src={`/assets/level1/${selectedCharacter.variant}.png`}
 						alt={selectedCharacter.name}
