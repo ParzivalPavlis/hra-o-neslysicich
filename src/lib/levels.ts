@@ -12,14 +12,14 @@ export const levels: LevelButtonType[] = [
 	{
 		icon: Speech,
 		stars: 0,
-		locked: false,
+		locked: true,
 		description: 'Kliknutím znovu pro spuštění',
 		trails: 5
 	},
 	{
 		icon: Speech,
 		stars: 0,
-		locked: false,
+		locked: true,
 		description: 'Kliknutím znovu pro spuštění',
 		trails: 2
 	},
@@ -33,14 +33,14 @@ export const levels: LevelButtonType[] = [
 	{
 		icon: Stethoscope,
 		stars: 0,
-		locked: false,
+		locked: true,
 		description: 'Kliknutím znovu pro spuštění',
 		trails: 1
 	},
 	{
 		icon: Stethoscope,
 		stars: 0,
-		locked: false,
+		locked: true,
 		description: 'Kliknutím znovu pro spuštění',
 		trails: 6
 	},
@@ -54,14 +54,14 @@ export const levels: LevelButtonType[] = [
 	{
 		icon: Hand,
 		stars: 0,
-		locked: false,
+		locked: true,
 		description: 'Kliknutím znovu pro spuštění',
 		trails: 5
 	},
 	{
 		icon: Hand,
 		stars: 0,
-		locked: false,
+		locked: true,
 		description: 'Kliknutím znovu pro spuštění',
 		trails: 2
 	},
@@ -75,14 +75,14 @@ export const levels: LevelButtonType[] = [
 	{
 		icon: PersonStanding,
 		stars: 0,
-		locked: false,
+		locked: true,
 		description: 'Kliknutím znovu pro spuštění',
 		trails: 4
 	},
 	{
 		icon: PersonStanding,
 		stars: 0,
-		locked: false,
+		locked: true,
 		description: 'Kliknutím znovu pro spuštění'
 	}
 ];

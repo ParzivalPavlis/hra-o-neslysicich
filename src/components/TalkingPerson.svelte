@@ -4,19 +4,45 @@
 	let {
 		id,
 		person,
+		isSpeaking = false,
+		isActive = true,
 		onclick = () => {}
-	}: { id: number; person: TalkingPersonType; onclick?: () => void } = $props();
+	}: {
+		id: number;
+		person: TalkingPersonType;
+		isSpeaking?: boolean;
+		isActive?: boolean;
+		onclick?: () => void;
+	} = $props();
 </script>
 
-<button
-	id={`talking-person-${id}`}
-	class="relative cursor-pointer transition-transform hover:scale-105 md:h-60 md:w-40"
-	{onclick}
->
-	<img
-		src={`/assets/level1/${person.variant}.png`}
-		alt="Character"
-		class="h-full w-full"
-		style={`transform: scaleX(${person.rotation === 'left' ? -1 : 1});`}
-	/>
-</button>
+<div class="relative">
+	{#if isSpeaking}
+		<div class="absolute -top-3 left-1/2 z-40 -translate-x-1/2">
+			<div class="relative">
+				<div class="rounded-full border-black bg-white px-4 py-2 shadow-lg">
+					<span class="animate-pulse text-xl font-bold text-gray-700">...</span>
+				</div>
+				<div class="absolute -bottom-1 left-1/2 -translate-x-1/2 transform">
+					<div
+						class="h-0 w-0 border-t-4 border-r-4 border-l-4 border-t-white border-r-transparent border-l-transparent"
+					></div>
+				</div>
+			</div>
+		</div>
+	{/if}
+	<button
+		id={`talking-person-${id}`}
+		class="relative cursor-pointer transition-all hover:scale-105 md:h-60 md:w-40 {isActive
+			? 'opacity-100'
+			: 'opacity-35'}"
+		{onclick}
+	>
+		<img
+			src={`/assets/level1/${person.variant}.png`}
+			alt="Character"
+			class="h-full w-full"
+			style={`transform: scaleX(${person.rotation === 'left' ? -1 : 1});`}
+		/>
+	</button>
+</div>

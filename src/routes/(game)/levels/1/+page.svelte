@@ -1,5 +1,5 @@
 <script lang="ts">
-	import { onMount, onDestroy } from 'svelte';
+	import { onMount } from 'svelte';
 	import TalkingPerson from '$components/TalkingPerson.svelte';
 	import Button from '$components/ui/button/button.svelte';
 	import type { TalkingPersonType } from '$types/talkingPerson';
@@ -9,73 +9,63 @@
 			{
 				name: 'Matěj',
 				thoughts: [
-					'Ahoj! Jak se máš dnes?',
-					'To zní skvěle! Co budeš dělat odpoledne?',
-					'Tvoje oblíbená kavárna? Ta na náměstí?',
-					'Přesně tam! Mají nejlepší dort.'
+					{ text: 'Ahoj! Jak se máš dnes?', duration: 2300 },
+					{ text: 'To zní skvěle! Co budeš dělat odpoledne?', duration: 2300 },
+					{ text: 'Tvoje oblíbená kavárna? Ta na náměstí?', duration: 2300 },
+					{ text: 'Přesně tam! Mají nejlepší dort.', duration: 2300 }
 				],
 				variant: 'man1',
-				rotation: 'left'
+				rotation: 'left',
+				pauseBetween: { min: 0.5, max: 1 },
+				pauseStart: 1000
 			},
 			{
 				name: 'Anna',
 				thoughts: [
-					'Dobře, děkuji! Jsem trochu unavená.',
-					'Plánuji si zajít do kavárny na kávu.',
-					'Ano! Mají tam výborný čokoládový dort.',
-					'Přidáš se ke mně? Můžeme si popovídat.'
+					{ text: 'Dobře, děkuji! Jsem trochu unavená.', duration: 2300 },
+					{ text: 'Plánuji si zajít do kavárny na kávu.', duration: 2300 },
+					{ text: 'Ano! Mají tam výborný čokoládový dort.', duration: 2300 },
+					{ text: 'Přidáš se ke mně? Můžeme si popovídat.', duration: 2300 }
 				],
 				variant: 'woman1',
-				rotation: 'right'
+				rotation: 'right',
+				pauseBetween: { min: 0.5, max: 1 },
+				pauseStart: 0
 			}
 		],
 		2: [
 			{
 				name: 'Petr',
 				thoughts: [
-					'Slyšel jsi včera tu bouřku?',
-					'Já taky! Nemohl jsem spát hodiny.',
-					'To je pravda. Dnes je krásně.',
-					'Super nápad! Kam půjdeme?'
+					{ text: 'Slyšel jsi včera tu bouřku?', duration: 2300 },
+					{ text: 'Já taky! Nemohl jsem spát hodiny.', duration: 2300 },
+					{ text: 'To je pravda. Dnes je krásně.', duration: 2300 },
+					{ text: 'Super nápad! Kam půjdeme?', duration: 2300 }
 				],
 				variant: 'man2',
-				rotation: 'left'
+				rotation: 'left',
+				pauseBetween: { min: 0.5, max: 1 },
+				pauseStart: 500
 			},
 			{
 				name: 'Lucie',
 				thoughts: [
-					'Ano! Byla strašně hlasitá!',
-					'Já taky ne. Ale aspoň teď svítí slunce.',
-					'Počasí se hodně zlepšilo. Měli bychom jít ven.',
-					'Co takhle park? Můžeme si tam dát zmrzlinu.'
+					{ text: 'Ano! Byla strašně hlasitá!', duration: 2300 },
+					{ text: 'Já taky ne. Ale aspoň teď svítí slunce.', duration: 2300 },
+					{ text: 'Počasí se hodně zlepšilo. Měli bychom jít ven.', duration: 2300 },
+					{ text: 'Co takhle park? Můžeme si tam dát zmrzlinu.', duration: 2300 }
 				],
 				variant: 'woman2',
-				rotation: 'right'
+				rotation: 'right',
+				pauseBetween: { min: 0.5, max: 1 }
 			}
 		]
-	};
-
-	// Timing configuration for each group (in seconds)
-	const groupTimings: {
-		[key: number]: {
-			characterDuration: number; // milliseconds per character
-			pauseBetween: { min: number; max: number };
-		};
-	} = {
-		1: {
-			characterDuration: 200, // 50ms per character
-			pauseBetween: { min: 0.5, max: 1 } // 0.5-1 second pause between speakers
-		},
-		2: {
-			characterDuration: 50,
-			pauseBetween: { min: 0.5, max: 1 }
-		}
 	};
 
 	// Helper function to get random value within range (in seconds, returns milliseconds)
 	function getRandomDuration(min: number, max: number): number {
 		const randomSeconds = Math.random() * (max - min) + min;
-		return randomSeconds * 1000; // Convert to milliseconds
+		return randomSeconds * 1000;
 	}
 
 	let conversationStates: Map<
@@ -92,7 +82,10 @@
 		new Map(
 			Object.values(characterGroups)
 				.flat()
-				.map((char, index) => [index, { currentThoughtIndex: 0, currentThought: char.thoughts[0] }])
+				.map((char, index) => [
+					index,
+					{ currentThoughtIndex: 0, currentThought: char.thoughts[0].text }
+				])
 		);
 
 	let selectedCharacter: TalkingPersonType | null = $state(null);
@@ -102,7 +95,9 @@
 	let typingInterval: number | null = null;
 	let conversationIntervals: Map<number, number> = new Map();
 	let currentlySpeaking: Set<number> = $state(new Set());
-	let lastTypingThought: string = $state(''); // Track the last typed thought to avoid re-triggering
+	let lastTypingThought: string = $state('');
+	let conversationStarted: boolean = $state(false);
+	let finishedGroups: Set<number> = $state(new Set());
 
 	$effect(() => {
 		if (selectedCharacterIndex !== null) {
@@ -153,8 +148,9 @@
 			const convState = conversationStates.get(groupKey);
 			if (!convState) return;
 
-			const timing = groupTimings[groupKey];
 			const currentSpeaker = group[convState.currentSpeakerIndex];
+			const currentThought = currentSpeaker.thoughts[convState.currentThoughtIndex];
+			const pauseBetween = currentSpeaker.pauseBetween;
 
 			// Calculate global index correctly based on the group's position
 			const groupKeys = Object.keys(characterGroups)
@@ -171,21 +167,20 @@
 
 			characterStates.set(globalIndex, {
 				currentThoughtIndex: convState.currentThoughtIndex,
-				currentThought: currentSpeaker.thoughts[convState.currentThoughtIndex]
+				currentThought: currentThought.text
 			});
 			characterStates = characterStates;
 
-			// Calculate speaking duration based on thought length
-			const thoughtLength = currentSpeaker.thoughts[convState.currentThoughtIndex].length;
-			const speakingDuration = thoughtLength * timing.characterDuration;
+			// Get speaking duration from the thought's duration property
+			const speakingDuration = currentThought.duration;
 
 			// Get random pause duration
-			const pauseDuration = getRandomDuration(timing.pauseBetween.min, timing.pauseBetween.max);
+			const pauseDuration = getRandomDuration(pauseBetween.min, pauseBetween.max);
 
 			// Total interval is speaking + pause
 			const totalInterval = speakingDuration + pauseDuration;
 
-			// Remove the speaking indicator before next speaker (10% before speaking ends)
+			// Remove the speaking indicator before next speaker
 			setTimeout(() => {
 				const newSet = new Set(currentlySpeaking);
 				newSet.delete(globalIndex);
@@ -199,8 +194,18 @@
 				convState.currentSpeakerIndex = 0;
 				convState.currentThoughtIndex++;
 
+				// Check if all thoughts are finished
 				if (convState.currentThoughtIndex >= currentSpeaker.thoughts.length) {
-					convState.currentThoughtIndex = 0;
+					// Mark this group as finished after the current speaker finishes talking
+					setTimeout(() => {
+						finishedGroups = new Set(finishedGroups).add(groupKey);
+					}, speakingDuration);
+
+					if (conversationIntervals.has(groupKey)) {
+						clearTimeout(conversationIntervals.get(groupKey)! as unknown as NodeJS.Timeout);
+						conversationIntervals.delete(groupKey);
+					}
+					return; // Stop the conversation for this group
 				}
 			}
 
@@ -216,8 +221,13 @@
 			conversationIntervals.set(groupKey, nextInterval as unknown as number);
 		}
 
-		// Run immediately on start
-		updateConversation();
+		// Get the pause duration for the first speaker in this group
+		const firstSpeaker = group[0];
+		const initialPause = firstSpeaker.pauseStart ?? 0;
+
+		// Schedule the first updateConversation with the pauseStart delay
+		const initialInterval = window.setTimeout(updateConversation, initialPause);
+		conversationIntervals.set(groupKey, initialInterval as unknown as number);
 	}
 
 	function handleCharacterClick(character: TalkingPersonType, index: number) {
@@ -274,13 +284,16 @@
 		displayedThought = '';
 	}
 
-	// Start conversations when component mounts
-	onMount(() => {
+	function startConversation() {
+		conversationStarted = true;
 		Object.entries(characterGroups).forEach(([key, group]) => {
 			const groupKey = parseInt(key);
 			initializeConversation(groupKey, group);
 		});
+	}
 
+	// Start conversations when component mounts
+	onMount(() => {
 		// Cleanup on destroy
 		return () => {
 			conversationIntervals.forEach((interval) => {
@@ -294,37 +307,31 @@
 </script>
 
 <div class="relative flex min-h-screen flex-col items-center justify-center px-2 py-5 md:p-10">
-	{#each Object.entries(characterGroups) as [groupKey, group], groupIndex}
-		<div class="flex h-fit">
-			{#each group as character, charIndex}
-				{@const charactersBeforeThisGroup = Object.values(characterGroups)
-					.slice(0, groupIndex)
-					.reduce((sum, g) => sum + g.length, 0)}
-				{@const globalIndex = charactersBeforeThisGroup + charIndex}
-				<div class="relative">
-					{#if currentlySpeaking.has(globalIndex)}
-						<div class="absolute -top-1 left-1/2 z-40 -translate-x-1/2">
-							<div class="relative">
-								<div class="rounded-full border-black bg-white px-4 py-2 shadow-lg">
-									<span class="animate-pulse text-xl font-bold text-gray-700">...</span>
-								</div>
-								<div class="absolute -bottom-1 left-1/2 -translate-x-1/2 transform">
-									<div
-										class="h-0 w-0 border-t-4 border-r-4 border-l-4 border-t-white border-r-transparent border-l-transparent"
-									></div>
-								</div>
-							</div>
-						</div>
-					{/if}
+	{#if !conversationStarted}
+		<Button onclick={startConversation} class="rounded-lg px-20 py-10 text-3xl font-bold">
+			Začít
+		</Button>
+	{:else}
+		{#each Object.entries(characterGroups) as [groupKeyStr, group], groupIndex}
+			<div class="flex h-fit">
+				{#each group as character, charIndex}
+					{@const charactersBeforeThisGroup = Object.values(characterGroups)
+						.slice(0, groupIndex)
+						.reduce((sum, g) => sum + g.length, 0)}
+					{@const globalIndex = charactersBeforeThisGroup + charIndex}
+					{@const groupKey = parseInt(groupKeyStr)}
+					{@const isGroupActive = !finishedGroups.has(groupKey)}
 					<TalkingPerson
 						id={globalIndex}
 						person={character}
+						isSpeaking={currentlySpeaking.has(globalIndex)}
+						isActive={isGroupActive}
 						onclick={() => handleCharacterClick(character, globalIndex)}
 					/>
-				</div>
-			{/each}
-		</div>
-	{/each}
+				{/each}
+			</div>
+		{/each}
+	{/if}
 
 	{#if selectedCharacter}
 		<div
