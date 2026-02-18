@@ -1,6 +1,6 @@
 <script lang="ts">
-	import { onMount } from 'svelte';
 	import TalkingPerson from '$components/TalkingPerson.svelte';
+	import Paragraph from '$components/typography/Paragraph.svelte';
 	import Button from '$components/ui/button/button.svelte';
 	import type { TalkingPersonType } from '$types/talkingPerson';
 
@@ -8,7 +8,7 @@
 		1: [
 			{
 				name: 'Matěj',
-				thoughts: [
+				dialog: [
 					{ text: 'Ahoj! Jak se máš dnes?', duration: 2300 },
 					{ text: 'To zní skvěle! Co budeš dělat odpoledne?', duration: 2300 },
 					{ text: 'Tvoje oblíbená kavárna? Ta na náměstí?', duration: 2300 },
@@ -21,7 +21,7 @@
 			},
 			{
 				name: 'Anna',
-				thoughts: [
+				dialog: [
 					{ text: 'Dobře, děkuji! Jsem trochu unavená.', duration: 2300 },
 					{ text: 'Plánuji si zajít do kavárny na kávu.', duration: 2300 },
 					{ text: 'Ano! Mají tam výborný čokoládový dort.', duration: 2300 },
@@ -36,7 +36,7 @@
 		2: [
 			{
 				name: 'Petr',
-				thoughts: [
+				dialog: [
 					{ text: 'Slyšel jsi včera tu bouřku?', duration: 2300 },
 					{ text: 'Já taky! Nemohl jsem spát hodiny.', duration: 2300 },
 					{ text: 'To je pravda. Dnes je krásně.', duration: 2300 },
@@ -45,11 +45,11 @@
 				variant: 'man2',
 				rotation: 'left',
 				pauseBetween: { min: 0.5, max: 1 },
-				pauseStart: 500
+				pauseStart: 3000
 			},
 			{
 				name: 'Lucie',
-				thoughts: [
+				dialog: [
 					{ text: 'Ano! Byla strašně hlasitá!', duration: 2300 },
 					{ text: 'Já taky ne. Ale aspoň teď svítí slunce.', duration: 2300 },
 					{ text: 'Počasí se hodně zlepšilo. Měli bychom jít ven.', duration: 2300 },
@@ -68,266 +68,166 @@
 		return randomSeconds * 1000;
 	}
 
-	let conversationStates: Map<
-		number,
-		{ currentSpeakerIndex: number; currentThoughtIndex: number }
-	> = new Map(
-		Object.keys(characterGroups).map((key) => [
-			parseInt(key),
-			{ currentSpeakerIndex: 0, currentThoughtIndex: 0 }
-		])
+	// Flatten characters with group info for simpler management
+	const allCharacters = Object.entries(characterGroups).flatMap(([groupId, chars]) =>
+		chars.map((char, index) => ({
+			...char,
+			groupId: parseInt(groupId),
+			globalId:
+				Object.values(characterGroups)
+					.slice(0, parseInt(groupId) - 1)
+					.reduce((sum, g) => sum + g.length, 0) + index
+		}))
 	);
 
-	let characterStates: Map<number, { currentThoughtIndex: number; currentThought: string }> =
-		new Map(
-			Object.values(characterGroups)
-				.flat()
-				.map((char, index) => [
-					index,
-					{ currentThoughtIndex: 0, currentThought: char.thoughts[0].text }
-				])
-		);
+	let conversationStarted = $state(false);
+	let currentlySpeaking = $state(new Set<number>());
+	let finishedGroups = $state(new Set<number>());
+	let selectedCharacter = $state<(typeof allCharacters)[0] | null>(null);
+	let currentThoughts = $state(new Map<number, string>());
+	let displayedThought = $state('');
+	let typingInterval: ReturnType<typeof setInterval> | null = null;
+	let lastTypedThought = $state('');
 
-	let selectedCharacter: TalkingPersonType | null = $state(null);
-	let selectedCharacterIndex: number | null = $state(null);
-	let selectedThought: string = $state('');
-	let displayedThought: string = $state('');
-	let typingInterval: number | null = null;
-	let conversationIntervals: Map<number, number> = new Map();
-	let currentlySpeaking: Set<number> = $state(new Set());
-	let lastTypingThought: string = $state('');
-	let conversationStarted: boolean = $state(false);
-	let finishedGroups: Set<number> = $state(new Set());
+	// Derived thought for selected character
+	let selectedCharacterThought = $derived(
+		selectedCharacter && currentlySpeaking.has(selectedCharacter.globalId)
+			? currentThoughts.get(selectedCharacter.globalId) || ''
+			: ''
+	);
 
+	// Effect to handle typing animation when selected character's thought changes
 	$effect(() => {
-		if (selectedCharacterIndex !== null) {
-			const isCurrentlySpeaking = currentlySpeaking.has(selectedCharacterIndex);
-			const state = characterStates.get(selectedCharacterIndex);
+		if (selectedCharacterThought && selectedCharacterThought !== lastTypedThought) {
+			lastTypedThought = selectedCharacterThought;
 
-			if (isCurrentlySpeaking && state && selectedCharacter) {
-				// Only restart typing if the thought actually changed
-				if (state.currentThought !== lastTypingThought) {
-					selectedThought = state.currentThought;
-					displayedThought = '';
-					lastTypingThought = state.currentThought;
+			if (typingInterval) clearInterval(typingInterval);
+			displayedThought = '';
 
+			let charIndex = 0;
+			typingInterval = setInterval(() => {
+				if (charIndex < selectedCharacterThought.length) {
+					displayedThought += selectedCharacterThought[charIndex];
+					charIndex++;
+				} else {
 					if (typingInterval) {
 						clearInterval(typingInterval);
+						typingInterval = null;
 					}
-
-					let charIndex = 0;
-					typingInterval = window.setInterval(() => {
-						if (charIndex < state.currentThought.length) {
-							displayedThought += state.currentThought[charIndex];
-							charIndex++;
-						} else {
-							if (typingInterval) {
-								clearInterval(typingInterval);
-								typingInterval = null;
-							}
-						}
-					}, 40);
 				}
-			} else {
-				// Character stopped speaking, clear the text
-				selectedThought = '';
-				displayedThought = '';
-				lastTypingThought = '';
-
-				if (typingInterval) {
-					clearInterval(typingInterval);
-					typingInterval = null;
-				}
+			}, 40);
+		} else if (!selectedCharacterThought) {
+			displayedThought = '';
+			lastTypedThought = '';
+			if (typingInterval) {
+				clearInterval(typingInterval);
+				typingInterval = null;
 			}
 		}
 	});
 
-	function initializeConversation(groupKey: number, group: TalkingPersonType[]) {
-		// Function to handle each conversation step
-		function updateConversation() {
-			const convState = conversationStates.get(groupKey);
-			if (!convState) return;
+	function startGroupConversation(groupId: number) {
+		const groupChars = allCharacters.filter((c) => c.groupId === groupId);
+		let speakerIndex = 0;
+		let thoughtIndex = 0;
 
-			const currentSpeaker = group[convState.currentSpeakerIndex];
-			const currentThought = currentSpeaker.thoughts[convState.currentThoughtIndex];
-			const pauseBetween = currentSpeaker.pauseBetween;
+		function nextThought() {
+			if (finishedGroups.has(groupId)) return;
 
-			// Calculate global index correctly based on the group's position
-			const groupKeys = Object.keys(characterGroups)
-				.map((k) => parseInt(k))
-				.sort((a, b) => a - b);
-			const groupPosition = groupKeys.indexOf(groupKey);
-			const charactersBeforeThisGroup = groupKeys
-				.slice(0, groupPosition)
-				.reduce((sum, key) => sum + characterGroups[key].length, 0);
-			const globalIndex = charactersBeforeThisGroup + convState.currentSpeakerIndex;
+			const speaker = groupChars[speakerIndex];
+			const dialog = speaker.dialog[thoughtIndex];
 
-			// Mark this character as currently speaking
-			currentlySpeaking = new Set(currentlySpeaking).add(globalIndex);
+			// Start speaking
+			currentlySpeaking = new Set(currentlySpeaking).add(speaker.globalId);
+			if (dialog?.text) {
+				currentThoughts.set(speaker.globalId, dialog.text);
+			}
 
-			characterStates.set(globalIndex, {
-				currentThoughtIndex: convState.currentThoughtIndex,
-				currentThought: currentThought.text
-			});
-			characterStates = characterStates;
-
-			// Get speaking duration from the thought's duration property
-			const speakingDuration = currentThought.duration;
-
-			// Get random pause duration
-			const pauseDuration = getRandomDuration(pauseBetween.min, pauseBetween.max);
-
-			// Total interval is speaking + pause
-			const totalInterval = speakingDuration + pauseDuration;
-
-			// Remove the speaking indicator before next speaker
+			// Stop speaking after duration
 			setTimeout(() => {
-				const newSet = new Set(currentlySpeaking);
-				newSet.delete(globalIndex);
-				currentlySpeaking = newSet;
-			}, speakingDuration * 0.9);
+				const newSpeaking = new Set(currentlySpeaking);
+				newSpeaking.delete(speaker.globalId);
+				currentlySpeaking = newSpeaking;
+			}, dialog.duration * 0.9);
 
-			// Move to next speaker
-			convState.currentSpeakerIndex++;
+			// Move to next
+			speakerIndex = (speakerIndex + 1) % groupChars.length;
+			if (speakerIndex === 0) thoughtIndex++;
 
-			if (convState.currentSpeakerIndex >= group.length) {
-				convState.currentSpeakerIndex = 0;
-				convState.currentThoughtIndex++;
+			// Check if conversation finished
+			if (thoughtIndex >= speaker.dialog.length) {
+				setTimeout(() => {
+					finishedGroups = new Set(finishedGroups).add(groupId);
+				}, dialog.duration);
 
-				// Check if all thoughts are finished
-				if (convState.currentThoughtIndex >= currentSpeaker.thoughts.length) {
-					// Mark this group as finished after the current speaker finishes talking
-					setTimeout(() => {
-						finishedGroups = new Set(finishedGroups).add(groupKey);
-					}, speakingDuration);
-
-					if (conversationIntervals.has(groupKey)) {
-						clearTimeout(conversationIntervals.get(groupKey)! as unknown as NodeJS.Timeout);
-						conversationIntervals.delete(groupKey);
-					}
-					return; // Stop the conversation for this group
-				}
+				return;
 			}
 
-			conversationStates.set(groupKey, convState);
-
-			// Schedule next speaker with combined interval
-			const nextInterval = window.setTimeout(updateConversation, totalInterval);
-
-			// Replace the interval in the map
-			if (conversationIntervals.has(groupKey)) {
-				clearInterval(conversationIntervals.get(groupKey)!);
-			}
-			conversationIntervals.set(groupKey, nextInterval as unknown as number);
+			// Schedule next thought
+			const pauseTime = getRandomDuration(speaker.pauseBetween.min, speaker.pauseBetween.max);
+			setTimeout(nextThought, dialog.duration + pauseTime);
 		}
 
-		// Get the pause duration for the first speaker in this group
-		const firstSpeaker = group[0];
-		const initialPause = firstSpeaker.pauseStart ?? 0;
-
-		// Schedule the first updateConversation with the pauseStart delay
-		const initialInterval = window.setTimeout(updateConversation, initialPause);
-		conversationIntervals.set(groupKey, initialInterval as unknown as number);
+		// Start with initial delay
+		const firstChar = groupChars[0];
+		setTimeout(nextThought, firstChar.pauseStart || 0);
 	}
 
-	function handleCharacterClick(character: TalkingPersonType, index: number) {
-		const state = characterStates.get(index);
-		if (state) {
-			selectedCharacter = character;
-			selectedCharacterIndex = index;
-
-			// Only show the thought if this character is currently speaking
-			if (currentlySpeaking.has(index)) {
-				selectedThought = state.currentThought;
-				displayedThought = '';
-
-				// Clear any existing typing animation
-				if (typingInterval) {
-					clearInterval(typingInterval);
-				}
-
-				// Start typing animation
-				let charIndex = 0;
-				typingInterval = window.setInterval(() => {
-					if (charIndex < state.currentThought.length) {
-						displayedThought += state.currentThought[charIndex];
-						charIndex++;
-					} else {
-						if (typingInterval) {
-							clearInterval(typingInterval);
-							typingInterval = null;
-						}
-					}
-				}, 40);
-			} else {
-				// Character is not speaking, show empty text
-				selectedThought = '';
-				displayedThought = '';
-
-				// Clear any existing typing animation
-				if (typingInterval) {
-					clearInterval(typingInterval);
-					typingInterval = null;
-				}
-			}
-		}
+	function handleCharacterClick(character: (typeof allCharacters)[0]) {
+		selectedCharacter = character;
 	}
 
 	function closeModal() {
-		if (typingInterval) {
-			clearInterval(typingInterval);
-			typingInterval = null;
-		}
 		selectedCharacter = null;
-		selectedCharacterIndex = null;
-		selectedThought = '';
-		displayedThought = '';
 	}
 
 	function startConversation() {
 		conversationStarted = true;
-		Object.entries(characterGroups).forEach(([key, group]) => {
-			const groupKey = parseInt(key);
-			initializeConversation(groupKey, group);
+		Object.keys(characterGroups).forEach((groupId) => {
+			startGroupConversation(parseInt(groupId));
 		});
 	}
-
-	// Start conversations when component mounts
-	onMount(() => {
-		// Cleanup on destroy
-		return () => {
-			conversationIntervals.forEach((interval) => {
-				clearTimeout(interval as unknown as NodeJS.Timeout);
-			});
-			if (typingInterval) {
-				clearInterval(typingInterval);
-			}
-		};
-	});
 </script>
 
 <div class="relative flex min-h-screen flex-col items-center justify-center px-2 py-5 md:p-10">
 	{#if !conversationStarted}
-		<Button onclick={startConversation} class="rounded-lg px-20 py-10 text-3xl font-bold">
-			Začít
-		</Button>
+		<div class="flex w-full flex-col items-center gap-5 text-center">
+			<Paragraph>Nacházíte se v roli neslyšícího člověka v kavárně.</Paragraph>
+			<Paragraph>
+				Okolo sebe máte další návštěvníky, kteří si povídají a jelikož čekáte na kamaráda, nenapadne
+				vás nic lepšího než mezitím zjistit, o čem si ostatní povídají.
+			</Paragraph>
+			<Paragraph>
+				Pomocí kliknutí na jednotlivé postavy se na ně začnete soustředit a odezírat z jejich úst o
+				čem se konkrétně baví.
+			</Paragraph>
+			<Paragraph
+				>Na konci je vaším cílem odpovědět na sérii otázek vztahující se k tématům, o kterých si
+				postavy povídaly.</Paragraph
+			>
+			<Button
+				onclick={startConversation}
+				class="w-full max-w-[80%] rounded-lg px-20 py-10 text-3xl font-bold md:max-w-75"
+			>
+				Začít
+			</Button>
+		</div>
 	{:else}
-		{#each Object.entries(characterGroups) as [groupKeyStr, group], groupIndex}
+		{#each Object.entries(characterGroups) as [groupKeyStr, group]}
 			<div class="flex h-fit">
-				{#each group as character, charIndex}
-					{@const charactersBeforeThisGroup = Object.values(characterGroups)
-						.slice(0, groupIndex)
-						.reduce((sum, g) => sum + g.length, 0)}
-					{@const globalIndex = charactersBeforeThisGroup + charIndex}
-					{@const groupKey = parseInt(groupKeyStr)}
-					{@const isGroupActive = !finishedGroups.has(groupKey)}
-					<TalkingPerson
-						id={globalIndex}
-						person={character}
-						isSpeaking={currentlySpeaking.has(globalIndex)}
-						isActive={isGroupActive}
-						onclick={() => handleCharacterClick(character, globalIndex)}
-					/>
+				{#each group as character}
+					{@const globalCharacter = allCharacters.find(
+						(c) => c.groupId === parseInt(groupKeyStr) && c.name === character.name
+					)}
+					{#if globalCharacter}
+						<TalkingPerson
+							id={globalCharacter.globalId}
+							person={character}
+							isSpeaking={currentlySpeaking.has(globalCharacter.globalId)}
+							finishedSpeaking={finishedGroups.has(globalCharacter.groupId)}
+							onclick={() => handleCharacterClick(globalCharacter)}
+						/>
+					{/if}
 				{/each}
 			</div>
 		{/each}

@@ -7,6 +7,7 @@ export const levels: LevelButtonType[] = [
 		stars: 0,
 		locked: false,
 		description: 'Kliknutím znovu pro spuštění adad ad aaddada adda a d',
+		href: '/levels/1/intro',
 		trails: 3
 	},
 	{
@@ -14,6 +15,7 @@ export const levels: LevelButtonType[] = [
 		stars: 0,
 		locked: true,
 		description: 'Kliknutím znovu pro spuštění',
+		href: '/levels/2',
 		trails: 5
 	},
 	{
@@ -21,6 +23,7 @@ export const levels: LevelButtonType[] = [
 		stars: 0,
 		locked: true,
 		description: 'Kliknutím znovu pro spuštění',
+		href: '/levels/3',
 		trails: 2
 	},
 	{
@@ -28,6 +31,7 @@ export const levels: LevelButtonType[] = [
 		stars: 0,
 		locked: false,
 		description: 'Kliknutím znovu pro spuštění',
+		href: '/levels/4',
 		trails: 4
 	},
 	{
@@ -35,6 +39,7 @@ export const levels: LevelButtonType[] = [
 		stars: 0,
 		locked: true,
 		description: 'Kliknutím znovu pro spuštění',
+		href: '/levels/5',
 		trails: 1
 	},
 	{
@@ -42,6 +47,7 @@ export const levels: LevelButtonType[] = [
 		stars: 0,
 		locked: true,
 		description: 'Kliknutím znovu pro spuštění',
+		href: '/levels/6',
 		trails: 6
 	},
 	{
@@ -49,6 +55,7 @@ export const levels: LevelButtonType[] = [
 		stars: 0,
 		locked: false,
 		description: 'Kliknutím znovu pro spuštění',
+		href: '/levels/7',
 		trails: 3
 	},
 	{
@@ -56,6 +63,7 @@ export const levels: LevelButtonType[] = [
 		stars: 0,
 		locked: true,
 		description: 'Kliknutím znovu pro spuštění',
+		href: '/levels/8',
 		trails: 5
 	},
 	{
@@ -63,6 +71,7 @@ export const levels: LevelButtonType[] = [
 		stars: 0,
 		locked: true,
 		description: 'Kliknutím znovu pro spuštění',
+		href: '/levels/9',
 		trails: 2
 	},
 	{
@@ -70,6 +79,7 @@ export const levels: LevelButtonType[] = [
 		stars: 0,
 		locked: false,
 		description: 'Kliknutím znovu pro spuštění',
+		href: '/levels/10',
 		trails: 5
 	},
 	{
@@ -77,12 +87,14 @@ export const levels: LevelButtonType[] = [
 		stars: 0,
 		locked: true,
 		description: 'Kliknutím znovu pro spuštění',
+		href: '/levels/11',
 		trails: 4
 	},
 	{
 		icon: PersonStanding,
 		stars: 0,
 		locked: true,
-		description: 'Kliknutím znovu pro spuštění'
+		description: 'Kliknutím znovu pro spuštění',
+		href: '/levels/12'
 	}
 ];

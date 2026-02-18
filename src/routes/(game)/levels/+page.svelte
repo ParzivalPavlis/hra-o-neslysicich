@@ -51,11 +51,11 @@
 </script>
 
 <div class="relative flex min-h-screen flex-col-reverse items-center gap-50 p-10">
-	{#each levels as { icon, stars, locked, description, trails }, index}
+	{#each levels as { icon, stars, locked, description, trails, href }, index}
 		<div bind:this={levelButtonRefs[index]}>
 			<LevelButton
 				levelInfoOpen={showAllInfo}
-				attributes={{ icon, stars, locked, description, trails, level: index + 1 }}
+				attributes={{ icon, stars, locked, description, trails, level: index + 1, href }}
 			/>
 		</div>
 	{/each}

@@ -19,12 +19,12 @@
 	function handleClick() {
 		if (levelInfoOpen) {
 			// If info is open, navigate directly with single click
-			goto(`/levels/${attributes.level}`);
+			goto(attributes.href);
 		} else {
 			// Otherwise require 2 clicks
 			clickCount++;
 			if (clickCount === 2) {
-				goto(`/levels/${attributes.level}`);
+				goto(attributes.href);
 			}
 		}
 	}

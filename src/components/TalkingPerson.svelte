@@ -5,13 +5,13 @@
 		id,
 		person,
 		isSpeaking = false,
-		isActive = true,
+		finishedSpeaking = false,
 		onclick = () => {}
 	}: {
 		id: number;
 		person: TalkingPersonType;
 		isSpeaking?: boolean;
-		isActive?: boolean;
+		finishedSpeaking?: boolean;
 		onclick?: () => void;
 	} = $props();
 </script>
@@ -33,10 +33,11 @@
 	{/if}
 	<button
 		id={`talking-person-${id}`}
-		class="relative cursor-pointer transition-all hover:scale-105 md:h-60 md:w-40 {isActive
-			? 'opacity-100'
-			: 'opacity-35'}"
-		{onclick}
+		class="relative transition-all md:h-100 {finishedSpeaking
+			? 'cursor-default opacity-35'
+			: 'cursor-pointer opacity-100 hover:scale-105'}"
+		onclick={finishedSpeaking ? undefined : onclick}
+		disabled={finishedSpeaking}
 	>
 		<img
 			src={`/assets/level1/${person.variant}.png`}
