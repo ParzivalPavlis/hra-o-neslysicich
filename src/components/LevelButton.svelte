@@ -49,13 +49,15 @@
 		type="button"
 		disabled={attributes.locked}
 		onclick={handleClick}
-		class="group relative flex h-40 w-40 cursor-pointer flex-col items-center justify-center overflow-hidden rounded-full border border-white/10
-          bg-foreground
-          shadow-lg
+		class="group relative flex h-40 w-40 cursor-pointer flex-col items-center justify-center overflow-hidden rounded-full
+          bg-blue-500
+          shadow-[0_8px_0_rgb(29,78,216)]
           transition-all
-          hover:-translate-y-0.5
-         hover:bg-foreground hover:opacity-100 active:translate-y-0
-         disabled:translate-y-0 disabled:opacity-50"
+          hover:-translate-y-0.5 hover:bg-blue-500
+         hover:opacity-100 hover:shadow-[0_10px_0_rgb(29,78,216)]
+         active:translate-y-1 active:shadow-[0_4px_0_rgb(29,78,216)]
+         disabled:translate-y-0 disabled:bg-gray-500 disabled:opacity-100
+				 disabled:shadow-[0_8px_0_rgb(55,65,81)]"
 	>
 		<div class="flex flex-col items-center gap-2">
 			<div class="flex h-11 w-11 items-center justify-center rounded-full bg-white/10 text-white">
@@ -75,8 +77,8 @@
 		</div>
 	</Button>
 	{#if clickCount === 1 || levelInfoOpen}
-		<div class="chat-bubble mt-2 max-w-xs rounded-lg border border-foreground bg-white px-4 py-3">
-			<p class="text-sm leading-relaxed text-foreground">{attributes.description}</p>
+		<div class="chat-bubble mt-4 max-w-xs rounded-lg border border-foreground bg-white px-4 py-3">
+			<p class="text-center text-sm leading-relaxed text-foreground">{attributes.description}</p>
 		</div>
 	{/if}
 </div>

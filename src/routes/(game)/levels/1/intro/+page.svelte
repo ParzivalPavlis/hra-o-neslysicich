@@ -2,10 +2,12 @@
 	import { fade } from 'svelte/transition';
 	import Paragraph from '$components/typography/Paragraph.svelte';
 	import Button from '$components/ui/button/button.svelte';
-	import { onMount } from 'svelte';
+	import { onMount, onDestroy } from 'svelte';
 	import type { TalkingPersonType } from '$types/talkingPerson';
 	import TalkingPerson from '$components/TalkingPerson.svelte';
 	import { goto } from '$app/navigation';
+	import { beforeNavigate } from '$app/navigation';
+	import GameButton from '$components/GameButton.svelte';
 
 	let fadeAnimations = $state(false);
 	let manAudio: HTMLAudioElement;
@@ -90,6 +92,17 @@
 		womanAudio?.pause();
 	}
 
+	function stopAndResetAudio() {
+		if (manAudio) {
+			manAudio.pause();
+			manAudio.currentTime = 0;
+		}
+		if (womanAudio) {
+			womanAudio.pause();
+			womanAudio.currentTime = 0;
+		}
+	}
+
 	function fadeOutAudio() {
 		const fadeSteps = 50;
 		const fadeInterval = 200; // 200ms between steps for slower fade
@@ -106,7 +119,7 @@
 			if (currentStep >= fadeSteps) {
 				clearInterval(fadeInterval_id);
 				// Stop audio completely when volume reaches 0
-				stopAllAudio();
+				stopAndResetAudio();
 			}
 		}, fadeInterval);
 	}
@@ -129,6 +142,12 @@
 		}
 	}
 
+	// Stop audio before navigating away
+	beforeNavigate(() => {
+		conversationActive = false;
+		stopAndResetAudio();
+	});
+
 	onMount(() => {
 		fadeAnimations = true;
 
@@ -142,9 +161,15 @@
 		womanAudio.currentTime = 0;
 
 		return () => {
-			manAudio?.pause();
-			womanAudio?.pause();
+			conversationActive = false;
+			stopAndResetAudio();
 		};
+	});
+
+	// Additional cleanup on component destruction
+	onDestroy(() => {
+		conversationActive = false;
+		stopAndResetAudio();
 	});
 </script>
 
@@ -185,7 +210,9 @@
 			{/if}
 		</div>
 		<div transition:fade={{ delay: 6000, duration: 3000 }}>
-			<Button class="mt-8 text-[16px]" onclick={handleContinue}>Pokračovat</Button>
+			<GameButton onclick={handleContinue} class={introState === 1 ? 'mt-8' : 'mt-5'}>
+				Pokračovat
+			</GameButton>
 		</div>
 	</div>
 {/if}

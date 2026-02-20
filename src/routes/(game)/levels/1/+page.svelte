@@ -1,8 +1,20 @@
 <script lang="ts">
+	import GameButton from '$components/GameButton.svelte';
 	import TalkingPerson from '$components/TalkingPerson.svelte';
 	import Paragraph from '$components/typography/Paragraph.svelte';
 	import Button from '$components/ui/button/button.svelte';
 	import type { TalkingPersonType } from '$types/talkingPerson';
+	import { RotateCcw } from '@lucide/svelte';
+
+	let conversationStarted = $state(false);
+	let currentlySpeaking = $state(new Set<number>());
+	let finishedGroups = $state(new Set<number>());
+	let selectedCharacter = $state<(typeof allCharacters)[0] | null>(null);
+	let currentDialogs = $state(new Map<number, string>());
+	let displayedDialog = $state('');
+	let typingInterval: ReturnType<typeof setInterval> | null = null;
+	let lastTypedDialog = $state('');
+	let restartUsed = $state(false);
 
 	const characterGroups: { [key: number]: TalkingPersonType[] } = {
 		1: [
@@ -80,34 +92,31 @@
 		}))
 	);
 
-	let conversationStarted = $state(false);
-	let currentlySpeaking = $state(new Set<number>());
-	let finishedGroups = $state(new Set<number>());
-	let selectedCharacter = $state<(typeof allCharacters)[0] | null>(null);
-	let currentThoughts = $state(new Map<number, string>());
-	let displayedThought = $state('');
-	let typingInterval: ReturnType<typeof setInterval> | null = null;
-	let lastTypedThought = $state('');
-
-	// Derived thought for selected character
-	let selectedCharacterThought = $derived(
+	// Derived dialog for selected character
+	let selectedCharacterDialog = $derived(
 		selectedCharacter && currentlySpeaking.has(selectedCharacter.globalId)
-			? currentThoughts.get(selectedCharacter.globalId) || ''
+			? currentDialogs.get(selectedCharacter.globalId) || ''
 			: ''
 	);
 
-	// Effect to handle typing animation when selected character's thought changes
+	// Check if all conversations have finished
+	let allConversationsFinished = $derived(
+		conversationStarted &&
+			Object.keys(characterGroups).every((groupId) => finishedGroups.has(parseInt(groupId)))
+	);
+
+	// Effect to handle typing animation when selected character's dialog changes
 	$effect(() => {
-		if (selectedCharacterThought && selectedCharacterThought !== lastTypedThought) {
-			lastTypedThought = selectedCharacterThought;
+		if (selectedCharacterDialog && selectedCharacterDialog !== lastTypedDialog) {
+			lastTypedDialog = selectedCharacterDialog;
 
 			if (typingInterval) clearInterval(typingInterval);
-			displayedThought = '';
+			displayedDialog = '';
 
 			let charIndex = 0;
 			typingInterval = setInterval(() => {
-				if (charIndex < selectedCharacterThought.length) {
-					displayedThought += selectedCharacterThought[charIndex];
+				if (charIndex < selectedCharacterDialog.length) {
+					displayedDialog += selectedCharacterDialog[charIndex];
 					charIndex++;
 				} else {
 					if (typingInterval) {
@@ -116,9 +125,9 @@
 					}
 				}
 			}, 40);
-		} else if (!selectedCharacterThought) {
-			displayedThought = '';
-			lastTypedThought = '';
+		} else if (!selectedCharacterDialog) {
+			displayedDialog = '';
+			lastTypedDialog = '';
 			if (typingInterval) {
 				clearInterval(typingInterval);
 				typingInterval = null;
@@ -131,7 +140,7 @@
 		let speakerIndex = 0;
 		let thoughtIndex = 0;
 
-		function nextThought() {
+		function nextDialog() {
 			if (finishedGroups.has(groupId)) return;
 
 			const speaker = groupChars[speakerIndex];
@@ -140,7 +149,7 @@
 			// Start speaking
 			currentlySpeaking = new Set(currentlySpeaking).add(speaker.globalId);
 			if (dialog?.text) {
-				currentThoughts.set(speaker.globalId, dialog.text);
+				currentDialogs.set(speaker.globalId, dialog.text);
 			}
 
 			// Stop speaking after duration
@@ -163,14 +172,14 @@
 				return;
 			}
 
-			// Schedule next thought
+			// Schedule next dialog
 			const pauseTime = getRandomDuration(speaker.pauseBetween.min, speaker.pauseBetween.max);
-			setTimeout(nextThought, dialog.duration + pauseTime);
+			setTimeout(nextDialog, dialog.duration + pauseTime);
 		}
 
 		// Start with initial delay
 		const firstChar = groupChars[0];
-		setTimeout(nextThought, firstChar.pauseStart || 0);
+		setTimeout(nextDialog, firstChar.pauseStart || 0);
 	}
 
 	function handleCharacterClick(character: (typeof allCharacters)[0]) {
@@ -186,6 +195,46 @@
 		Object.keys(characterGroups).forEach((groupId) => {
 			startGroupConversation(parseInt(groupId));
 		});
+	}
+
+	function restartConversation() {
+		// Mark restart as used
+		restartUsed = true;
+
+		// Clear any running typing animation
+		if (typingInterval) {
+			clearInterval(typingInterval);
+			typingInterval = null;
+		}
+
+		// Reset conversation state but keep conversationStarted = true
+		currentlySpeaking = new Set<number>();
+		finishedGroups = new Set<number>();
+		selectedCharacter = null;
+		currentDialogs = new Map<number, string>();
+		displayedDialog = '';
+		lastTypedDialog = '';
+
+		// Start new conversation immediately
+		Object.keys(characterGroups).forEach((groupId) => {
+			startGroupConversation(parseInt(groupId));
+		});
+	}
+
+	// Development function to skip conversation
+	function skipConversation() {
+		// Clear any running typing animation
+		if (typingInterval) {
+			clearInterval(typingInterval);
+			typingInterval = null;
+		}
+
+		// Mark all groups as finished
+		finishedGroups = new Set(Object.keys(characterGroups).map((id) => parseInt(id)));
+		currentlySpeaking = new Set<number>();
+		selectedCharacter = null;
+		displayedDialog = '';
+		lastTypedDialog = '';
 	}
 </script>
 
@@ -205,14 +254,21 @@
 				>Na konci je vaším cílem odpovědět na sérii otázek vztahující se k tématům, o kterých si
 				postavy povídaly.</Paragraph
 			>
-			<Button
-				onclick={startConversation}
-				class="w-full max-w-[80%] rounded-lg px-20 py-10 text-3xl font-bold md:max-w-75"
-			>
-				Začít
-			</Button>
+			<GameButton onclick={startConversation} class="w-full max-w-[80%]">Začít</GameButton>
 		</div>
 	{:else}
+		<!-- Development skip button -->
+		{#if !allConversationsFinished}
+			<div class="mb-6 flex justify-center">
+				<Button
+					onclick={skipConversation}
+					class="rounded-lg bg-red-600 px-6 py-2 font-medium text-white hover:bg-red-700"
+				>
+					[DEV] Přeskočit rozhovor
+				</Button>
+			</div>
+		{/if}
+
 		{#each Object.entries(characterGroups) as [groupKeyStr, group]}
 			<div class="flex h-fit">
 				{#each group as character}
@@ -231,8 +287,16 @@
 				{/each}
 			</div>
 		{/each}
-	{/if}
 
+		<div class="h-10 w-full max-w-150 text-center">
+			{#if allConversationsFinished && !restartUsed}
+				<GameButton onclick={restartConversation}>
+					Zkusit znovu
+					<RotateCcw />
+				</GameButton>
+			{/if}
+		</div>
+	{/if}
 	{#if selectedCharacter}
 		<div
 			class="bg-opacity-50 fixed inset-0 z-50 flex items-center justify-center backdrop-blur-md transition-opacity"
@@ -263,7 +327,7 @@
 					</div>
 					<div class="rounded-2xl bg-white px-6 py-4 shadow-lg">
 						<p class="text-center text-lg font-semibold text-gray-800">{selectedCharacter.name}</p>
-						<p class="mt-3 text-center text-gray-700 italic">"{displayedThought}"</p>
+						<p class="mt-3 text-center text-gray-700 italic">"{displayedDialog}"</p>
 					</div>
 				</div>
 				<Button
