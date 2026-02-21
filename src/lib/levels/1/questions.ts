@@ -1,6 +1,6 @@
-import type { QuestionsArrayType } from '$types/question';
+import type { QuestionType } from '$types/question';
 
-export const questions: QuestionsArrayType = [
+export const questions: QuestionType[] = [
 	{
 		id: 1,
 		question: 'Kolik projektů má Matěj aktuálně rozpracovaných současně?',

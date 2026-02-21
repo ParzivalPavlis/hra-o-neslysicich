@@ -9,5 +9,3 @@ export type QuestionOptionType = {
 	text: string;
 	correct: boolean;
 };
-
-export type QuestionsArrayType = QuestionType[];

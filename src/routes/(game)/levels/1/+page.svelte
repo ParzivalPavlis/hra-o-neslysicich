@@ -5,6 +5,7 @@
 	import Paragraph from '$components/typography/Paragraph.svelte';
 	import Button from '$components/ui/button/button.svelte';
 	import characterGroups from '$lib/levels/1/characterGroups';
+	import { getRandomDuration } from '$lib/shared/utils';
 	import { RotateCcw } from '@lucide/svelte';
 
 	let conversationStarted = $state(false);
@@ -16,12 +17,6 @@
 	let typingInterval: ReturnType<typeof setInterval> | null = null;
 	let lastTypedDialog = $state('');
 	let restartUsed = $state(false);
-
-	// Helper function to get random value within range (in seconds, returns milliseconds)
-	function getRandomDuration(min: number, max: number): number {
-		const randomSeconds = Math.random() * (max - min) + min;
-		return randomSeconds * 1000;
-	}
 
 	// Flatten characters with group info for simpler management
 	const allCharacters = Object.entries(characterGroups).flatMap(([groupId, chars]) =>

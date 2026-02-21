@@ -9,6 +9,7 @@
 	import { beforeNavigate } from '$app/navigation';
 	import GameButton from '$components/GameButton.svelte';
 	import Layout1 from '$components/layouts/Layout1.svelte';
+	import { clearLevel1QuestionsState } from '$lib/stores/level1';
 
 	let fadeAnimations = $state(false);
 	let manAudio: HTMLAudioElement;
@@ -150,6 +151,7 @@
 	});
 
 	onMount(() => {
+		clearLevel1QuestionsState();
 		fadeAnimations = true;
 
 		// Initialize audio elements
