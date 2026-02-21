@@ -8,6 +8,7 @@
 	import { goto } from '$app/navigation';
 	import { beforeNavigate } from '$app/navigation';
 	import GameButton from '$components/GameButton.svelte';
+	import Layout1 from '$components/layouts/Layout1.svelte';
 
 	let fadeAnimations = $state(false);
 	let manAudio: HTMLAudioElement;
@@ -174,7 +175,7 @@
 </script>
 
 {#if fadeAnimations}
-	<div class="relative flex min-h-screen flex-col items-center justify-center px-2 py-5 md:p-10">
+	<Layout1>
 		<div class="flex w-full max-w-150 flex-col">
 			<div transition:fade={{ duration: 3000 }}>
 				<Paragraph className="text-center">
@@ -214,5 +215,5 @@
 				Pokračovat
 			</GameButton>
 		</div>
-	</div>
+	</Layout1>
 {/if}

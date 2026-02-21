@@ -1,9 +1,10 @@
 <script lang="ts">
 	import GameButton from '$components/GameButton.svelte';
+	import Layout1 from '$components/layouts/Layout1.svelte';
 	import TalkingPerson from '$components/TalkingPerson.svelte';
 	import Paragraph from '$components/typography/Paragraph.svelte';
 	import Button from '$components/ui/button/button.svelte';
-	import type { TalkingPersonType } from '$types/talkingPerson';
+	import characterGroups from '$lib/levels/1/characterGroups';
 	import { RotateCcw } from '@lucide/svelte';
 
 	let conversationStarted = $state(false);
@@ -15,64 +16,6 @@
 	let typingInterval: ReturnType<typeof setInterval> | null = null;
 	let lastTypedDialog = $state('');
 	let restartUsed = $state(false);
-
-	const characterGroups: { [key: number]: TalkingPersonType[] } = {
-		1: [
-			{
-				name: 'Matěj',
-				dialog: [
-					{ text: 'Ahoj! Jak se máš dnes?', duration: 2300 },
-					{ text: 'To zní skvěle! Co budeš dělat odpoledne?', duration: 2300 },
-					{ text: 'Tvoje oblíbená kavárna? Ta na náměstí?', duration: 2300 },
-					{ text: 'Přesně tam! Mají nejlepší dort.', duration: 2300 }
-				],
-				variant: 'man1',
-				rotation: 'left',
-				pauseBetween: { min: 0.5, max: 1 },
-				pauseStart: 1000
-			},
-			{
-				name: 'Anna',
-				dialog: [
-					{ text: 'Dobře, děkuji! Jsem trochu unavená.', duration: 2300 },
-					{ text: 'Plánuji si zajít do kavárny na kávu.', duration: 2300 },
-					{ text: 'Ano! Mají tam výborný čokoládový dort.', duration: 2300 },
-					{ text: 'Přidáš se ke mně? Můžeme si popovídat.', duration: 2300 }
-				],
-				variant: 'woman1',
-				rotation: 'right',
-				pauseBetween: { min: 0.5, max: 1 },
-				pauseStart: 0
-			}
-		],
-		2: [
-			{
-				name: 'Petr',
-				dialog: [
-					{ text: 'Slyšel jsi včera tu bouřku?', duration: 2300 },
-					{ text: 'Já taky! Nemohl jsem spát hodiny.', duration: 2300 },
-					{ text: 'To je pravda. Dnes je krásně.', duration: 2300 },
-					{ text: 'Super nápad! Kam půjdeme?', duration: 2300 }
-				],
-				variant: 'man2',
-				rotation: 'left',
-				pauseBetween: { min: 0.5, max: 1 },
-				pauseStart: 3000
-			},
-			{
-				name: 'Lucie',
-				dialog: [
-					{ text: 'Ano! Byla strašně hlasitá!', duration: 2300 },
-					{ text: 'Já taky ne. Ale aspoň teď svítí slunce.', duration: 2300 },
-					{ text: 'Počasí se hodně zlepšilo. Měli bychom jít ven.', duration: 2300 },
-					{ text: 'Co takhle park? Můžeme si tam dát zmrzlinu.', duration: 2300 }
-				],
-				variant: 'woman2',
-				rotation: 'right',
-				pauseBetween: { min: 0.5, max: 1 }
-			}
-		]
-	};
 
 	// Helper function to get random value within range (in seconds, returns milliseconds)
 	function getRandomDuration(min: number, max: number): number {
@@ -238,7 +181,7 @@
 	}
 </script>
 
-<div class="relative flex min-h-screen flex-col items-center justify-center px-2 py-5 md:p-10">
+<Layout1>
 	{#if !conversationStarted}
 		<div class="flex w-full flex-col items-center gap-5 text-center">
 			<Paragraph>Nacházíte se v roli neslyšícího člověka v kavárně.</Paragraph>
@@ -254,7 +197,9 @@
 				>Na konci je vaším cílem odpovědět na sérii otázek vztahující se k tématům, o kterých si
 				postavy povídaly.</Paragraph
 			>
-			<GameButton onclick={startConversation} class="w-full max-w-[80%]">Začít</GameButton>
+			<GameButton onclick={startConversation} class="w-full max-w-[80%] md:max-w-150">
+				Začít
+			</GameButton>
 		</div>
 	{:else}
 		<!-- Development skip button -->
@@ -287,12 +232,16 @@
 				{/each}
 			</div>
 		{/each}
-
-		<div class="h-10 w-full max-w-150 text-center">
-			{#if allConversationsFinished && !restartUsed}
-				<GameButton onclick={restartConversation}>
-					Zkusit znovu
-					<RotateCcw />
+		<div class="flex min-h-26 w-full max-w-150 flex-col text-center">
+			{#if allConversationsFinished}
+				{#if !restartUsed}
+					<GameButton onclick={restartConversation}>
+						Zkusit znovu
+						<RotateCcw />
+					</GameButton>
+				{/if}
+				<GameButton href="/levels/1/questions" class="mt-3 bg-gray-600 hover:bg-gray-700">
+					Pokračovat
 				</GameButton>
 			{/if}
 		</div>
@@ -305,7 +254,7 @@
 			onkeydown={(e) => e.key === 'Escape' && closeModal()}
 		>
 			<div
-				class="animate-zoom flex flex-col items-center gap-6"
+				class="animate-zoom flex max-w-[80%] flex-col items-center gap-6"
 				role="dialog"
 				onclick={(e) => e.stopPropagation()}
 				onkeydown={(e) => e.stopPropagation()}
@@ -330,16 +279,13 @@
 						<p class="mt-3 text-center text-gray-700 italic">"{displayedDialog}"</p>
 					</div>
 				</div>
-				<Button
-					onclick={closeModal}
-					class="animate-bubble-in text-1xl w-full rounded-lg  px-6 py-2"
-				>
+				<GameButton onclick={closeModal} class="animate-bubble-in w-full max-w-[256px]">
 					Zavřít
-				</Button>
+				</GameButton>
 			</div>
 		</div>
 	{/if}
-</div>
+</Layout1>
 
 <style>
 	@keyframes zoom-image {

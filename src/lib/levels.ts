@@ -6,7 +6,7 @@ export const levels: LevelButtonType[] = [
 		icon: Speech,
 		stars: 0,
 		locked: false,
-		description: 'Zachyťte konverzaci ostatních v kavárně a odpovězte na otázky',
+		description: 'Zachyťte konverzaci v kavárně a odpovězte na otázky',
 		href: '/levels/1/intro',
 		trails: 3
 	},
