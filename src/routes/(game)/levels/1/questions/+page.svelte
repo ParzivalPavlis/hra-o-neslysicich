@@ -1,7 +1,8 @@
 <script lang="ts">
+	import { goto } from '$app/navigation';
 	import GameButton from '$components/GameButton.svelte';
 	import questionsData from '$lib/levels/1/questions';
-	import { selectRandomQuestions, selectRandomOptions } from '$lib/shared/utils';
+	import { selectRandomOptions } from '$lib/shared/utils';
 	import {
 		level1QuestionsState,
 		initializeLevel1Questions,
@@ -67,6 +68,8 @@
 		if (questions && currentQuestionIndex < questions.length) {
 			const nextIndex = currentQuestionIndex + 1;
 			updateCurrentQuestion(nextIndex);
+		} else {
+			goto('/levels/1/overview');
 		}
 	}
 
@@ -79,9 +82,7 @@
 	$effect(() => {
 		const storedState = $level1QuestionsState;
 		if (!storedState.questionIds || storedState.questionIds.length === 0) {
-			// Generate new questions and store their original IDs
-			const newQuestions = selectRandomQuestions(questionsData, 6);
-			// Extract the original question IDs (from before selectRandomQuestions reassignment)
+			// Extract the original question IDs
 			const shuffled = [...questionsData].sort(() => 0.5 - Math.random());
 			const originalIds = shuffled.slice(0, 6).map((q) => q.id);
 			initializeLevel1Questions(originalIds);

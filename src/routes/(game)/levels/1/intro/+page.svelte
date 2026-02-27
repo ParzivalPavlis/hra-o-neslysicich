@@ -1,7 +1,6 @@
 <script lang="ts">
 	import { fade } from 'svelte/transition';
 	import Paragraph from '$components/typography/Paragraph.svelte';
-	import Button from '$components/ui/button/button.svelte';
 	import { onMount, onDestroy } from 'svelte';
 	import type { TalkingPersonType } from '$types/talkingPerson';
 	import TalkingPerson from '$components/TalkingPerson.svelte';
@@ -9,7 +8,6 @@
 	import { beforeNavigate } from '$app/navigation';
 	import GameButton from '$components/GameButton.svelte';
 	import Layout1 from '$components/layouts/Layout1.svelte';
-	import { clearLevel1QuestionsState } from '$lib/stores/level1';
 
 	let fadeAnimations = $state(false);
 	let manAudio: HTMLAudioElement;
@@ -151,7 +149,6 @@
 	});
 
 	onMount(() => {
-		clearLevel1QuestionsState();
 		fadeAnimations = true;
 
 		// Initialize audio elements

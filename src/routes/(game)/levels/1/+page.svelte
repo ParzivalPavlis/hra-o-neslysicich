@@ -6,16 +6,17 @@
 	import Button from '$components/ui/button/button.svelte';
 	import characterGroups from '$lib/levels/1/characterGroups';
 	import { getRandomDuration } from '$lib/shared/utils';
+	import { clearLevel1QuestionsState } from '$lib/stores/level1';
 	import { RotateCcw } from '@lucide/svelte';
+	import { onMount } from 'svelte';
 
 	let conversationStarted = $state(false);
 	let currentlySpeaking = $state(new Set<number>());
 	let finishedGroups = $state(new Set<number>());
 	let selectedCharacter = $state<(typeof allCharacters)[0] | null>(null);
 	let currentDialogs = $state(new Map<number, string>());
-	let displayedDialog = $state('');
-	let typingInterval: ReturnType<typeof setInterval> | null = null;
-	let lastTypedDialog = $state('');
+	let typedDialogs = $state(new Map<number, string>()); // Track typed progress per character
+	let typingIntervals = $state(new Map<number, ReturnType<typeof setInterval>>()); // Track typing intervals per character
 	let restartUsed = $state(false);
 
 	// Flatten characters with group info for simpler management
@@ -30,11 +31,13 @@
 		}))
 	);
 
-	// Derived dialog for selected character
+	// Derived dialog for selected character (now shows the typed version)
 	let selectedCharacterDialog = $derived(
 		selectedCharacter && currentlySpeaking.has(selectedCharacter.globalId)
-			? currentDialogs.get(selectedCharacter.globalId) || ''
-			: ''
+			? typedDialogs.get(selectedCharacter.globalId) || ''
+			: selectedCharacter
+				? typedDialogs.get(selectedCharacter.globalId) || ''
+				: ''
 	);
 
 	// Check if all conversations have finished
@@ -43,32 +46,52 @@
 			Object.keys(characterGroups).every((groupId) => finishedGroups.has(parseInt(groupId)))
 	);
 
-	// Effect to handle typing animation when selected character's dialog changes
+	// Effect to handle typing animation when characters start speaking
 	$effect(() => {
-		if (selectedCharacterDialog && selectedCharacterDialog !== lastTypedDialog) {
-			lastTypedDialog = selectedCharacterDialog;
+		// Check for new dialogs that need typing animation
+		for (const [characterId, dialog] of currentDialogs) {
+			const currentTyped = typedDialogs.get(characterId) || '';
 
-			if (typingInterval) clearInterval(typingInterval);
-			displayedDialog = '';
-
-			let charIndex = 0;
-			typingInterval = setInterval(() => {
-				if (charIndex < selectedCharacterDialog.length) {
-					displayedDialog += selectedCharacterDialog[charIndex];
-					charIndex++;
-				} else {
-					if (typingInterval) {
-						clearInterval(typingInterval);
-						typingInterval = null;
-					}
+			// If this dialog is new or different, start typing animation
+			if (dialog && dialog !== currentTyped && !typingIntervals.has(characterId)) {
+				// Clear any existing typing interval for this character
+				const existingInterval = typingIntervals.get(characterId);
+				if (existingInterval) {
+					clearInterval(existingInterval);
 				}
-			}, 40);
-		} else if (!selectedCharacterDialog) {
-			displayedDialog = '';
-			lastTypedDialog = '';
-			if (typingInterval) {
-				clearInterval(typingInterval);
-				typingInterval = null;
+
+				// Start typing animation for this character
+				let charIndex = 0;
+				typedDialogs.set(characterId, '');
+				typedDialogs = new Map(typedDialogs); // Trigger reactivity
+
+				const newInterval = setInterval(() => {
+					if (charIndex < dialog.length) {
+						const newTyped = dialog.substring(0, charIndex + 1);
+						typedDialogs.set(characterId, newTyped);
+						typedDialogs = new Map(typedDialogs); // Trigger reactivity
+						charIndex++;
+					} else {
+						// Animation complete, clear interval
+						const interval = typingIntervals.get(characterId);
+						if (interval) {
+							clearInterval(interval);
+							typingIntervals.delete(characterId);
+							typingIntervals = new Map(typingIntervals); // Trigger reactivity
+						}
+					}
+				}, 40);
+
+				typingIntervals.set(characterId, newInterval);
+				typingIntervals = new Map(typingIntervals); // Trigger reactivity
+			}
+		}
+
+		// Clear typed dialog for characters who stopped speaking
+		for (const [characterId, typedDialog] of typedDialogs) {
+			if (!currentlySpeaking.has(characterId) && typedDialog !== '') {
+				typedDialogs.set(characterId, '');
+				typedDialogs = new Map(typedDialogs); // Trigger reactivity
 			}
 		}
 	});
@@ -88,6 +111,7 @@
 			currentlySpeaking = new Set(currentlySpeaking).add(speaker.globalId);
 			if (dialog?.text) {
 				currentDialogs.set(speaker.globalId, dialog.text);
+				currentDialogs = new Map(currentDialogs); // Trigger reactivity
 			}
 
 			// Stop speaking after duration
@@ -139,19 +163,16 @@
 		// Mark restart as used
 		restartUsed = true;
 
-		// Clear any running typing animation
-		if (typingInterval) {
-			clearInterval(typingInterval);
-			typingInterval = null;
-		}
+		// Clear any running typing animations
+		typingIntervals.forEach((interval) => clearInterval(interval));
+		typingIntervals = new Map();
 
 		// Reset conversation state but keep conversationStarted = true
 		currentlySpeaking = new Set<number>();
 		finishedGroups = new Set<number>();
 		selectedCharacter = null;
 		currentDialogs = new Map<number, string>();
-		displayedDialog = '';
-		lastTypedDialog = '';
+		typedDialogs = new Map<number, string>();
 
 		// Start new conversation immediately
 		Object.keys(characterGroups).forEach((groupId) => {
@@ -161,24 +182,25 @@
 
 	// Development function to skip conversation
 	function skipConversation() {
-		// Clear any running typing animation
-		if (typingInterval) {
-			clearInterval(typingInterval);
-			typingInterval = null;
-		}
+		// Clear any running typing animations
+		typingIntervals.forEach((interval) => clearInterval(interval));
+		typingIntervals = new Map();
 
 		// Mark all groups as finished
 		finishedGroups = new Set(Object.keys(characterGroups).map((id) => parseInt(id)));
 		currentlySpeaking = new Set<number>();
 		selectedCharacter = null;
-		displayedDialog = '';
-		lastTypedDialog = '';
+		typedDialogs = new Map<number, string>();
 	}
+
+	onMount(() => {
+		clearLevel1QuestionsState();
+	});
 </script>
 
 <Layout1>
 	{#if !conversationStarted}
-		<div class="flex w-full flex-col items-center gap-5 text-center">
+		<div class="flex w-full max-w-150 flex-col items-center gap-5 text-center">
 			<Paragraph>Nacházíte se v roli neslyšícího člověka v kavárně.</Paragraph>
 			<Paragraph>
 				Okolo sebe máte další návštěvníky, kteří si povídají a jelikož čekáte na kamaráda, nenapadne
@@ -271,7 +293,7 @@
 					</div>
 					<div class="rounded-2xl bg-white px-6 py-4 shadow-lg">
 						<p class="text-center text-lg font-semibold text-gray-800">{selectedCharacter.name}</p>
-						<p class="mt-3 text-center text-gray-700 italic">"{displayedDialog}"</p>
+						<p class="mt-3 text-center text-gray-700 italic">"{selectedCharacterDialog}"</p>
 					</div>
 				</div>
 				<GameButton onclick={closeModal} class="animate-bubble-in w-full max-w-[256px]">
