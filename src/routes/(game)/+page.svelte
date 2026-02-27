@@ -11,6 +11,10 @@
 	};
 </script>
 
+<svelte:head>
+	<title>Hra o neslyšících</title>
+</svelte:head>
+
 <div class="relative flex min-h-screen flex-col items-center gap-10 p-10">
 	<MainMenuHeading>Hra o neslyšících</MainMenuHeading>
 	<GameButton onclick={() => goto('/levels')} class="w-full max-w-100">Úrovně</GameButton>

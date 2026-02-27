@@ -50,6 +50,10 @@
 	}
 </script>
 
+<svelte:head>
+	<title>Úrovně</title>
+</svelte:head>
+
 <div class="relative flex min-h-screen flex-col-reverse items-center gap-50 p-10">
 	{#each levels as { icon, stars, locked, description, trails, href }, index}
 		<div bind:this={levelButtonRefs[index]}>

@@ -198,6 +198,10 @@
 	});
 </script>
 
+<svelte:head>
+	<title>Úroveň 1</title>
+</svelte:head>
+
 <Layout1>
 	{#if !conversationStarted}
 		<div class="flex w-full max-w-150 flex-col items-center gap-5 text-center">
