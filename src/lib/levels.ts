@@ -30,7 +30,7 @@ export const levels: LevelButtonType[] = [
 		icon: Stethoscope,
 		stars: 0,
 		locked: false,
-		description: 'Kliknutím znovu pro spuštění',
+		description: 'Zkuste si návštěvu u lékaře',
 		href: '/levels/4',
 		trails: 4
 	},
