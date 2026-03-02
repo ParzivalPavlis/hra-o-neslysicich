@@ -26,12 +26,12 @@ export const actions: Actions = {
 		// Email validation
 		const validEmail = /^[\w\-.+]+@([\w-]+\.)+[\w-]{2,}$/.test(email);
 		if (!validEmail) {
-			errors.email = 'Please enter a valid email address';
+			errors.email = 'Prosím zadejte platnou e-mailovou adresu';
 		}
 
 		// Password validation
 		if (!password || password.length < 6) {
-			errors.password = 'Password must be at least 6 characters';
+			errors.password = 'Heslo musí mít alespoň 6 znaků';
 		}
 
 		// Return early if validation errors
@@ -52,7 +52,7 @@ export const actions: Actions = {
 			return fail(401, {
 				success: false,
 				email,
-				message: error.message || 'Invalid email or password'
+				message: error.message || 'Neplatný e-mail nebo heslo'
 			} as FormResponseType);
 		}
 

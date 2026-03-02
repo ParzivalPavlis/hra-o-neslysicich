@@ -3,6 +3,7 @@
 	import LevelButton from '$components/LevelButton.svelte';
 	import Button from '$components/ui/button/button.svelte';
 	import { levels } from '$lib/levels';
+	import type { GameProgressType } from '$types/supabase/gameProgress';
 	import {
 		ArrowUp,
 		ArrowDown,
@@ -11,9 +12,28 @@
 		MessageSquareText,
 		MessageSquareX
 	} from '@lucide/svelte';
+	import type { PageData } from './$types';
+
+	let { data }: { data: PageData } = $props();
+	let gameProgress = $derived(data.gameProgress);
 
 	let levelButtonRefs: HTMLDivElement[] = [];
 	let showAllInfo: boolean = $state(false);
+
+	// Merge game progress with levels data
+	const levelsWithProgress = $derived(
+		levels.map((level, index) => {
+			const levelKey = `level${index + 1}` as keyof GameProgressType['levels'];
+			const progress = gameProgress?.levels[levelKey];
+
+			return {
+				...level,
+				stars: progress?.stars ?? level.stars,
+				completed: progress?.completed ?? false,
+				locked: progress?.locked ?? level.locked
+			};
+		})
+	);
 
 	afterNavigate(() => {
 		window.scrollTo(0, document.body.scrollHeight);
@@ -55,7 +75,7 @@
 </svelte:head>
 
 <div class="relative flex min-h-screen flex-col-reverse items-center gap-50 p-10">
-	{#each levels as { icon, stars, locked, description, trails, href }, index}
+	{#each levelsWithProgress as { icon, stars, locked, completed, description, trails, href }, index}
 		<div bind:this={levelButtonRefs[index]}>
 			<LevelButton
 				levelInfoOpen={showAllInfo}

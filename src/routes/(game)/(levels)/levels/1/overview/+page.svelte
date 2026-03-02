@@ -6,6 +6,7 @@
 	import Heading from '$components/typography/Heading.svelte';
 	import Layout1 from '$components/layouts/Layout1.svelte';
 	import { Star } from '@lucide/svelte';
+	import { onMount } from 'svelte';
 
 	let questionsState = $derived($level1QuestionsState);
 	let answers = $derived(questionsState.answers);
@@ -19,6 +20,8 @@
 		return 1;
 	});
 
+	let progressSaved = $state(false);
+
 	function handleRetry() {
 		goto('/levels/1');
 	}
@@ -26,6 +29,27 @@
 	function handleBackToLevels() {
 		goto('/levels');
 	}
+
+	onMount(async () => {
+		// Auto-save level progress when overview page is loaded
+		const formData = new FormData();
+		formData.append('stars', stars().toString());
+		formData.append('completed', 'true');
+
+		try {
+			const response = await fetch('?/saveLevelProgress', {
+				method: 'POST',
+				body: formData
+			});
+
+			const result = await response.json();
+			if (result.data?.success) {
+				progressSaved = true;
+			}
+		} catch (error) {
+			console.error('Error saving level progress:', error);
+		}
+	});
 </script>
 
 <Layout1>
