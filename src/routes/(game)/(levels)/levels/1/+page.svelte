@@ -11,15 +11,17 @@
 	import { onMount } from 'svelte';
 
 	let conversationStarted = $state(false);
+	let restartUsed = $state(false);
 	let currentlySpeaking = $state(new Set<number>());
 	let finishedGroups = $state(new Set<number>());
 	let selectedCharacter = $state<(typeof allCharacters)[0] | null>(null);
+	let selectedCharacterClickTime = $state(0);
 	let currentDialogs = $state(new Map<number, string>());
-	let typedDialogs = $state(new Map<number, string>()); // Track typed progress per character
-	let typingIntervals = $state(new Map<number, ReturnType<typeof setInterval>>()); // Track typing intervals per character
-	let restartUsed = $state(false);
+	let typedDialogs = $state(new Map<number, string>());
+	let typingIntervals = $state(new Map<number, ReturnType<typeof setInterval>>());
+	let trackedDialogs = $state(new Map<number, string>());
+	let typingStartTimes = $state(new Map<number, number>());
 
-	// Flatten characters with group info for simpler management
 	const allCharacters = Object.entries(characterGroups).flatMap(([groupId, chars]) =>
 		chars.map((char, index) => ({
 			...char,
@@ -31,67 +33,109 @@
 		}))
 	);
 
-	// Derived dialog for selected character (now shows the typed version)
-	let selectedCharacterDialog = $derived(
-		selectedCharacter && currentlySpeaking.has(selectedCharacter.globalId)
-			? typedDialogs.get(selectedCharacter.globalId) || ''
-			: selectedCharacter
-				? typedDialogs.get(selectedCharacter.globalId) || ''
-				: ''
-	);
-
-	// Check if all conversations have finished
 	let allConversationsFinished = $derived(
 		conversationStarted &&
 			Object.keys(characterGroups).every((groupId) => finishedGroups.has(parseInt(groupId)))
 	);
 
-	// Effect to handle typing animation when characters start speaking
+	let selectedCharacterTyped = $derived.by(() => {
+		if (
+			!selectedCharacter ||
+			selectedCharacterClickTime === 0 ||
+			!currentlySpeaking.has(selectedCharacter.globalId)
+		) {
+			return '';
+		}
+
+		const fullTyped = typedDialogs.get(selectedCharacter.globalId) || '';
+		const typingStart = typingStartTimes.get(selectedCharacter.globalId);
+
+		if (typingStart === undefined || typingStart === 0) {
+			return '';
+		}
+
+		const timeSinceClick = selectedCharacterClickTime - typingStart;
+
+		if (timeSinceClick < 0) {
+			return fullTyped;
+		}
+
+		const charsTypedAfterClick = Math.floor(timeSinceClick / 40);
+		let charIndex = Math.max(0, Math.min(charsTypedAfterClick, fullTyped.length));
+		const missedContent = charIndex > 0;
+
+		// Backtrack to start of word
+		while (charIndex > 0 && fullTyped[charIndex - 1] !== ' ') {
+			charIndex--;
+		}
+
+		let displayText = fullTyped.substring(charIndex);
+		if (missedContent) {
+			displayText = '... ' + displayText;
+		}
+		return displayText;
+	});
+
+	let selectedCharacterDialog = $derived(selectedCharacterTyped);
+
+	function updateMap<K, V>(map: Map<K, V>, key: K, value: V): Map<K, V> {
+		map.set(key, value);
+		return new Map(map);
+	}
+
+	function deleteFromMap<K, V>(map: Map<K, V>, key: K): Map<K, V> {
+		map.delete(key);
+		return new Map(map);
+	}
+
+	function resetConversationState() {
+		typingIntervals.forEach((interval) => clearInterval(interval));
+
+		currentlySpeaking = new Set();
+		finishedGroups = new Set();
+		selectedCharacter = null;
+		selectedCharacterClickTime = 0;
+		currentDialogs = new Map();
+		typedDialogs = new Map();
+		trackedDialogs = new Map();
+		typingIntervals = new Map();
+		typingStartTimes = new Map();
+	}
+
 	$effect(() => {
-		// Check for new dialogs that need typing animation
 		for (const [characterId, dialog] of currentDialogs) {
-			const currentTyped = typedDialogs.get(characterId) || '';
+			const lastDialog = trackedDialogs.get(characterId);
 
-			// If this dialog is new or different, start typing animation
-			if (dialog && dialog !== currentTyped && !typingIntervals.has(characterId)) {
-				// Clear any existing typing interval for this character
-				const existingInterval = typingIntervals.get(characterId);
-				if (existingInterval) {
-					clearInterval(existingInterval);
+			if (!dialog || dialog === lastDialog) continue;
+
+			// Clear existing interval
+			const existingInterval = typingIntervals.get(characterId);
+			if (existingInterval) clearInterval(existingInterval);
+
+			// Track new dialog
+			trackedDialogs = updateMap(trackedDialogs, characterId, dialog);
+			typedDialogs = updateMap(typedDialogs, characterId, '');
+			typingStartTimes = updateMap(typingStartTimes, characterId, Date.now());
+
+			// Start typing animation
+			let charIndex = 0;
+			const newInterval = setInterval(() => {
+				if (charIndex < dialog.length) {
+					typedDialogs = updateMap(typedDialogs, characterId, dialog.substring(0, charIndex + 1));
+					charIndex++;
+				} else {
+					clearInterval(newInterval);
+					typingIntervals = deleteFromMap(typingIntervals, characterId);
 				}
+			}, 40);
 
-				// Start typing animation for this character
-				let charIndex = 0;
-				typedDialogs.set(characterId, '');
-				typedDialogs = new Map(typedDialogs); // Trigger reactivity
-
-				const newInterval = setInterval(() => {
-					if (charIndex < dialog.length) {
-						const newTyped = dialog.substring(0, charIndex + 1);
-						typedDialogs.set(characterId, newTyped);
-						typedDialogs = new Map(typedDialogs); // Trigger reactivity
-						charIndex++;
-					} else {
-						// Animation complete, clear interval
-						const interval = typingIntervals.get(characterId);
-						if (interval) {
-							clearInterval(interval);
-							typingIntervals.delete(characterId);
-							typingIntervals = new Map(typingIntervals); // Trigger reactivity
-						}
-					}
-				}, 40);
-
-				typingIntervals.set(characterId, newInterval);
-				typingIntervals = new Map(typingIntervals); // Trigger reactivity
-			}
+			typingIntervals = updateMap(typingIntervals, characterId, newInterval);
 		}
 
 		// Clear typed dialog for characters who stopped speaking
-		for (const [characterId, typedDialog] of typedDialogs) {
-			if (!currentlySpeaking.has(characterId) && typedDialog !== '') {
-				typedDialogs.set(characterId, '');
-				typedDialogs = new Map(typedDialogs); // Trigger reactivity
+		for (const characterId of Array.from(typedDialogs.keys())) {
+			if (!currentlySpeaking.has(characterId) && typedDialogs.get(characterId) !== '') {
+				typedDialogs = updateMap(typedDialogs, characterId, '');
 			}
 		}
 	});
@@ -101,7 +145,7 @@
 		let speakerIndex = 0;
 		let thoughtIndex = 0;
 
-		function nextDialog() {
+		const playNextDialog = () => {
 			if (finishedGroups.has(groupId)) return;
 
 			const speaker = groupChars[speakerIndex];
@@ -109,10 +153,7 @@
 
 			// Start speaking
 			currentlySpeaking = new Set(currentlySpeaking).add(speaker.globalId);
-			if (dialog?.text) {
-				currentDialogs.set(speaker.globalId, dialog.text);
-				currentDialogs = new Map(currentDialogs); // Trigger reactivity
-			}
+			currentDialogs = updateMap(currentDialogs, speaker.globalId, dialog.text || '');
 
 			// Stop speaking after duration
 			setTimeout(() => {
@@ -121,35 +162,35 @@
 				currentlySpeaking = newSpeaking;
 			}, dialog.duration * 0.9);
 
-			// Move to next
+			// Move to next speaker
 			speakerIndex = (speakerIndex + 1) % groupChars.length;
 			if (speakerIndex === 0) thoughtIndex++;
 
-			// Check if conversation finished
+			// Check if finished
 			if (thoughtIndex >= speaker.dialog.length) {
 				setTimeout(() => {
 					finishedGroups = new Set(finishedGroups).add(groupId);
 				}, dialog.duration);
-
 				return;
 			}
 
-			// Schedule next dialog
+			// Schedule next
 			const pauseTime = getRandomDuration(speaker.pauseBetween.min, speaker.pauseBetween.max);
-			setTimeout(nextDialog, dialog.duration + pauseTime);
-		}
+			setTimeout(playNextDialog, dialog.duration + pauseTime);
+		};
 
-		// Start with initial delay
 		const firstChar = groupChars[0];
-		setTimeout(nextDialog, firstChar.pauseStart || 0);
+		setTimeout(playNextDialog, firstChar.pauseStart || 0);
 	}
 
 	function handleCharacterClick(character: (typeof allCharacters)[0]) {
 		selectedCharacter = character;
+		selectedCharacterClickTime = Date.now();
 	}
 
 	function closeModal() {
 		selectedCharacter = null;
+		selectedCharacterClickTime = 0;
 	}
 
 	function startConversation() {
@@ -160,37 +201,18 @@
 	}
 
 	function restartConversation() {
-		// Mark restart as used
 		restartUsed = true;
+		resetConversationState();
 
-		// Clear any running typing animations
-		typingIntervals.forEach((interval) => clearInterval(interval));
-		typingIntervals = new Map();
-
-		// Reset conversation state but keep conversationStarted = true
-		currentlySpeaking = new Set<number>();
-		finishedGroups = new Set<number>();
-		selectedCharacter = null;
-		currentDialogs = new Map<number, string>();
-		typedDialogs = new Map<number, string>();
-
-		// Start new conversation immediately
+		// Restart conversation
 		Object.keys(characterGroups).forEach((groupId) => {
 			startGroupConversation(parseInt(groupId));
 		});
 	}
 
-	// Development function to skip conversation
 	function skipConversation() {
-		// Clear any running typing animations
-		typingIntervals.forEach((interval) => clearInterval(interval));
-		typingIntervals = new Map();
-
-		// Mark all groups as finished
+		resetConversationState();
 		finishedGroups = new Set(Object.keys(characterGroups).map((id) => parseInt(id)));
-		currentlySpeaking = new Set<number>();
-		selectedCharacter = null;
-		typedDialogs = new Map<number, string>();
 	}
 
 	onMount(() => {
