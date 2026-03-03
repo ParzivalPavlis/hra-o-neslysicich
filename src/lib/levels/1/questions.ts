@@ -1,6 +1,6 @@
 import type { QuestionType } from '$types/question';
 
-export const questions: QuestionType[] = [
+const group1: QuestionType[] = [
 	{
 		id: 1,
 		question: 'Kolik projektů má Matěj aktuálně rozpracovaných současně?',
@@ -124,5 +124,104 @@ export const questions: QuestionType[] = [
 		]
 	}
 ];
+
+const group2: QuestionType[] = [
+	{
+		id: 11,
+		question:
+			'O kolik se rekonstrukce kuchyně u Luciiných rodičů prodražila oproti původnímu plánu?',
+		options: [
+			{ id: 'a', text: 'O 80 000 Kč', correct: false },
+			{ id: 'b', text: 'O 90 000 Kč', correct: true },
+			{ id: 'c', text: 'O 100 000 Kč', correct: false }
+		]
+	},
+	{
+		id: 12,
+		question: 'Kolik let bylo Petrovi, když se odstěhoval od rodičů?',
+		options: [
+			{ id: 'a', text: '23 let', correct: false },
+			{ id: 'b', text: '24 let', correct: true },
+			{ id: 'c', text: '25 let', correct: false }
+		]
+	},
+	{
+		id: 13,
+		question: 'Jak vysoký je Luciin měsíční nájem a jak daleko to má do práce?',
+		options: [
+			{ id: 'a', text: '18 000 Kč a 10 minut pěšky', correct: true },
+			{ id: 'b', text: '15 000 Kč a 10 minut pěšky', correct: false },
+			{ id: 'c', text: '18 000 Kč a 20 minut tramvají', correct: false }
+		]
+	},
+	{
+		id: 14,
+		question: 'Jak velký je Petrův byt a kolik za něj platí měsíčně?',
+		options: [
+			{ id: 'a', text: '48 m² a 15 000 Kč', correct: true },
+			{ id: 'b', text: '50 m² a 15 000 Kč', correct: false },
+			{ id: 'c', text: '48 m² a 18 000 Kč', correct: false }
+		]
+	},
+	{
+		id: 15,
+		question: 'Kolik si Petr a Lucie měsíčně spoří?',
+		options: [
+			{ id: 'a', text: 'Petr 5 000 Kč, Lucie 8 000 Kč', correct: false },
+			{ id: 'b', text: 'Petr 8 000 Kč, Lucie 5 000 Kč', correct: true },
+			{ id: 'c', text: 'Petr 8 000 Kč, Lucie 6 000 Kč', correct: false }
+		]
+	},
+	{
+		id: 16,
+		question: 'Kolik stál Petrův nový fotoaparát?',
+		options: [
+			{ id: 'a', text: 'Přibližně 30 000 Kč', correct: false },
+			{ id: 'b', text: 'Přibližně 32 000 Kč', correct: true },
+			{ id: 'c', text: 'Přibližně 35 000 Kč', correct: false }
+		]
+	},
+	{
+		id: 17,
+		question: 'Jaký roční fotografický cíl si Petr stanovil a kolik sérií už má hotových?',
+		options: [
+			{ id: 'a', text: '10 sérií, hotové 4', correct: false },
+			{ id: 'b', text: '12 sérií, hotové 3', correct: false },
+			{ id: 'c', text: '12 sérií, hotové 4', correct: true }
+		]
+	},
+	{
+		id: 18,
+		question: 'Jak často běhá Lucie a jak dlouhou vzdálenost obvykle uběhne?',
+		options: [
+			{ id: 'a', text: 'Dvakrát týdně, kolem 5 km', correct: true },
+			{ id: 'b', text: 'Třikrát týdně, kolem 5 km', correct: false },
+			{ id: 'c', text: 'Dvakrát týdně, kolem 10 km', correct: false }
+		]
+	},
+	{
+		id: 19,
+		question: 'Jak často Petr běhá a jak dlouhou trasu obvykle zvolí?',
+		options: [
+			{ id: 'a', text: 'Jednou týdně, kolem 10 km', correct: true },
+			{ id: 'b', text: 'Dvakrát týdně, kolem 10 km', correct: false },
+			{ id: 'c', text: 'Jednou týdně, kolem 8 km', correct: false }
+		]
+	},
+	{
+		id: 20,
+		question: 'Kam jel Petr minulý rok na dovolenou v létě a kam v zimě?',
+		options: [
+			{ id: 'a', text: 'V létě do Chorvatska, v zimě do Špindlerova Mlýna', correct: false },
+			{ id: 'b', text: 'V létě na Makarskou riviéru, v zimě do Špindlerova Mlýna', correct: true },
+			{ id: 'c', text: 'V létě na Makarskou riviéru, v zimě do Krkonoš', correct: false }
+		]
+	}
+];
+
+const questions = {
+	group1,
+	group2
+};
 
 export default questions;
