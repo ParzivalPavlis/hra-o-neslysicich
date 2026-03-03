@@ -10,6 +10,8 @@
 	import { RotateCcw } from '@lucide/svelte';
 	import { onMount } from 'svelte';
 
+	const SHOW_FULL_DIALOG = true;
+
 	let conversationStarted = $state(false);
 	let restartUsed = $state(false);
 	let currentlySpeaking = $state(new Set<number>());
@@ -54,6 +56,11 @@
 			return '';
 		}
 
+		// If SHOW_FULL_DIALOG is true, return all typed text
+		if (SHOW_FULL_DIALOG) {
+			return fullTyped;
+		}
+
 		const timeSinceClick = selectedCharacterClickTime - typingStart;
 
 		if (timeSinceClick < 0) {
@@ -64,13 +71,27 @@
 		let charIndex = Math.max(0, Math.min(charsTypedAfterClick, fullTyped.length));
 		const missedContent = charIndex > 0;
 
-		// Backtrack to start of word
+		// Backtrack to start of current word
 		while (charIndex > 0 && fullTyped[charIndex - 1] !== ' ') {
 			charIndex--;
 		}
 
+		// Backtrack 2 more words
+		let wordCount = 0;
+		while (charIndex > 0 && wordCount < 2) {
+			charIndex--;
+			if (fullTyped[charIndex] === ' ') {
+				wordCount++;
+			}
+		}
+
+		// Move forward to start of a word (skip leading spaces)
+		while (charIndex < fullTyped.length && fullTyped[charIndex] === ' ') {
+			charIndex++;
+		}
+
 		let displayText = fullTyped.substring(charIndex);
-		if (missedContent) {
+		if (missedContent && charIndex > 0) {
 			displayText = '... ' + displayText;
 		}
 		return displayText;

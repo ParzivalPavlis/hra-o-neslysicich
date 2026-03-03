@@ -1,7 +1,7 @@
 <script lang="ts">
 	import { goto } from '$app/navigation';
 	import GameButton from '$components/GameButton.svelte';
-	import questionsData from '$lib/levels/1/questions';
+	import questions from '$lib/levels/1/questions';
 	import { selectRandomOptions } from '$lib/shared/utils';
 	import {
 		level1QuestionsState,
@@ -26,15 +26,18 @@
 	let selectedQuestions = $derived(() => {
 		if (!questionIds || questionIds.length === 0) return [];
 
+		// Combine both groups for searching
+		const allQuestions = [...questions.group1, ...questions.group2];
+
 		// Get the original questions by ID and regenerate with randomized options
 		const originalQuestions = questionIds
-			.map((id) => questionsData.find((q) => q.id === id))
+			.map((id) => allQuestions.find((q) => q.id === id))
 			.filter((q) => q !== undefined);
 
 		// Apply the same transformation as selectRandomQuestions (reassign IDs and randomize options)
 		return originalQuestions.map((q, index) => ({
 			...q,
-			id: index + 1, // Reassign IDs to be sequential 1-6
+			id: index + 1, // Reassign IDs to be sequential 1-8
 			options: selectRandomOptions(q.options)
 		}));
 	});
@@ -82,9 +85,19 @@
 	$effect(() => {
 		const storedState = $level1QuestionsState;
 		if (!storedState.questionIds || storedState.questionIds.length === 0) {
-			// Extract the original question IDs
-			const shuffled = [...questionsData].sort(() => 0.5 - Math.random());
-			const originalIds = shuffled.slice(0, 6).map((q) => q.id);
+			// Select 4 random from group1
+			const shuffledGroup1 = [...questions.group1].sort(() => 0.5 - Math.random());
+			const selectedFromGroup1 = shuffledGroup1.slice(0, 4);
+
+			// Select 4 random from group2
+			const shuffledGroup2 = [...questions.group2].sort(() => 0.5 - Math.random());
+			const selectedFromGroup2 = shuffledGroup2.slice(0, 4);
+
+			// Combine and shuffle all selected questions
+			const combinedQuestions = [...selectedFromGroup1, ...selectedFromGroup2].sort(
+				() => 0.5 - Math.random()
+			);
+			const originalIds = combinedQuestions.map((q) => q.id);
 			initializeLevel1Questions(originalIds);
 		}
 	});
