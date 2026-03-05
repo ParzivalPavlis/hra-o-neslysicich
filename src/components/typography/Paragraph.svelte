@@ -9,7 +9,7 @@
 	}: { children: Snippet; className?: string; variant?: 1 | 2 | 3 } = $props();
 
 	const variantClasses = {
-		1: 'text-[17px]',
+		1: 'text-[14px]',
 		2: 'text-[18px]',
 		3: 'text-[21px]'
 	};

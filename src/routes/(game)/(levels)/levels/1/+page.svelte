@@ -247,20 +247,20 @@
 
 <Layout1>
 	{#if !conversationStarted}
-		<div class="flex w-full max-w-150 flex-col items-center gap-5 text-center">
+		<div class="flex w-full max-w-150 flex-col items-center gap-3 text-center">
 			<Paragraph>Nacházíte se v roli neslyšícího člověka v kavárně.</Paragraph>
 			<Paragraph>
 				Okolo sebe máte další návštěvníky, kteří si povídají a jelikož čekáte na kamaráda, nenapadne
 				vás nic lepšího než mezitím zjistit, o čem si ostatní povídají.
 			</Paragraph>
 			<Paragraph>
-				Pomocí kliknutí na jednotlivé postavy se na ně začnete soustředit a odezírat z jejich úst o
-				čem se konkrétně baví.
+				Kliknutím na jednotlivé postavy se na ně začnete soustředit a odezírat z jejich úst o čem se
+				konkrétně baví.
 			</Paragraph>
-			<Paragraph
-				>Na konci je vaším cílem odpovědět na sérii otázek vztahující se k tématům, o kterých si
-				postavy povídaly.</Paragraph
-			>
+			<Paragraph>
+				Na konci je vaším cílem odpovědět na sérii otázek vztahující se k tématům, o kterých si
+				postavy povídaly.
+			</Paragraph>
 			<GameButton onclick={startConversation} class="w-full max-w-[80%] md:max-w-150">
 				Začít
 			</GameButton>
