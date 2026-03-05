@@ -25,7 +25,6 @@ export const actions: Actions = {
 
 		// Get current level progress
 		const currentProgress = await getLevelProgress(session.user.id, 1, supabase);
-		console.log('Current level progress:', currentProgress);
 
 		// Only update if user got more stars than before
 		if (currentProgress && currentProgress.stars >= newStars) {

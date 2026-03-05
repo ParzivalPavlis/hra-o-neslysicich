@@ -1,7 +1,7 @@
 <script lang="ts">
 	import GameButton from '$components/GameButton.svelte';
 	import { level1QuestionsState } from '$lib/stores/level1';
-	import { goto } from '$app/navigation';
+	import { goto, invalidate } from '$app/navigation';
 	import Paragraph from '$components/typography/Paragraph.svelte';
 	import Heading from '$components/typography/Heading.svelte';
 	import Layout1 from '$components/layouts/Layout1.svelte';
@@ -30,8 +30,7 @@
 		goto('/levels');
 	}
 
-	onMount(async () => {
-		// Auto-save level progress when overview page is loaded
+	async function saveLevelProgress() {
 		const formData = new FormData();
 		formData.append('stars', stars().toString());
 		formData.append('completed', 'true');
@@ -43,12 +42,19 @@
 			});
 
 			const result = await response.json();
+
+			// Force reload the game:progress cache
 			if (result.data?.success) {
 				progressSaved = true;
+				await invalidate('game:progress');
 			}
 		} catch (error) {
 			console.error('Error saving level progress:', error);
 		}
+	}
+
+	onMount(() => {
+		saveLevelProgress();
 	});
 </script>
 

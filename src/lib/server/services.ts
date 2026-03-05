@@ -98,11 +98,13 @@ export async function getGameProgress(
 	userId: string,
 	client: any = supabase
 ): Promise<GameProgressType | null> {
+	// Optimized query: only select progress column (smaller payload)
+	// Make sure user_id column has a database index for faster queries
 	const { data, error } = await client
 		.from('game_progress')
-		.select('progress, user_id')
+		.select('progress', { count: 'exact' })
 		.eq('user_id', userId)
-		.single();
+		.maybeSingle();
 
 	if (error) {
 		console.error('Error fetching game progress:', error);

@@ -1,6 +1,5 @@
 <script lang="ts">
 	import GameButton from '$components/GameButton.svelte';
-	import Layout1 from '$components/layouts/Layout1.svelte';
 	import Layout2 from '$components/layouts/Layout2.svelte';
 	import Paragraph from '$components/typography/Paragraph.svelte';
 	import { onMount } from 'svelte';
@@ -19,13 +18,6 @@
 
 	onMount(() => {
 		checkOrientation();
-		window.addEventListener('orientationchange', checkOrientation);
-		window.addEventListener('resize', checkOrientation);
-
-		return () => {
-			window.removeEventListener('orientationchange', checkOrientation);
-			window.removeEventListener('resize', checkOrientation);
-		};
 	});
 </script>
 
@@ -33,14 +25,14 @@
 	<title>Úroveň 4</title>
 </svelte:head>
 
+<svelte:window on:orientationchange={checkOrientation} on:resize={checkOrientation} />
 <Layout2>
 	{#if isMobile && isPortrait}
 		<div class="flex h-screen w-full flex-col items-center justify-center gap-6 px-6 text-center">
 			<div class="text-5xl">📱</div>
-			<Paragraph className="text-xl font-semibold"
-				>Prosím otočte zařízení do vodorovné polohy</Paragraph
-			>
-			<GameButton>Otočit</GameButton>
+			<Paragraph className="text-xl font-semibold">
+				Prosím otočte zařízení do vodorovné polohy
+			</Paragraph>
 		</div>
 	{:else}
 		<div class="flex w-full flex-col items-center justify-center landscape:gap-2">
