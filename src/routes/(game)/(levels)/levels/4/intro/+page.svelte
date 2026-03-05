@@ -9,7 +9,7 @@
 	let fadeAnimations = $state(false);
 
 	function handleContinue() {
-		goto('/levels/4');
+		goto('/levels/4/game');
 	}
 
 	onMount(() => {

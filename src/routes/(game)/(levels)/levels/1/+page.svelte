@@ -296,19 +296,21 @@
 				{/each}
 			</div>
 		{/each}
-		<div class="flex min-h-26 w-full max-w-150 flex-col text-center">
-			{#if allConversationsFinished}
-				{#if !restartUsed}
-					<GameButton onclick={restartConversation}>
-						Zkusit znovu
-						<RotateCcw />
+		{#if allConversationsFinished}
+			<div class="fixed inset-0 z-40 flex items-center justify-center">
+				<div class="flex w-full max-w-[80%] flex-col text-center md:max-w-150">
+					{#if !restartUsed}
+						<GameButton onclick={restartConversation}>
+							Zkusit znovu
+							<RotateCcw />
+						</GameButton>
+					{/if}
+					<GameButton href="/levels/1/questions" class="mt-3 bg-gray-600 hover:bg-gray-700">
+						Pokračovat
 					</GameButton>
-				{/if}
-				<GameButton href="/levels/1/questions" class="mt-3 bg-gray-600 hover:bg-gray-700">
-					Pokračovat
-				</GameButton>
-			{/if}
-		</div>
+				</div>
+			</div>
+		{/if}
 	{/if}
 	{#if selectedCharacter}
 		<div
