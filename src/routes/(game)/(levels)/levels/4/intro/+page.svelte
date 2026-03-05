@@ -35,9 +35,8 @@
 				</ul>
 			</div>
 			<div in:fade={{ delay: 6000, duration: 3000 }}>
-				<Paragraph className="text-center">
-					Je to pro vás divné, jelikož je sice alergická sezóna ale vy
-					<span class="font-bold"> nejste na nic alegický/á </span>.
+				<Paragraph className="text-center font-bold">
+					Další důležitá informace: <span class="font-normal">nejste na nic alegický/á</span>
 				</Paragraph>
 			</div>
 			<div in:fade={{ delay: 9000, duration: 3000 }}>

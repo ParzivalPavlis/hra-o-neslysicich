@@ -33,22 +33,22 @@ export const answers: AnswerType[] = [
 		options: [
 			{
 				id: 'a',
-				text: 'Odpověď 1',
+				text: 'Potíže na sobě cítím už poslední 3 dny',
 				correct: false
 			},
 			{
 				id: 'b',
-				text: 'Odpověď 2',
+				text: 'V posledních dnech mi není úplně dobře, hlavně mě bolí v krku',
 				correct: true
 			},
 			{
 				id: 'c',
-				text: 'Odpověď 3',
+				text: 'Nejsem alergický na žádné léky',
 				correct: false
 			},
 			{
 				id: 'd',
-				text: 'Odpověď 4',
+				text: 'Ano, teplotu jsem si naměřil a mám 38 °C',
 				correct: false
 			}
 		]
@@ -65,6 +65,110 @@ export const answers: AnswerType[] = [
 			{
 				id: 'b',
 				text: 'Odpověď 2',
+				correct: false
+			},
+			{
+				id: 'c',
+				text: 'Odpověď 3',
+				correct: false
+			},
+			{
+				id: 'd',
+				text: 'Potíže na sobě cítím už poslední 3 dny',
+				correct: true
+			}
+		]
+	},
+	{
+		id: 4,
+		videoSrc: '/assets/level4/4.mp4',
+		options: [
+			{
+				id: 'a',
+				text: 'Odpověď 1',
+				correct: false
+			},
+			{
+				id: 'b',
+				text: 'Ano, měřil jsem si ji a měl jsem asi 38 °C',
+				correct: true
+			},
+			{
+				id: 'c',
+				text: 'Odpověď 3',
+				correct: false
+			},
+			{
+				id: 'd',
+				text: 'Odpověď 4',
+				correct: false
+			}
+		]
+	},
+	{
+		id: 5,
+		videoSrc: '/assets/level4/5.mp4',
+		options: [
+			{
+				id: 'a',
+				text: 'Odpověď 1',
+				correct: false
+			},
+			{
+				id: 'b',
+				text: 'Ano kašel mám, ale je to jen lehký kašel',
+				correct: true
+			},
+			{
+				id: 'c',
+				text: 'Bolestma hlavy ani únavou netrpím',
+				correct: false
+			},
+			{
+				id: 'd',
+				text: 'Odpověď 4',
+				correct: false
+			}
+		]
+	},
+	{
+		id: 6,
+		videoSrc: '/assets/level4/6.mp4',
+		options: [
+			{
+				id: 'a',
+				text: 'Bolestma hlavy ani únavou netrpím',
+				correct: true
+			},
+			{
+				id: 'b',
+				text: 'Odpověď 2',
+				correct: false
+			},
+			{
+				id: 'c',
+				text: 'Odpověď 3',
+				correct: false
+			},
+			{
+				id: 'd',
+				text: 'Odpověď 4',
+				correct: false
+			}
+		]
+	},
+	{
+		id: 7,
+		videoSrc: '/assets/level4/7.mp4',
+		options: [
+			{
+				id: 'a',
+				text: 'Odpověď 1',
+				correct: false
+			},
+			{
+				id: 'b',
+				text: 'Nejsem alergický na žádné léky',
 				correct: true
 			},
 			{

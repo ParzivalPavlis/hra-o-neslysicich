@@ -4,21 +4,37 @@
 	import Layout2 from '$components/layouts/Layout2.svelte';
 	import Paragraph from '$components/typography/Paragraph.svelte';
 	import { fly, fade } from 'svelte/transition';
-	import { Play } from '@lucide/svelte';
+	import { Play, HeartHandshake, ChevronUp } from '@lucide/svelte';
 	import { shuffleArray } from '$lib/shared/utils';
 	import { onMount } from 'svelte';
+	import { goto } from '$app/navigation';
 	import { answers } from '$lib/levels/4/answers';
 	import type { AnswerOptionType } from '$types/answer';
+	import {
+		level4GameState,
+		initializeLevel4Game,
+		updateCurrentAnswer,
+		decreaseLives,
+		addAnswer
+	} from '$lib/stores/level4';
 
 	let isPortrait = $state(true);
 	let isMobile = $state(false);
 	let showAnswerTab = $state(false);
+	let answerTabCollapsed = $state(false);
 	let helpUses = $state(3);
-	let currentAnswerIndex = $state(0);
 	let videoEnded = $state(false);
 	let videoElement: HTMLVideoElement | null = $state(null);
 	let autoplayPrevented = $state(false);
 	let shuffledOptions = $state<AnswerOptionType[]>([]);
+	let selectedAnswer = $state<string | null>(null);
+	let showingFeedback = $state(false);
+	let isCorrect = $state(false);
+
+	// Derived state from store
+	let gameState = $derived($level4GameState);
+	let currentAnswerIndex = $derived(gameState.currentAnswerIndex);
+	let lives = $derived(gameState.lives);
 
 	function updateOrientation() {
 		const userAgent = navigator.userAgent.toLowerCase();
@@ -27,14 +43,34 @@
 	}
 
 	function handleAnswerClick(optionId: string) {
+		if (showingFeedback) return;
+
 		const currentAnswer = answers[currentAnswerIndex];
 		const selectedOption = currentAnswer.options.find((opt) => opt.id === optionId);
 
-		if (selectedOption?.correct) {
-			showAnswerTab = false;
-			if (currentAnswerIndex < answers.length - 1) {
-				currentAnswerIndex++;
-			}
+		if (selectedOption) {
+			selectedAnswer = optionId;
+			isCorrect = selectedOption.correct;
+			showingFeedback = true;
+
+			// Record the answer in the store
+			addAnswer(currentAnswerIndex, optionId, isCorrect);
+
+			setTimeout(() => {
+				if (isCorrect) {
+					showAnswerTab = false;
+					if (currentAnswerIndex < answers.length - 1) {
+						updateCurrentAnswer(currentAnswerIndex + 1);
+					} else {
+						// Last question answered correctly - navigate to overview
+						goto('/levels/4/overview');
+					}
+				} else {
+					decreaseLives();
+				}
+				showingFeedback = false;
+				selectedAnswer = null;
+			}, 1500);
 		}
 	}
 
@@ -58,8 +94,14 @@
 		showAnswerTab = true;
 	}
 
+	function showColorFeedback(optionId: string) {
+		if (!showingFeedback || selectedAnswer !== optionId) return 1;
+		return isCorrect ? 2 : 3;
+	}
+
 	onMount(() => {
 		updateOrientation();
+		initializeLevel4Game();
 	});
 
 	$effect(() => {
@@ -136,7 +178,17 @@
 						{/if}
 					</div>
 					<!-- Help button for desktop - absolute positioned -->
-					<div class="absolute top-4 right-4">
+					<div class="absolute top-4 right-4 flex flex-col items-center gap-3">
+						<div class="flex flex-col gap-2">
+							{#each Array(4) as _, i}
+								<HeartHandshake
+									size={30}
+									class="transition-all duration-500 {i < lives
+										? ' text-red-600'
+										: 'text-gray-300'}"
+								/>
+							{/each}
+						</div>
 						<ReplayButton
 							onclick={replayVideo}
 							disabled={!videoEnded || helpUses === 0}
@@ -185,7 +237,11 @@
 			{#if !isMobile && videoEnded}
 				<div class="mt-4 flex w-full max-w-6xl flex-col gap-4" in:fly={{ y: 300, duration: 400 }}>
 					{#each shuffledOptions as option (option.id)}
-						<GameButton size="small" onclick={() => handleAnswerClick(option.id)}>
+						<GameButton
+							size="small"
+							onclick={() => handleAnswerClick(option.id)}
+							variant={showColorFeedback(option.id)}
+						>
 							{option.text}
 						</GameButton>
 					{/each}
@@ -194,22 +250,50 @@
 		</div>
 	{/if}
 	{#if isMobile && !isPortrait}
-		<div class="fixed right-4 bottom-4">
+		<div class="fixed right-4 bottom-4 flex flex-col items-center gap-3">
+			<div class="flex flex-col gap-2">
+				{#each Array(4) as _, i}
+					<HeartHandshake
+						size={30}
+						class="transition-all duration-500 {i < lives ? ' text-red-600' : 'text-gray-300'}"
+					/>
+				{/each}
+			</div>
 			<ReplayButton onclick={replayVideo} disabled={!videoEnded || helpUses === 0} {helpUses} />
 		</div>
 	{/if}
 	<!-- Answer tab -->
 	{#if showAnswerTab && !isPortrait && isMobile}
-		<div class="fixed inset-0 z-30 bg-black/30" role="presentation"></div>
 		<div
-			class="fixed right-0 bottom-0 left-0 z-40 flex flex-col gap-4 border-t-2 border-foreground bg-white p-4"
-			in:fly={{ y: 300, duration: 400 }}
+			class="fixed right-0 bottom-0 left-0 z-40 transition-all duration-300"
+			class:max-h-96={!answerTabCollapsed}
+			class:max-h-20={answerTabCollapsed}
 		>
-			{#each shuffledOptions as option (option.id)}
-				<GameButton size="small" onclick={() => handleAnswerClick(option.id)}>
-					{option.text}
-				</GameButton>
-			{/each}
+			<button
+				onclick={() => (answerTabCollapsed = !answerTabCollapsed)}
+				class="mx-auto flex items-center justify-center rounded-t-lg border-t-2 border-r-2 border-l-2 border-foreground bg-white p-1"
+			>
+				<ChevronUp
+					size={30}
+					class="transition-transform duration-300 {answerTabCollapsed ? 'rotate-180' : ''}"
+				/>
+			</button>
+			{#if !answerTabCollapsed}
+				<div
+					class="flex flex-col gap-4 overflow-y-auto border-t-2 border-foreground bg-white p-4"
+					transition:fly={{ y: 100, duration: 300 }}
+				>
+					{#each shuffledOptions as option (option.id)}
+						<GameButton
+							size="small"
+							onclick={() => handleAnswerClick(option.id)}
+							variant={showColorFeedback(option.id)}
+						>
+							{option.text}
+						</GameButton>
+					{/each}
+				</div>
+			{/if}
 		</div>
 	{/if}
 </Layout2>
