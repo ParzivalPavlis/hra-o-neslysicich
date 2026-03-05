@@ -174,46 +174,44 @@
 	});
 </script>
 
-{#if true}
-	<Layout1>
-		<div class="flex w-full max-w-150 flex-col">
-			{#if introState === 1 && fadeAnimations}
-				<div in:fade={{ duration: 3000 }}>
-					<Paragraph className="text-center">
-						Zvuk je pro nás všudypřítomný a často si ani neuvědomujeme, jak moc ho ke každodennímu
-						životu potřebujeme.
-					</Paragraph>
-				</div>
-				<div in:fade={{ delay: 3000, duration: 3000 }}>
-					<Paragraph className="text-center mt-3">
-						Dokážeme se díky němu například orientovat v prostoru, užívat si hudbu a také hlavně
-						efektivně komunikovat s ostatními a dokážeme ihned zjistit, co se děje kolem nás a o čem
-						se lidé baví.
-					</Paragraph>
-				</div>
-			{/if}
-			{#if introState === 2}
-				<div class="mt-8 flex justify-center" transition:fade={{ duration: 3000 }}>
-					<TalkingPerson
-						id={1}
-						person={characters[0]}
-						isSpeaking={currentSpeaker === 'anna'}
-						finishedSpeaking={false}
-					/>
-					<TalkingPerson
-						id={2}
-						person={characters[1]}
-						isSpeaking={currentSpeaker === 'tomas'}
-						finishedSpeaking={false}
-					/>
-				</div>
-				<div transition:fade={{ delay: 7000, duration: 3000 }}>
-					<Paragraph className="text-center">Co se ale stane, když o něj přijdeme?</Paragraph>
-				</div>
-			{/if}
-		</div>
-		<div transition:fade={{ delay: 6000, duration: 3000 }}>
-			<GameButton onclick={handleContinue} class="mt-5">Pokračovat</GameButton>
-		</div>
-	</Layout1>
-{/if}
+<Layout1>
+	<div class="flex w-full max-w-150 flex-col">
+		{#if introState === 1 && fadeAnimations}
+			<div in:fade={{ duration: 3000 }}>
+				<Paragraph className="text-center">
+					Zvuk je pro nás všudypřítomný a často si ani neuvědomujeme, jak moc ho ke každodennímu
+					životu potřebujeme.
+				</Paragraph>
+			</div>
+			<div in:fade={{ delay: 3000, duration: 3000 }}>
+				<Paragraph className="text-center mt-3">
+					Dokážeme se díky němu například orientovat v prostoru, užívat si hudbu a také hlavně
+					efektivně komunikovat s ostatními a dokážeme ihned zjistit, co se děje kolem nás a o čem
+					se lidé baví.
+				</Paragraph>
+			</div>
+		{/if}
+		{#if introState === 2}
+			<div class="mt-8 flex justify-center" transition:fade={{ duration: 3000 }}>
+				<TalkingPerson
+					id={1}
+					person={characters[0]}
+					isSpeaking={currentSpeaker === 'anna'}
+					finishedSpeaking={false}
+				/>
+				<TalkingPerson
+					id={2}
+					person={characters[1]}
+					isSpeaking={currentSpeaker === 'tomas'}
+					finishedSpeaking={false}
+				/>
+			</div>
+			<div transition:fade={{ delay: 7000, duration: 3000 }}>
+				<Paragraph className="text-center">Co se ale stane, když o něj přijdeme?</Paragraph>
+			</div>
+		{/if}
+	</div>
+	<div transition:fade={{ delay: 6000, duration: 3000 }}>
+		<GameButton onclick={handleContinue} class="mt-5">Pokračovat</GameButton>
+	</div>
+</Layout1>

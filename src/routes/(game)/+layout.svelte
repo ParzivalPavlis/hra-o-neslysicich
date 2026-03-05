@@ -122,7 +122,7 @@
 	{#if isLandscapePage && isMobile}
 		<Button
 			onclick={() => (menuOpen = !menuOpen)}
-			class="fixed top-4 right-4 z-50 flex items-center justify-center border-2 border-foreground bg-white"
+			class="fixed top-4 right-4 z-50 flex items-center justify-center border-2 border-foreground bg-white hover:bg-white active:bg-white"
 		>
 			{#if menuOpen}
 				<X color="black" size={32} />

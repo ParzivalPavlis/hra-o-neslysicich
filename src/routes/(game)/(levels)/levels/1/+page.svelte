@@ -325,7 +325,7 @@
 				tabindex="0"
 			>
 				<div
-					class="animate-zoom-image mt-5 h-[250px] overflow-hidden rounded-lg bg-white shadow-2xl md:mt-0"
+					class="animate-zoom-image mt-5 h-62.5 overflow-hidden rounded-lg bg-white shadow-2xl md:mt-0"
 				>
 					<img
 						src={`/assets/level1/${selectedCharacter.variant}.png`}
