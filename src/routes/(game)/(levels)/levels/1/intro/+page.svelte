@@ -175,7 +175,7 @@
 </script>
 
 <Layout1>
-	<div class="flex w-full max-w-150 flex-col">
+	<div class="flex w-full max-w-150 flex-col items-center">
 		{#if introState === 1 && fadeAnimations}
 			<div in:fade={{ duration: 3000 }}>
 				<Paragraph className="text-center">
@@ -190,9 +190,12 @@
 					se lidé baví.
 				</Paragraph>
 			</div>
+			<div in:fade={{ delay: 6000, duration: 3000 }}>
+				<GameButton onclick={handleContinue} class="mt-5">Pokračovat</GameButton>
+			</div>
 		{/if}
 		{#if introState === 2}
-			<div class="mt-8 flex justify-center" transition:fade={{ duration: 3000 }}>
+			<div class="mt-8 flex justify-center" in:fade={{ duration: 3000 }}>
 				<TalkingPerson
 					id={1}
 					person={characters[0]}
@@ -206,12 +209,10 @@
 					finishedSpeaking={false}
 				/>
 			</div>
-			<div transition:fade={{ delay: 7000, duration: 3000 }}>
+			<div class="flex flex-col items-center" in:fade={{ delay: 6000, duration: 3000 }}>
 				<Paragraph className="text-center">Co se ale stane, když o něj přijdeme?</Paragraph>
+				<GameButton onclick={handleContinue} class="mt-5">Pokračovat</GameButton>
 			</div>
 		{/if}
-	</div>
-	<div transition:fade={{ delay: 6000, duration: 3000 }}>
-		<GameButton onclick={handleContinue} class="mt-5">Pokračovat</GameButton>
 	</div>
 </Layout1>
