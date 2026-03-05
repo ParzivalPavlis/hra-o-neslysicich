@@ -33,3 +33,13 @@ export function getRandomDuration(min: number, max: number): number {
 	const randomSeconds = Math.random() * (max - min) + min;
 	return randomSeconds * 1000;
 }
+
+// Fisher-Yates shuffle algorithm
+export function shuffleArray<T>(array: T[]): T[] {
+	const shuffled = [...array];
+	for (let i = shuffled.length - 1; i > 0; i--) {
+		const j = Math.floor(Math.random() * (i + 1));
+		[shuffled[i], shuffled[j]] = [shuffled[j], shuffled[i]];
+	}
+	return shuffled;
+}

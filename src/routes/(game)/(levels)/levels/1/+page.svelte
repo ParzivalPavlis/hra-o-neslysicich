@@ -247,20 +247,20 @@
 
 <Layout1>
 	{#if !conversationStarted}
-		<div class="flex w-full max-w-150 flex-col items-center gap-5 text-center">
+		<div class="flex w-full max-w-150 flex-col items-center gap-3 text-center">
 			<Paragraph>Nacházíte se v roli neslyšícího člověka v kavárně.</Paragraph>
 			<Paragraph>
 				Okolo sebe máte další návštěvníky, kteří si povídají a jelikož čekáte na kamaráda, nenapadne
 				vás nic lepšího než mezitím zjistit, o čem si ostatní povídají.
 			</Paragraph>
 			<Paragraph>
-				Pomocí kliknutí na jednotlivé postavy se na ně začnete soustředit a odezírat z jejich úst o
-				čem se konkrétně baví.
+				Kliknutím na jednotlivé postavy se na ně začnete soustředit a odezírat z jejich úst o čem se
+				konkrétně baví.
 			</Paragraph>
-			<Paragraph
-				>Na konci je vaším cílem odpovědět na sérii otázek vztahující se k tématům, o kterých si
-				postavy povídaly.</Paragraph
-			>
+			<Paragraph>
+				Na konci je vaším cílem odpovědět na sérii otázek vztahující se k tématům, o kterých si
+				postavy povídaly.
+			</Paragraph>
 			<GameButton onclick={startConversation} class="w-full max-w-[80%] md:max-w-150">
 				Začít
 			</GameButton>
@@ -296,39 +296,43 @@
 				{/each}
 			</div>
 		{/each}
-		<div class="flex min-h-26 w-full max-w-150 flex-col text-center">
-			{#if allConversationsFinished}
-				{#if !restartUsed}
-					<GameButton onclick={restartConversation}>
-						Zkusit znovu
-						<RotateCcw />
+		{#if allConversationsFinished}
+			<div class="fixed inset-0 z-40 flex items-center justify-center">
+				<div class="flex w-full max-w-[80%] flex-col text-center md:max-w-150">
+					{#if !restartUsed}
+						<GameButton onclick={restartConversation}>
+							Zkusit znovu
+							<RotateCcw />
+						</GameButton>
+					{/if}
+					<GameButton href="/levels/1/questions" class="mt-3 bg-gray-600 hover:bg-gray-700">
+						Pokračovat
 					</GameButton>
-				{/if}
-				<GameButton href="/levels/1/questions" class="mt-3 bg-gray-600 hover:bg-gray-700">
-					Pokračovat
-				</GameButton>
-			{/if}
-		</div>
+				</div>
+			</div>
+		{/if}
 	{/if}
 	{#if selectedCharacter}
 		<div
-			class="bg-opacity-50 fixed inset-0 z-50 flex items-center justify-center backdrop-blur-md transition-opacity"
+			class="bg-opacity-50 fixed inset-0 z-50 flex justify-center backdrop-blur-md transition-opacity md:items-center"
 			role="presentation"
 			onclick={closeModal}
 			onkeydown={(e) => e.key === 'Escape' && closeModal()}
 		>
 			<div
-				class="animate-zoom flex max-w-[80%] flex-col items-center gap-6"
+				class="animate-zoom flex max-w-[80%] flex-col items-center gap-4"
 				role="dialog"
 				onclick={(e) => e.stopPropagation()}
 				onkeydown={(e) => e.stopPropagation()}
 				tabindex="0"
 			>
-				<div class="animate-zoom-image h-80 w-64 overflow-hidden rounded-lg bg-white shadow-2xl">
+				<div
+					class="animate-zoom-image mt-5 h-62.5 overflow-hidden rounded-lg bg-white shadow-2xl md:mt-0"
+				>
 					<img
 						src={`/assets/level1/${selectedCharacter.variant}.png`}
 						alt={selectedCharacter.name}
-						class="h-full w-full object-cover"
+						class="h-full w-50 object-cover"
 						style={`transform: scaleX(${selectedCharacter.rotation === 'left' ? -1 : 1});`}
 					/>
 				</div>
@@ -339,8 +343,12 @@
 						></div>
 					</div>
 					<div class="rounded-2xl bg-white px-6 py-4 shadow-lg">
-						<p class="text-center text-lg font-semibold text-gray-800">{selectedCharacter.name}</p>
-						<p class="mt-3 text-center text-gray-700 italic">"{selectedCharacterDialog}"</p>
+						<p class="text-center text-lg font-semibold text-gray-800">
+							{selectedCharacter.name}
+						</p>
+						<p class="mt-1 text-center text-[15px] text-gray-700 italic">
+							"{selectedCharacterDialog}"
+						</p>
 					</div>
 				</div>
 				<GameButton onclick={closeModal} class="animate-bubble-in w-full max-w-[256px]">

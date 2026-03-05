@@ -1,11 +1,8 @@
 <script lang="ts">
-	import GameButton from '$components/GameButton.svelte';
+	import LevelCompletionScreen from '$components/LevelCompletionScreen.svelte';
 	import { level1QuestionsState } from '$lib/stores/level1';
-	import { goto } from '$app/navigation';
-	import Paragraph from '$components/typography/Paragraph.svelte';
-	import Heading from '$components/typography/Heading.svelte';
+	import { goto, invalidate } from '$app/navigation';
 	import Layout1 from '$components/layouts/Layout1.svelte';
-	import { Star } from '@lucide/svelte';
 	import { onMount } from 'svelte';
 
 	let questionsState = $derived($level1QuestionsState);
@@ -22,6 +19,12 @@
 
 	let progressSaved = $state(false);
 
+	const messages = {
+		excellent: 'Výborně! Máte skvělé porozumění konverzaci.',
+		good: 'Dobře! S trochou pozornosti to bude ještě lepší.',
+		tryAgain: 'Zkuste to znovu a věnujte více pozornosti detailům.'
+	};
+
 	function handleRetry() {
 		goto('/levels/1');
 	}
@@ -30,8 +33,7 @@
 		goto('/levels');
 	}
 
-	onMount(async () => {
-		// Auto-save level progress when overview page is loaded
+	async function saveLevelProgress() {
 		const formData = new FormData();
 		formData.append('stars', stars().toString());
 		formData.append('completed', 'true');
@@ -43,55 +45,30 @@
 			});
 
 			const result = await response.json();
+
+			// Force reload the game:progress cache
 			if (result.data?.success) {
 				progressSaved = true;
+				await invalidate('game:progress');
 			}
 		} catch (error) {
 			console.error('Error saving level progress:', error);
 		}
+	}
+
+	onMount(() => {
+		saveLevelProgress();
 	});
 </script>
 
 <Layout1>
-	<div class="relative flex w-full max-w-180 flex-col items-center gap-8">
-		<div class="flex flex-col text-center">
-			<Heading variant={2}>Úroveň 1 dokončena!</Heading>
-		</div>
-		<div class="rounded-2xl border-2 border-foreground bg-white p-8 text-center">
-			<div class="mb-4 text-6xl font-bold text-foreground">
-				{correctAnswers}/{totalQuestions}
-			</div>
-			<Paragraph>Správných odpovědí</Paragraph>
-		</div>
-		<div class="flex gap-2">
-			{#each Array(3) as _, i}
-				<div class="flex">
-					{#if i < stars()}
-						<Star size={55} color="gold" fill="gold" />
-					{:else}
-						<Star size={55} />
-					{/if}
-				</div>
-			{/each}
-		</div>
-		<div class="text-center">
-			<Paragraph variant={3}>
-				{#if stars() === 3}
-					Výborně! Máte skvělé porozumění konverzaci.
-				{:else if stars() === 2}
-					Dobře! S trochou pozornosti to bude ještě lepší.
-				{:else}
-					Zkuste to znovu a věnujte více pozornosti detailům.
-				{/if}
-			</Paragraph>
-		</div>
-		<div class="flex w-full max-w-150 flex-col gap-4">
-			<GameButton class="w-full" onclick={handleRetry} size="medium" variant={1}>
-				Zkusit znovu
-			</GameButton>
-			<GameButton class="w-full" onclick={handleBackToLevels} size="medium" variant={1}>
-				Zpět na úrovně
-			</GameButton>
-		</div>
-	</div>
+	<LevelCompletionScreen
+		{correctAnswers}
+		{totalQuestions}
+		onRetry={handleRetry}
+		onBackToLevels={handleBackToLevels}
+		title="Úroveň 1 dokončena!"
+		stars={stars()}
+		{messages}
+	/>
 </Layout1>

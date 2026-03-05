@@ -105,7 +105,7 @@
 
 	function fadeOutAudio() {
 		const fadeSteps = 50;
-		const fadeInterval = 200; // 200ms between steps for slower fade
+		const fadeInterval = 50; // 50ms between steps for faster fade
 		const volumeStep = 0.7 / fadeSteps;
 
 		let currentStep = 0;
@@ -131,10 +131,10 @@
 			startConversation();
 			introState = 2;
 
-			// Start fade out when the final paragraph appears (after 8 seconds)
+			// Start fade out after 5 seconds
 			setTimeout(() => {
 				fadeOutAudio();
-			}, 13000);
+			}, 7000);
 		} else {
 			manAudio.pause();
 			womanAudio.pause();
@@ -149,11 +149,12 @@
 	});
 
 	onMount(() => {
-		fadeAnimations = true;
-
 		// Initialize audio elements
 		manAudio = new Audio('/assets/level1/man_voice.mp3');
 		womanAudio = new Audio('/assets/level1/woman_voice.mp3');
+
+		// Set fadeAnimations to true to trigger fade in animations
+		fadeAnimations = true;
 
 		manAudio.volume = 0.7;
 		womanAudio.volume = 0.7;
@@ -173,46 +174,45 @@
 	});
 </script>
 
-{#if fadeAnimations}
-	<Layout1>
-		<div class="flex w-full max-w-150 flex-col">
-			<div transition:fade={{ duration: 3000 }}>
+<Layout1>
+	<div class="flex w-full max-w-150 flex-col items-center">
+		{#if introState === 1 && fadeAnimations}
+			<div in:fade={{ duration: 3000 }}>
 				<Paragraph className="text-center">
 					Zvuk je pro nás všudypřítomný a často si ani neuvědomujeme, jak moc ho ke každodennímu
 					životu potřebujeme.
 				</Paragraph>
 			</div>
-			<div transition:fade={{ delay: 3000, duration: 3000 }}>
+			<div in:fade={{ delay: 3000, duration: 3000 }}>
 				<Paragraph className="text-center mt-3">
 					Dokážeme se díky němu například orientovat v prostoru, užívat si hudbu a také hlavně
 					efektivně komunikovat s ostatními a dokážeme ihned zjistit, co se děje kolem nás a o čem
 					se lidé baví.
 				</Paragraph>
 			</div>
-			{#if introState > 1}
-				<div class="mt-8 flex justify-center" transition:fade={{ duration: 3000 }}>
-					<TalkingPerson
-						id={1}
-						person={characters[0]}
-						isSpeaking={currentSpeaker === 'anna'}
-						finishedSpeaking={false}
-					/>
-					<TalkingPerson
-						id={2}
-						person={characters[1]}
-						isSpeaking={currentSpeaker === 'tomas'}
-						finishedSpeaking={false}
-					/>
-				</div>
-				<div transition:fade={{ delay: 13000, duration: 3000 }}>
-					<Paragraph className="text-center">Co se ale stane, když o něj přijdeme?</Paragraph>
-				</div>
-			{/if}
-		</div>
-		<div transition:fade={{ delay: 6000, duration: 3000 }}>
-			<GameButton onclick={handleContinue} class={introState === 1 ? 'mt-8' : 'mt-5'}>
-				Pokračovat
-			</GameButton>
-		</div>
-	</Layout1>
-{/if}
+			<div in:fade={{ delay: 6000, duration: 3000 }}>
+				<GameButton onclick={handleContinue} class="mt-5">Pokračovat</GameButton>
+			</div>
+		{/if}
+		{#if introState === 2}
+			<div class="mt-8 flex justify-center" in:fade={{ duration: 3000 }}>
+				<TalkingPerson
+					id={1}
+					person={characters[0]}
+					isSpeaking={currentSpeaker === 'anna'}
+					finishedSpeaking={false}
+				/>
+				<TalkingPerson
+					id={2}
+					person={characters[1]}
+					isSpeaking={currentSpeaker === 'tomas'}
+					finishedSpeaking={false}
+				/>
+			</div>
+			<div class="flex flex-col items-center" in:fade={{ delay: 6000, duration: 3000 }}>
+				<Paragraph className="text-center">Co se ale stane, když o něj přijdeme?</Paragraph>
+				<GameButton onclick={handleContinue} class="mt-5">Pokračovat</GameButton>
+			</div>
+		{/if}
+	</div>
+</Layout1>
