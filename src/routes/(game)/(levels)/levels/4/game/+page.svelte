@@ -1,10 +1,11 @@
 <script lang="ts">
 	import GameButton from '$components/GameButton.svelte';
 	import ReplayButton from '$components/ReplayButton.svelte';
+	import AnswerTab from '$components/AnswerTab.svelte';
 	import Layout2 from '$components/layouts/Layout2.svelte';
 	import Paragraph from '$components/typography/Paragraph.svelte';
 	import { fly, fade } from 'svelte/transition';
-	import { Play, HeartHandshake, ChevronUp } from '@lucide/svelte';
+	import { Play, HeartHandshake } from '@lucide/svelte';
 	import { shuffleArray } from '$lib/shared/utils';
 	import { onMount } from 'svelte';
 	import { goto } from '$app/navigation';
@@ -105,6 +106,7 @@
 	});
 
 	$effect(() => {
+		videoEnded = false;
 		if (videoElement && answers[currentAnswerIndex]) {
 			// Wait for video to be loaded and play
 			videoElement.play().catch(() => {
@@ -263,37 +265,15 @@
 		</div>
 	{/if}
 	<!-- Answer tab -->
-	{#if showAnswerTab && !isPortrait && isMobile}
-		<div
-			class="fixed right-0 bottom-0 left-0 z-40 transition-all duration-300"
-			class:max-h-96={!answerTabCollapsed}
-			class:max-h-20={answerTabCollapsed}
-		>
-			<button
-				onclick={() => (answerTabCollapsed = !answerTabCollapsed)}
-				class="mx-auto flex items-center justify-center rounded-t-lg border-t-2 border-r-2 border-l-2 border-foreground bg-white p-1"
-			>
-				<ChevronUp
-					size={30}
-					class="transition-transform duration-300 {answerTabCollapsed ? 'rotate-180' : ''}"
-				/>
-			</button>
-			{#if !answerTabCollapsed}
-				<div
-					class="flex flex-col gap-4 overflow-y-auto border-t-2 border-foreground bg-white p-4"
-					transition:fly={{ y: 100, duration: 300 }}
-				>
-					{#each shuffledOptions as option (option.id)}
-						<GameButton
-							size="small"
-							onclick={() => handleAnswerClick(option.id)}
-							variant={showColorFeedback(option.id)}
-						>
-							{option.text}
-						</GameButton>
-					{/each}
-				</div>
-			{/if}
-		</div>
-	{/if}
+	<AnswerTab
+		bind:showAnswerTab
+		bind:answerTabCollapsed
+		text="ODPOVĚDI"
+		onCollapsedChange={(collapsed) => (answerTabCollapsed = collapsed)}
+		{shuffledOptions}
+		onAnswerClick={handleAnswerClick}
+		{showColorFeedback}
+		{isPortrait}
+		{isMobile}
+	/>
 </Layout2>

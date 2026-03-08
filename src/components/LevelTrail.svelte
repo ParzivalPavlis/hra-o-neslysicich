@@ -18,7 +18,7 @@
 </script>
 
 <svg
-	class="absolute -bottom-65 left-1/2 z-10 h-100 w-25 -translate-x-1/2 transform"
+	class="absolute -bottom-48 left-1/2 z-10 h-85 w-25 -translate-x-1/2 transform"
 	viewBox="0 0 100 400"
 	style="overflow: visible;"
 >
@@ -28,6 +28,6 @@
 		stroke-width={strokeWidth}
 		fill="none"
 		stroke-linecap="round"
-		stroke-dasharray="26"
+		stroke-dasharray="27"
 	/>
 </svg>

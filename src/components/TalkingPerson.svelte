@@ -1,19 +1,21 @@
 <script lang="ts">
 	import type { TalkingPersonType } from '$types/talkingPerson';
 
+	type Props = {
+		id: number;
+		person: TalkingPersonType;
+		isSpeaking?: boolean;
+		finishedSpeaking?: boolean;
+		onclick?: () => void;
+	};
+
 	let {
 		id,
 		person,
 		isSpeaking = false,
 		finishedSpeaking = false,
 		onclick = () => {}
-	}: {
-		id: number;
-		person: TalkingPersonType;
-		isSpeaking?: boolean;
-		finishedSpeaking?: boolean;
-		onclick?: () => void;
-	} = $props();
+	}: Props = $props();
 </script>
 
 <div class="relative">

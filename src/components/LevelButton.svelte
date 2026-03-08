@@ -31,6 +31,16 @@
 					: 'blue'
 	);
 
+	const variantProgressColors = {
+		blue: 'rgb(59, 130, 246)',
+		gray: 'rgb(107, 114, 128)',
+		green: 'rgb(34, 197, 94)',
+		yellow: 'rgb(234, 179, 8)'
+	};
+
+	const circumference = 2 * Math.PI * 95;
+	const strokeDasharray = $derived(`${(attributes.stars / 3) * circumference} ${circumference}`);
+
 	function handleClick(e: MouseEvent, node: HTMLElement) {
 		if (clickCount === 1 && !node.contains(e.target as Node)) {
 			clickCount = 0;
@@ -48,6 +58,28 @@
 </script>
 
 <div class="relative z-20 flex h-96 w-full max-w-64 flex-col items-center" use:clickOutside>
+	{#if !attributes.locked}
+		<svg
+			class="pointer-events-none absolute -top-4 left-1/2 z-10 h-62 w-62 -translate-x-1/2"
+			viewBox="0 0 200 200"
+		>
+			<circle cx="100" cy="100" r="96" fill="none" stroke="rgb(209, 213, 219)" stroke-width="6" />
+			{#if attributes.stars > 0}
+				<circle
+					cx="100"
+					cy="100"
+					r="96"
+					fill="none"
+					stroke="rgb(234, 179, 8)"
+					stroke-width="6"
+					stroke-dasharray={strokeDasharray}
+					stroke-linecap="round"
+					class="transition-all duration-300"
+					style="transform-origin: 100px 100px; transform: rotate(-90deg);"
+				/>
+			{/if}
+		</svg>
+	{/if}
 	<Button
 		type="button"
 		disabled={attributes.locked}
@@ -77,7 +109,7 @@
 	</Button>
 	{#if clickCount === 1}
 		<div
-			class="chat-bubble mt-4 max-w-xs rounded-lg border border-foreground bg-white px-4 py-3"
+			class="chat-bubble mt-6 max-w-xs rounded-lg border border-foreground bg-white px-4 py-3"
 			style="z-index: inherit;"
 		>
 			<p class="text-center text-sm leading-relaxed text-foreground">{attributes.description}</p>

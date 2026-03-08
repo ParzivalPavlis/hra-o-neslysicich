@@ -4,7 +4,7 @@
 	import Heading from '$components/typography/Heading.svelte';
 	import { Star } from '@lucide/svelte';
 
-	interface Props {
+	type Props = {
 		correctAnswers: number;
 		totalQuestions: number;
 		onRetry: () => void;
@@ -16,7 +16,7 @@
 			good: string;
 			tryAgain: string;
 		};
-	}
+	};
 
 	let {
 		correctAnswers,

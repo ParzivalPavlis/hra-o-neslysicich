@@ -1,16 +1,15 @@
 <script lang="ts">
-	import { Menu, Play, X } from '@lucide/svelte';
+	import { ChevronUp, Menu, Play, X } from '@lucide/svelte';
 	import { page } from '$app/state';
 	import { levels } from '$lib/levels';
 	import { onMount } from 'svelte';
-	import Button from '$components/ui/button/button.svelte';
 	import { fly } from 'svelte/transition';
 
 	let { children } = $props();
 
 	let levelNumber: number | null = $state(null);
 	let isMobile = $state(false);
-	let menuOpen = $state(false);
+	let mobileMenuOpen = $state(false);
 
 	let currentLevel = $derived.by(() => {
 		return levelNumber !== null && levels[levelNumber - 1] ? levels[levelNumber - 1] : null;
@@ -60,16 +59,12 @@
 		} else {
 			lockPortraitOrientation();
 		}
-
-		// Reset menu when navigating
-		menuOpen = false;
 	});
 </script>
 
 <svelte:window on:resize={checkIsMobile} />
 <div class="relative">
 	{@render children()}
-	<!-- Regular menu for non-landscape pages OR desktop -->
 	{#if !isLandscapePage || !isMobile}
 		<nav class="fixed right-0 bottom-0 left-0 z-100 h-13 bg-foreground">
 			<ul class="flex h-full items-end justify-around">
@@ -120,95 +115,50 @@
 
 	<!-- Mobile landscape menu for landscape-only pages -->
 	{#if isLandscapePage && isMobile}
-		<Button
-			onclick={() => (menuOpen = !menuOpen)}
-			class="fixed top-4 right-4 z-50 flex items-center justify-center border-2 border-foreground bg-white hover:bg-white active:bg-white"
-		>
-			{#if menuOpen}
-				<X color="black" size={32} />
-			{:else}
-				<Menu color="black" size={32} />
-			{/if}
-		</Button>
-		{#if menuOpen}
-			<div
-				class="animate-fade-in fixed inset-0 z-40 bg-black/50 transition-opacity duration-200"
-				onclick={() => (menuOpen = false)}
-				role="presentation"
-			></div>
-			<nav class="animate-dropdown fixed top-[calc(1rem+2.5rem+5px)] right-4 z-50">
-				<div
-					class="relative rounded-lg border-2 border-foreground bg-white px-6 py-3 font-semibold"
+		<nav class="fixed top-0 right-0 bottom-0 z-100 flex">
+			<button
+				onclick={() => (mobileMenuOpen = !mobileMenuOpen)}
+				class="mt-4 flex h-fit items-center justify-center rounded-tl-lg rounded-bl-lg border-t-2 border-b-2 border-l-2 border-foreground bg-foreground p-1"
+			>
+				{#if mobileMenuOpen}
+					<X size={30} class="text-white transition-transform duration-300" />
+				{:else}
+					<Menu size={30} class=" text-white transition-transform duration-300" />
+				{/if}
+			</button>
+			{#if mobileMenuOpen}
+				<ul
+					class="flex h-full w-12 flex-col items-center justify-around bg-foreground"
+					transition:fly={{ x: 100, duration: 300 }}
 				>
-					<ul class="flex flex-col items-start gap-6">
-						<li in:fly={{ x: 20, duration: 400, delay: 0 }}>
-							<a
-								class="flex items-center gap-3 text-black"
-								href="/"
-								onclick={() => (menuOpen = false)}
-							>
-								<Menu size={24} />
-								<span>Domů</span>
-							</a>
-						</li>
-						<li in:fly={{ x: 20, duration: 400, delay: 80 }}>
-							<a
-								class="flex items-center gap-3 text-black"
-								href="/levels"
-								onclick={() => (menuOpen = false)}
-							>
-								<Play fill="white" size={24} />
-								<span>Úrovně</span>
-							</a>
-						</li>
-						<li
-							in:fly={{ x: 20, duration: 400, delay: 160 }}
-							class={currentLevel && page.url.pathname.includes('/levels/' + levelNumber)
-								? 'flex min-h-7.5 items-center gap-3 border-b-2 border-black text-white'
-								: ''}
-							style={currentLevel ? '' : 'display: none;'}
-						>
-							<div class="flex items-center gap-3 text-black">
-								<!-- svelte-ignore svelte_component_deprecated -->
-								{#if currentLevel}
-									<svelte:component this={currentLevel.icon} size={24} />
-									<span>Úroveň {levelNumber}</span>
-								{/if}
-							</div>
-						</li>
-					</ul>
-				</div>
-			</nav>
-		{/if}
+					<li>
+						<a class="flex flex-col items-center" href="/">
+							{#if page.url.pathname === '/'}
+								<div
+									class="absolute -left-5.25 flex h-10 w-10 rotate-45 transform items-center justify-center rounded bg-white"
+								>
+									<Menu size={30} class="-rotate-45 transform" />
+								</div>
+							{:else}
+								<Menu size={30} color="white" />
+							{/if}
+						</a>
+					</li>
+					<li>
+						<a class="flex flex-col items-center" href="/levels">
+							{#if page.url.pathname === '/levels'}
+								<div
+									class="absolute -left-5.25 flex h-10 w-10 rotate-45 transform items-center justify-center rounded bg-white"
+								>
+									<Play size={30} fill="white" class="-rotate-45 transform" />
+								</div>
+							{:else}
+								<Play size={30} fill="white" color="white" />
+							{/if}
+						</a>
+					</li>
+				</ul>
+			{/if}
+		</nav>
 	{/if}
 </div>
-
-<style>
-	@keyframes fadeIn {
-		from {
-			opacity: 0;
-		}
-		to {
-			opacity: 1;
-		}
-	}
-
-	@keyframes dropdown {
-		from {
-			opacity: 0;
-			transform: translateY(-10px) scale(0.95);
-		}
-		to {
-			opacity: 1;
-			transform: translateY(0) scale(1);
-		}
-	}
-
-	:global(.animate-fade-in) {
-		animation: fadeIn 0.2s ease-out;
-	}
-
-	:global(.animate-dropdown) {
-		animation: dropdown 0.3s ease-out;
-	}
-</style>
