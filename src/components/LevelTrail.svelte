@@ -18,7 +18,7 @@
 </script>
 
 <svg
-	class="absolute -top-95 left-1/2 h-100 w-25 -translate-x-1/2 transform"
+	class="absolute -bottom-65 left-1/2 z-10 h-100 w-25 -translate-x-1/2 transform"
 	viewBox="0 0 100 400"
 	style="overflow: visible;"
 >

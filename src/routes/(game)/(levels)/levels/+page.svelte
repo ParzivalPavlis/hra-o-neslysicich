@@ -4,21 +4,13 @@
 	import Button from '$components/ui/button/button.svelte';
 	import { levels } from '$lib/levels';
 	import type { GameProgressType } from '$types/supabase/gameProgress';
-	import {
-		ArrowUp,
-		ArrowDown,
-		ChevronUp,
-		ChevronDown,
-		MessageSquareText,
-		MessageSquareX
-	} from '@lucide/svelte';
+	import { ArrowUp, ArrowDown, ChevronUp, ChevronDown } from '@lucide/svelte';
 	import type { PageData } from './$types';
 
 	let { data }: { data: PageData } = $props();
 	let gameProgress = $derived(data.gameProgress);
 
 	let levelButtonRefs: HTMLDivElement[] = [];
-	let showAllInfo: boolean = $state(false);
 
 	// Merge game progress with levels data
 	const levelsWithProgress = $derived(
@@ -36,7 +28,7 @@
 	);
 
 	afterNavigate(() => {
-		window.scrollTo(0, document.body.scrollHeight);
+		window.scrollTo(0, 0);
 	});
 
 	function scrollToTop() {
@@ -74,26 +66,18 @@
 	<title>Úrovně</title>
 </svelte:head>
 
-<div class="relative flex min-h-screen flex-col-reverse items-center gap-50 p-10">
+<div class="relative flex min-h-screen flex-col items-center gap-50 p-10">
 	{#each levelsWithProgress as { icon, stars, locked, completed, description, trails, href }, index}
 		<div bind:this={levelButtonRefs[index]}>
 			<LevelButton
-				levelInfoOpen={showAllInfo}
 				attributes={{ icon, stars, locked, description, trails, level: index + 1, href }}
 			/>
 		</div>
 	{/each}
 </div>
-<div class="fixed top-1/2 right-4 flex -translate-y-1/2 transform flex-col gap-2">
+<div class="fixed top-1/2 right-4 hidden -translate-y-1/2 transform flex-col gap-2 md:flex">
 	<Button class="cursor-pointer" size="icon-lg" onclick={scrollToTop}><ArrowUp /></Button>
 	<Button class="cursor-pointer" size="icon-lg" onclick={scrollUpClosest}><ChevronUp /></Button>
 	<Button class="cursor-pointer" size="icon-lg" onclick={scrollDownClosest}><ChevronDown /></Button>
 	<Button class="cursor-pointer" size="icon-lg" onclick={scrollToBottom}><ArrowDown /></Button>
-	<Button class="cursor-pointer" size="icon-lg" onclick={() => (showAllInfo = !showAllInfo)}>
-		{#if showAllInfo}
-			<MessageSquareX />
-		{:else}
-			<MessageSquareText />
-		{/if}
-	</Button>
 </div>

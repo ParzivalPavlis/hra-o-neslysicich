@@ -1,85 +1,90 @@
 <script lang="ts">
-	import { onMount } from 'svelte';
 	import { Button } from '$components/ui/button';
 	import LevelTrail from '$components/LevelTrail.svelte';
-	import { Star } from '@lucide/svelte';
 	import { goto } from '$app/navigation';
-	import type { LevelButtonType } from '$types/levelButton';
+	import { cn } from '$lib/utils';
+	import { Lock } from '@lucide/svelte';
+	import type { ButtonVariantType, LevelButtonType } from '$types/levelButton';
 
-	let {
-		attributes,
-		levelInfoOpen = $bindable(false)
-	}: { attributes: LevelButtonType; levelInfoOpen?: boolean } = $props();
+	let { attributes }: { attributes: LevelButtonType } = $props();
 
 	let clickCount = $state(0);
-	let containerRef: HTMLDivElement;
 	// svelte-ignore state_referenced_locally
 	let IconComponent = attributes.icon;
 
-	function handleClick() {
-		if (levelInfoOpen) {
-			// If info is open, navigate directly with single click
-			goto(attributes.href);
-		} else {
-			// Otherwise require 2 clicks
-			clickCount++;
-			if (clickCount === 2) {
-				goto(attributes.href);
-			}
-		}
-	}
+	const variantClasses: Record<ButtonVariantType, string> = {
+		blue: 'hover:bg-blue-500 bg-blue-500 shadow-[0_8px_0_rgb(29,78,216)] hover:shadow-[0_10px_0_rgb(29,78,216)] active:shadow-[0_4px_0_rgb(29,78,216)]',
+		gray: 'hover:bg-gray-500 bg-gray-500 shadow-[0_8px_0_rgb(55,65,81)] hover:shadow-[0_10px_0_rgb(55,65,81)] active:shadow-[0_4px_0_rgb(55,65,81)]',
+		green:
+			'hover:bg-green-500 bg-green-500 shadow-[0_8px_0_rgb(21,128,61)] hover:shadow-[0_10px_0_rgb(21,128,61)] active:shadow-[0_4px_0_rgb(21,128,61)]',
+		yellow:
+			'hover:bg-yellow-500 bg-yellow-500 shadow-[0_8px_0_rgb(234,179,8)] hover:shadow-[0_10px_0_rgb(234,179,8)] active:shadow-[0_4px_0_rgb(234,179,8)]'
+	};
 
-	function handleDocumentClick(e: MouseEvent) {
-		if (clickCount === 1 && containerRef && !containerRef.contains(e.target as Node)) {
+	const variant = $derived(
+		attributes.locked
+			? 'gray'
+			: attributes.stars === 3
+				? 'yellow'
+				: attributes.stars > 0
+					? 'green'
+					: 'blue'
+	);
+
+	function handleClick(e: MouseEvent, node: HTMLElement) {
+		if (clickCount === 1 && !node.contains(e.target as Node)) {
 			clickCount = 0;
 		}
 	}
 
-	onMount(() => {
-		document.addEventListener('click', handleDocumentClick);
-		return () => document.removeEventListener('click', handleDocumentClick);
-	});
+	function clickOutside(node: HTMLElement) {
+		document.addEventListener('click', (e) => handleClick(e, node));
+		return {
+			destroy() {
+				document.removeEventListener('click', (e) => handleClick(e, node));
+			}
+		};
+	}
 </script>
 
-<div class="relative flex h-80 w-full max-w-50 flex-col items-center" bind:this={containerRef}>
-	{#if attributes.trails}
-		<LevelTrail variant={attributes.trails} />
-	{/if}
+<div class="relative z-20 flex h-96 w-full max-w-64 flex-col items-center" use:clickOutside>
 	<Button
 		type="button"
 		disabled={attributes.locked}
-		onclick={handleClick}
-		class="group relative flex h-40 w-40 cursor-pointer flex-col items-center justify-center overflow-hidden rounded-full
-          bg-blue-500
-          shadow-[0_8px_0_rgb(29,78,216)]
-          transition-all
-          hover:-translate-y-0.5 hover:bg-blue-500
-         hover:opacity-100 hover:shadow-[0_10px_0_rgb(29,78,216)]
-         active:translate-y-1 active:shadow-[0_4px_0_rgb(29,78,216)]
-         disabled:translate-y-0 disabled:bg-gray-500 disabled:opacity-100
-				 disabled:shadow-[0_8px_0_rgb(55,65,81)]"
+		onclick={() => {
+			clickCount++;
+			if (clickCount === 2) {
+				goto(attributes.href);
+			}
+		}}
+		class={cn(
+			'group relative flex h-52 w-52 cursor-pointer flex-col items-center justify-center overflow-hidden rounded-full transition-all hover:-translate-y-0.5 hover:opacity-100 active:translate-y-1',
+			variantClasses[variant]
+		)}
 	>
 		<div class="flex flex-col items-center gap-2">
-			<div class="flex h-11 w-11 items-center justify-center rounded-full bg-white/10 text-white">
-				<IconComponent class="h-5 w-5" />
+			<div class="flex h-14 w-14 items-center justify-center rounded-full bg-white/20 text-white">
+				{#if attributes.locked}
+					<Lock class="h-7 w-7" />
+				{:else}
+					<IconComponent class="h-7 w-7" />
+				{/if}
 			</div>
-			<div class="text-lg font-extrabold text-white uppercase drop-shadow">
+			<div class="text-2xl font-extrabold text-white uppercase drop-shadow">
 				Úroveň {attributes.level}
-			</div>
-			<div class="flex gap-1">
-				{#each Array(3) as _, i}
-					<Star
-						class={'h-4 w-4 ' +
-							(i < attributes.stars ? 'fill-yellow-300 text-yellow-300' : 'text-white/35')}
-					/>
-				{/each}
 			</div>
 		</div>
 	</Button>
-	{#if clickCount === 1 || levelInfoOpen}
-		<div class="chat-bubble mt-4 max-w-xs rounded-lg border border-foreground bg-white px-4 py-3">
+	{#if clickCount === 1}
+		<div
+			class="chat-bubble mt-4 max-w-xs rounded-lg border border-foreground bg-white px-4 py-3"
+			style="z-index: inherit;"
+		>
 			<p class="text-center text-sm leading-relaxed text-foreground">{attributes.description}</p>
 		</div>
+	{/if}
+	{#if attributes.trails}
+		<LevelTrail variant={attributes.trails} />
 	{/if}
 </div>
 
