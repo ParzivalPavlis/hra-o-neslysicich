@@ -147,7 +147,7 @@
 			{#if !isMobile}
 				<div class="relative w-full max-w-6xl">
 					<div
-						class="aspect-video overflow-hidden rounded-lg border-2 border-foreground bg-transparent landscape:h-auto landscape:max-h-[calc(100vh-2rem)]"
+						class="relative aspect-video overflow-hidden rounded-lg border-2 border-foreground bg-transparent landscape:h-auto landscape:max-h-[calc(100vh-2rem)]"
 					>
 						{#if autoplayPrevented}
 							<div class="flex h-full w-full items-center justify-center">
@@ -167,7 +167,9 @@
 							{#key answers[currentAnswerIndex].videoSrc}
 								<video
 									bind:this={videoElement}
-									class="h-full w-full object-cover"
+									class="h-full w-full object-cover transition-opacity duration-300 {videoEnded
+										? 'opacity-50'
+										: 'opacity-100'}"
 									playsinline
 									muted
 									transition:fade={{ duration: 400 }}
@@ -177,25 +179,24 @@
 									Your browser does not support the video tag.
 								</video>
 							{/key}
+							{#if videoEnded}
+								<div
+									class="absolute inset-0 flex items-center justify-center"
+									transition:fade={{ duration: 200 }}
+								>
+									<ReplayButton onclick={replayVideo} disabled={helpUses === 0} {helpUses} />
+								</div>
+							{/if}
 						{/if}
 					</div>
-					<!-- Help button for desktop - absolute positioned -->
-					<div class="absolute top-4 right-4 flex flex-col items-center gap-3">
-						<div class="flex flex-col gap-2">
-							{#each Array(4) as _, i}
-								<HeartHandshake
-									size={30}
-									class="transition-all duration-500 {i < lives
-										? ' text-red-600'
-										: 'text-gray-300'}"
-								/>
-							{/each}
-						</div>
-						<ReplayButton
-							onclick={replayVideo}
-							disabled={!videoEnded || helpUses === 0}
-							{helpUses}
-						/>
+					<!-- Lives indicator for desktop - absolute positioned -->
+					<div class="absolute top-4 right-4 flex flex-col gap-2">
+						{#each Array(4) as _, i}
+							<HeartHandshake
+								size={30}
+								class="transition-all duration-500 {i < lives ? ' text-red-600' : 'text-gray-300'}"
+							/>
+						{/each}
 					</div>
 				</div>
 			{/if}
@@ -203,7 +204,7 @@
 			<!-- Mobile layout with video only -->
 			{#if isMobile}
 				<div
-					class="aspect-video w-full max-w-6xl overflow-hidden rounded-lg border-2 border-foreground bg-transparent landscape:h-auto landscape:max-h-[calc(100vh-2rem)]"
+					class="relative aspect-video w-full max-w-6xl overflow-hidden rounded-lg border-2 border-foreground bg-transparent landscape:h-auto landscape:max-h-[calc(100vh-2rem)]"
 				>
 					{#if autoplayPrevented}
 						<div class="flex h-full w-full items-center justify-center">
@@ -223,7 +224,9 @@
 						{#key answers[currentAnswerIndex].videoSrc}
 							<video
 								bind:this={videoElement}
-								class="h-full w-full object-cover"
+								class="h-full w-full object-cover transition-opacity duration-300 {videoEnded
+									? 'opacity-50'
+									: 'opacity-100'}"
 								playsinline
 								muted
 								transition:fade={{ duration: 400 }}
@@ -233,6 +236,14 @@
 								Your browser does not support the video tag.
 							</video>
 						{/key}
+						{#if videoEnded}
+							<div
+								class="absolute inset-0 flex items-center justify-center"
+								transition:fade={{ duration: 200 }}
+							>
+								<ReplayButton onclick={replayVideo} disabled={helpUses === 0} {helpUses} />
+							</div>
+						{/if}
 					{/if}
 				</div>
 			{/if}
@@ -261,7 +272,6 @@
 					/>
 				{/each}
 			</div>
-			<ReplayButton onclick={replayVideo} disabled={!videoEnded || helpUses === 0} {helpUses} />
 		</div>
 	{/if}
 	<!-- Answer tab -->
