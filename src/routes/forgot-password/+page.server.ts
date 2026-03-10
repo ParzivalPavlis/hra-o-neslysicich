@@ -14,12 +14,12 @@ export const actions: Actions = {
 	default: async (event) => {
 		const {
 			request,
-			locals: { supabase }
+			locals: { supabase },
+			url
 		} = event;
 
 		const formData = await request.formData();
 		const email = formData.get('email') as string;
-		const password = formData.get('password') as string;
 
 		let errors: FormErrorsType = {};
 
@@ -27,11 +27,6 @@ export const actions: Actions = {
 		const validEmail = /^[\w\-.+]+@([\w-]+\.)+[\w-]{2,}$/.test(email);
 		if (!validEmail) {
 			errors.email = 'Prosím zadejte platnou e-mailovou adresu';
-		}
-
-		// Password validation
-		if (!password || password.length < 6) {
-			errors.password = 'Heslo musí mít alespoň 6 znaků';
 		}
 
 		// Return early if validation errors
@@ -42,20 +37,23 @@ export const actions: Actions = {
 			} as FormResponseType);
 		}
 
-		// Sign In logic
-		const { error } = await supabase.auth.signInWithPassword({
-			email,
-			password
+		// Send password reset email
+		const { error } = await supabase.auth.resetPasswordForEmail(email, {
+			redirectTo: `${url.origin}/reset-password`
 		});
 
 		if (error) {
-			return fail(401, {
+			// Don't reveal whether the email exists for security reasons
+			return fail(400, {
 				success: false,
 				email,
-				message: 'Neplatný e-mail nebo heslo'
+				message: 'Pokud existuje účet s touto e-mailovou adresou, obdržíte odkaz na obnovu hesla.'
 			} as FormResponseType);
 		}
 
-		redirect(303, '/');
+		return {
+			success: true,
+			message: 'Pokud existuje účet s touto e-mailovou adresou, obdržíte odkaz na obnovu hesla.'
+		} as FormResponseType;
 	}
 };

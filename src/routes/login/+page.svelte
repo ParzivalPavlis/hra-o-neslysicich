@@ -1,5 +1,6 @@
 <script lang="ts">
 	import { enhance } from '$app/forms';
+	import AlertMessage from '$components/AlertMessage.svelte';
 	import GameButton from '$components/GameButton.svelte';
 	import Layout1 from '$components/layouts/Layout1.svelte';
 	import MainMenuHeading from '$components/typography/MainMenuHeading.svelte';
@@ -27,15 +28,7 @@
 	<form class="flex w-full max-w-md flex-col gap-5" method="POST" use:enhance={handleSubmit}>
 		<MainMenuHeading>Hra o neslyšících</MainMenuHeading>
 		{#if form?.message !== undefined}
-			<div
-				class={`mb-6 rounded-md p-4 text-sm ${
-					form?.success
-						? 'border border-green-200 bg-green-50 text-green-800'
-						: 'border border-red-200 bg-red-50 text-red-800'
-				}`}
-			>
-				{form?.message}
-			</div>
+			<AlertMessage message={form.message} variant={form?.success ? 'success' : 'error'} />
 		{/if}
 		<div>
 			<label for="email" class="block text-sm font-medium text-gray-700">E-mail</label>
@@ -71,11 +64,18 @@
 			{/if}
 		</div>
 		<GameButton type="submit" class="w-full">Přihlásit se</GameButton>
-		<Paragraph className="text-center">
-			Nemáte účet?
-			<a href="/register" class="font-medium text-blue-600 hover:text-blue-700 hover:underline">
-				Registrovat se
-			</a>
-		</Paragraph>
+		<div class="flex flex-col">
+			<Paragraph className="text-center">
+				<a href="/forgot-password" class="text-blue-600 hover:text-blue-700 hover:underline">
+					Zapomněli jste heslo?
+				</a>
+			</Paragraph>
+			<Paragraph className="text-center">
+				Nemáte účet?
+				<a href="/register" class="font-medium text-blue-600 hover:text-blue-700 hover:underline">
+					Registrovat se
+				</a>
+			</Paragraph>
+		</div>
 	</form>
 </Layout1>
