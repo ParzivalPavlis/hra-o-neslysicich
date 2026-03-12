@@ -26,7 +26,7 @@
 	}: Props = $props();
 
 	const variantClasses: Record<1 | 2 | 3, string> = {
-		1: 'bg-blue-500 shadow-[0_6px_0_rgb(29,78,216)] hover:bg-blue-500 hover:shadow-[0_8px_0_rgb(29,78,216)] active:translate-y-0.5 hover:-translate-y-0.5 active:shadow-[0_4px_0_rgb(29,78,216)] disabled:bg-gray-500 disabled:shadow-[0_6px_0_rgb(55,65,81)]',
+		1: 'bg-[#0992C2] shadow-[0_6px_0_#0AC4E0] hover:bg-blue-500 hover:shadow-[0_8px_0_#0AC4E0] active:translate-y-0.5 hover:-translate-y-0.5 active:shadow-[0_4px_0_#0AC4E0] disabled:bg-gray-500 disabled:shadow-[0_6px_0_rgb(55,65,81)]',
 		2: 'bg-green-500 shadow-[0_6px_0_rgb(21,128,61)] hover:bg-green-500 hover:shadow-[0_8px_0_rgb(21,128,61)] active:translate-y-0.5 hover:-translate-y-0.5 active:shadow-[0_4px_0_rgb(21,128,61)] disabled:bg-gray-500 disabled:shadow-[0_6px_0_rgb(55,65,81)]',
 		3: 'bg-red-500 shadow-[0_6px_0_rgb(185,28,28)] hover:bg-red-500 hover:shadow-[0_8px_0_rgb(185,28,28)] active:translate-y-0.5 hover:-translate-y-0.5 active:shadow-[0_4px_0_rgb(185,28,28)] disabled:bg-gray-500 disabled:shadow-[0_6px_0_rgb(55,65,81)] ![&_svg:not([class*="size-"])]:size-9'
 	};

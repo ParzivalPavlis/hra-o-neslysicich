@@ -25,7 +25,7 @@
 
 <Layout1>
 	<form class="flex w-full max-w-md flex-col gap-5" method="POST" use:enhance={handleSubmit}>
-		<MainMenuHeading>Hra o neslyšících</MainMenuHeading>
+		<MainMenuHeading>Deafio</MainMenuHeading>
 		{#if form?.message !== undefined}
 			<div
 				class={`mb-6 rounded-md p-4 text-sm ${

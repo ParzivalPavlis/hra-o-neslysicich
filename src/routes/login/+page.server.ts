@@ -56,6 +56,6 @@ export const actions: Actions = {
 			} as FormResponseType);
 		}
 
-		redirect(303, '/');
+		redirect(303, '/levels');
 	}
 };

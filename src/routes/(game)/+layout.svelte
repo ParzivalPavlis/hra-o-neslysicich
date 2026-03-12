@@ -66,54 +66,56 @@
 <div class="relative">
 	{@render children()}
 	{#if !isLandscapePage || !isMobile}
-		<nav class="fixed right-0 bottom-0 left-0 z-100 h-13 bg-foreground">
+		<nav
+			class="fixed right-0 bottom-0 left-0 z-100 mx-auto h-13 w-[96%] rounded-tl-lg rounded-tr-lg bg-[#0AC4E0]"
+		>
 			<ul class="flex h-full items-end justify-around">
-				<li>
-					<a class="flex w-20 flex-col items-center" href="/">
+				<li class="flex h-full items-center">
+					<a class="flex h-full w-20 flex-col items-center justify-center" href="/">
 						{#if page.url.pathname === '/'}
 							<div
-								class="absolute -top-5.25 flex h-10 w-10 rotate-45 transform items-center justify-center rounded bg-white"
+								class="absolute -top-6.25 flex h-12 w-12 rotate-45 transform items-center justify-center rounded bg-white"
 							>
-								<Menu class="-rotate-45 transform" />
+								<Menu size={35} color="#0AC4E0" class="-rotate-45 transform" />
 							</div>
 						{:else}
-							<Menu color="white" />
+							<Menu size={35} color="white" />
 						{/if}
-						<span class="text-white">Domů</span>
 					</a>
 				</li>
-				<li>
-					<a class="flex w-20 flex-col items-center" href="/levels">
+				<li class="flex h-full items-center">
+					<a class="flex h-full w-20 flex-col items-center justify-center" href="/levels">
 						{#if page.url.pathname === '/levels'}
 							<div
-								class="absolute -top-5.25 flex h-10 w-10 rotate-45 transform items-center justify-center rounded bg-white"
+								class="absolute -top-6.25 flex h-12 w-12 rotate-45 transform items-center justify-center rounded bg-white"
 							>
-								<Play fill="white" class="-rotate-45 transform" />
+								<Play size={35} color="#0AC4E0" class="-rotate-45 transform" />
 							</div>
 						{:else}
-							<Play fill="white" color="white" />
+							<Play size={35} fill="white" color="white" />
 						{/if}
-						<span class="text-white">Úrovně</span>
 					</a>
 				</li>
 				{#if currentLevel}
-					<li>
-						<div class="flex w-20 flex-col items-center">
+					<li class="flex h-full items-center">
+						<div class="flex h-full w-20 flex-col items-center justify-center">
 							<div
-								class="absolute -top-5.25 flex h-10 w-10 rotate-45 transform items-center justify-center rounded bg-white"
+								class="absolute -top-6.25 flex h-12 w-12 rotate-45 transform items-center justify-center rounded bg-white"
 							>
 								<!-- svelte-ignore svelte_component_deprecated -->
-								<svelte:component this={currentLevel.icon} class="-rotate-45 transform" />
+								<svelte:component
+									this={currentLevel.icon}
+									color="#0AC4E0"
+									size={35}
+									class="-rotate-45 transform"
+								/>
 							</div>
-							<span class="text-white">Úroveň {levelNumber}</span>
 						</div>
 					</li>
 				{/if}
 			</ul>
 		</nav>
 	{/if}
-
-	<!-- Mobile landscape menu for landscape-only pages -->
 	{#if isLandscapePage && isMobile}
 		<nav class="fixed top-0 right-0 bottom-0 z-100 flex">
 			<button

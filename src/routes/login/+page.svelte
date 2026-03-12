@@ -26,7 +26,7 @@
 
 <Layout1>
 	<form class="flex w-full max-w-md flex-col gap-5" method="POST" use:enhance={handleSubmit}>
-		<MainMenuHeading>Hra o neslyšících</MainMenuHeading>
+		<MainMenuHeading>Deafio</MainMenuHeading>
 		{#if form?.message !== undefined}
 			<AlertMessage message={form.message} variant={form?.success ? 'success' : 'error'} />
 		{/if}
