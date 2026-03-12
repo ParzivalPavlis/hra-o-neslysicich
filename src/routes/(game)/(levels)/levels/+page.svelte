@@ -74,7 +74,7 @@
 <div class="relative flex min-h-screen flex-col items-center gap-50 overflow-x-hidden p-10">
 	{#each levelsWithProgress as { icon, stars, locked, completed, description, trails, href }, index}
 		<div class="relative flex w-full justify-center" bind:this={levelButtonRefs[index]}>
-			<div class="w-60">
+			<div class="hidden w-60 md:flex">
 				{#if index % 2 === 0}
 					{#if levelMapImages.find((img) => img.level === index + 1)}
 						<!-- svelte-ignore a11y_missing_attribute -->
@@ -95,7 +95,7 @@
 			<LevelButton
 				attributes={{ icon, stars, locked, description, trails, level: index + 1, href }}
 			/>
-			<div class="w-60">
+			<div class="hidden w-60 md:flex">
 				{#if index % 2 !== 0}
 					{#if levelMapImages.find((img) => img.level === index + 1)}
 						<!-- svelte-ignore a11y_missing_attribute -->

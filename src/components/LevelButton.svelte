@@ -3,8 +3,8 @@
 	import LevelTrail from '$components/LevelTrail.svelte';
 	import { goto } from '$app/navigation';
 	import { cn } from '$lib/utils';
-	import { colors } from '$lib/shared/colors';
 	import { Lock } from '@lucide/svelte';
+	import Paragraph from '$components/typography/Paragraph.svelte';
 	import type { ButtonVariantType, LevelButtonType } from '$types/levelButton';
 
 	let { attributes }: { attributes: LevelButtonType } = $props();
@@ -110,10 +110,11 @@
 	</Button>
 	{#if clickCount === 1}
 		<div
-			class="chat-bubble mt-6 max-w-xs rounded-lg border border-foreground bg-white px-4 py-3"
+			class="chat-bubble border-gray/20 mt-10 w-full rounded-lg border-3 bg-white px-4 py-3"
 			style="z-index: inherit;"
 		>
-			<p class="text-center text-sm leading-relaxed text-foreground">{attributes.description}</p>
+			<Paragraph className="text-center leading-relaxed">{attributes.description}</Paragraph>
+			<p class="text-center text-sm leading-relaxed text-foreground"></p>
 		</div>
 	{/if}
 	{#if attributes.trails}
