@@ -158,7 +158,7 @@
 											videoElement.play();
 										}
 									}}
-									class="flex h-14 w-14 cursor-pointer items-center justify-center rounded-full border-0 bg-blue-500 shadow-[0_6px_0_rgb(29,78,216)] transition-all hover:-translate-y-0.5 hover:shadow-[0_8px_0_rgb(29,78,216)] active:translate-y-0.5 active:shadow-[0_4px_0_rgb(29,78,216)]"
+									class="flex h-14 w-14 cursor-pointer items-center justify-center rounded-full border-0 bg-secondary shadow-[0_6px_0_var(--secondary-2)] transition-all hover:-translate-y-0.5 hover:shadow-[0_8px_0_var(--secondary-2)] active:translate-y-0.5 active:shadow-[0_4px_0_var(--secondary-2)]"
 								>
 									<Play size={24} color="white" fill="white" />
 								</button>
@@ -215,7 +215,7 @@
 										videoElement.play();
 									}
 								}}
-								class="flex h-14 w-14 cursor-pointer items-center justify-center rounded-full border-0 bg-blue-500 shadow-[0_6px_0_rgb(29,78,216)] transition-all hover:-translate-y-0.5 hover:shadow-[0_8px_0_rgb(29,78,216)] active:translate-y-0.5 active:shadow-[0_4px_0_rgb(29,78,216)]"
+								class="flex h-14 w-14 cursor-pointer items-center justify-center rounded-full border-0 bg-secondary shadow-[0_6px_0_var(--secondary-2)] transition-all hover:-translate-y-0.5 hover:shadow-[0_8px_0_var(--secondary-2)] active:translate-y-0.5 active:shadow-[0_4px_0_var(--secondary-2)]"
 							>
 								<Play size={24} color="white" fill="white" />
 							</button>
@@ -263,11 +263,11 @@
 		</div>
 	{/if}
 	{#if isMobile && !isPortrait}
-		<div class="fixed right-4 bottom-4 flex flex-col items-center gap-3">
+		<div class="fixed right-8 bottom-9 flex flex-col items-center gap-3">
 			<div class="flex flex-col gap-2">
 				{#each Array(4) as _, i}
 					<HeartHandshake
-						size={30}
+						size={35}
 						class="transition-all duration-500 {i < lives ? ' text-red-600' : 'text-gray-300'}"
 					/>
 				{/each}

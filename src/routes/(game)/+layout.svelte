@@ -4,6 +4,7 @@
 	import { levels } from '$lib/levels';
 	import { onMount } from 'svelte';
 	import { fly } from 'svelte/transition';
+	import { colors } from '$lib/shared/colors';
 
 	let { children } = $props();
 
@@ -67,7 +68,9 @@
 	{@render children()}
 	{#if !isLandscapePage || !isMobile}
 		<nav
-			class="fixed right-0 bottom-0 left-0 z-100 mx-auto h-13 w-[96%] rounded-tl-lg rounded-tr-lg bg-[#0AC4E0]"
+			class="fixed right-0 bottom-0 left-0 z-100 mx-auto h-13 border-t-4 border-r-4 border-l-4 border-white {isMobile
+				? 'w-[96%]'
+				: 'w-[30%]'} rounded-tl-lg rounded-tr-lg bg-secondary"
 		>
 			<ul class="flex h-full items-end justify-around">
 				<li class="flex h-full items-center">
@@ -76,7 +79,7 @@
 							<div
 								class="absolute -top-6.25 flex h-12 w-12 rotate-45 transform items-center justify-center rounded bg-white"
 							>
-								<Menu size={35} color="#0AC4E0" class="-rotate-45 transform" />
+								<Menu size={35} color={colors.secondary} class="-rotate-45 transform" />
 							</div>
 						{:else}
 							<Menu size={35} color="white" />
@@ -89,7 +92,7 @@
 							<div
 								class="absolute -top-6.25 flex h-12 w-12 rotate-45 transform items-center justify-center rounded bg-white"
 							>
-								<Play size={35} color="#0AC4E0" class="-rotate-45 transform" />
+								<Play size={35} color={colors.secondary} class="-rotate-45 transform" />
 							</div>
 						{:else}
 							<Play size={35} fill="white" color="white" />
@@ -105,7 +108,7 @@
 								<!-- svelte-ignore svelte_component_deprecated -->
 								<svelte:component
 									this={currentLevel.icon}
-									color="#0AC4E0"
+									color={colors.secondary}
 									size={35}
 									class="-rotate-45 transform"
 								/>
@@ -120,7 +123,7 @@
 		<nav class="fixed top-0 right-0 bottom-0 z-100 flex">
 			<button
 				onclick={() => (mobileMenuOpen = !mobileMenuOpen)}
-				class="mt-4 flex h-fit items-center justify-center rounded-tl-lg rounded-bl-lg border-t-2 border-b-2 border-l-2 border-foreground bg-foreground p-1"
+				class="mt-4 flex h-fit items-center justify-center rounded-tl-lg rounded-bl-lg border-t-2 border-b-2 border-l-2 border-secondary bg-secondary p-1"
 			>
 				{#if mobileMenuOpen}
 					<X size={30} class="text-white transition-transform duration-300" />
@@ -130,7 +133,7 @@
 			</button>
 			{#if mobileMenuOpen}
 				<ul
-					class="flex h-full w-12 flex-col items-center justify-around bg-foreground"
+					class="flex h-full w-12 flex-col items-center justify-around bg-secondary"
 					transition:fly={{ x: 100, duration: 300 }}
 				>
 					<li>

@@ -3,7 +3,7 @@
 	import AlertMessage from '$components/AlertMessage.svelte';
 	import GameButton from '$components/GameButton.svelte';
 	import Layout1 from '$components/layouts/Layout1.svelte';
-	import MainMenuHeading from '$components/typography/MainMenuHeading.svelte';
+	import Logo from '$components/Logo.svelte';
 	import Paragraph from '$components/typography/Paragraph.svelte';
 	import type { ActionData, SubmitFunction } from './$types';
 
@@ -25,8 +25,8 @@
 </svelte:head>
 
 <Layout1>
+	<Logo class="mb-5" />
 	<form class="flex w-full max-w-md flex-col gap-5" method="POST" use:enhance={handleSubmit}>
-		<MainMenuHeading>Deafio</MainMenuHeading>
 		{#if form?.message !== undefined}
 			<AlertMessage message={form.message} variant={form?.success ? 'success' : 'error'} />
 		{/if}

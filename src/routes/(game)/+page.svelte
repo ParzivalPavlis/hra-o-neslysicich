@@ -1,7 +1,7 @@
 <script lang="ts">
 	import { goto } from '$app/navigation';
 	import GameButton from '$components/GameButton.svelte';
-	import MainMenuHeading from '$components/typography/MainMenuHeading.svelte';
+	import Logo from '$components/Logo.svelte';
 
 	const handleLogout = async () => {
 		const res = await fetch('/api/v1/auth/logout', { method: 'POST' });
@@ -16,7 +16,7 @@
 </svelte:head>
 
 <div class="relative flex min-h-screen flex-col items-center gap-10 p-10">
-	<MainMenuHeading>Deafio</MainMenuHeading>
+	<Logo />
 	<GameButton onclick={() => goto('/levels')} class="w-full max-w-100">Úrovně</GameButton>
 	<GameButton class="w-full max-w-100">Profil</GameButton>
 	<GameButton class="w-full max-w-100">Titulky</GameButton>

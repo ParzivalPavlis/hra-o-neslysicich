@@ -3,6 +3,7 @@
 	import LevelTrail from '$components/LevelTrail.svelte';
 	import { goto } from '$app/navigation';
 	import { cn } from '$lib/utils';
+	import { colors } from '$lib/shared/colors';
 	import { Lock } from '@lucide/svelte';
 	import type { ButtonVariantType, LevelButtonType } from '$types/levelButton';
 
@@ -13,7 +14,7 @@
 	let IconComponent = attributes.icon;
 
 	const variantClasses: Record<ButtonVariantType, string> = {
-		blue: 'hover:bg-blue-500 bg-blue-500 shadow-[0_8px_0_rgb(29,78,216)] hover:shadow-[0_10px_0_rgb(29,78,216)] active:shadow-[0_4px_0_rgb(29,78,216)]',
+		blue: 'hover:bg-secondary bg-secondary shadow-[0_8px_0_var(--secondary-2)] hover:shadow-[0_10px_0_var(--secondary-2)] active:shadow-[0_4px_0_var(--secondary-2)]',
 		gray: 'hover:bg-gray-500 bg-gray-500 shadow-[0_8px_0_rgb(55,65,81)] hover:shadow-[0_10px_0_rgb(55,65,81)] active:shadow-[0_4px_0_rgb(55,65,81)]',
 		green:
 			'hover:bg-green-500 bg-green-500 shadow-[0_8px_0_rgb(21,128,61)] hover:shadow-[0_10px_0_rgb(21,128,61)] active:shadow-[0_4px_0_rgb(21,128,61)]',

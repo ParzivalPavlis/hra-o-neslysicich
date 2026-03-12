@@ -4,9 +4,9 @@
 	import AlertMessage from '$components/AlertMessage.svelte';
 	import GameButton from '$components/GameButton.svelte';
 	import Layout1 from '$components/layouts/Layout1.svelte';
-	import MainMenuHeading from '$components/typography/MainMenuHeading.svelte';
 	import Paragraph from '$components/typography/Paragraph.svelte';
 	import type { ActionData, SubmitFunction } from './$types';
+	import Logo from '$components/Logo.svelte';
 
 	let { form }: { form: ActionData } = $props();
 
@@ -34,8 +34,8 @@
 </svelte:head>
 
 <Layout1>
+	<Logo class="mb-5" />
 	<form class="flex w-full max-w-md flex-col gap-5" method="POST" use:enhance={handleSubmit}>
-		<MainMenuHeading>Nastavit nové heslo</MainMenuHeading>
 		{#if form?.message !== undefined}
 			<AlertMessage message={form.message} variant={form?.success ? 'success' : 'error'} />
 		{/if}
