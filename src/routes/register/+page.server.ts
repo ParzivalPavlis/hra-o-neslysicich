@@ -12,7 +12,7 @@ export const load: PageServerLoad = async ({ locals: { safeGetSession } }) => {
 };
 
 export const actions: Actions = {
-	default: async (event) => {
+	email: async (event) => {
 		const {
 			request,
 			locals: { supabase }
@@ -76,5 +76,29 @@ export const actions: Actions = {
 			message:
 				'Účet vytvořen! Prosím zkontrolujte svůj e-mail pro ověření účtu, nebo se můžete přihlásit hned.'
 		} as FormResponseType;
+	},
+	google: async (event) => {
+		const {
+			locals: { supabase },
+			url
+		} = event;
+
+		const { data, error } = await supabase.auth.signInWithOAuth({
+			provider: 'google',
+			options: {
+				redirectTo: `${url.origin}/api/v1/auth/callback`
+			}
+		});
+
+		if (error) {
+			return fail(400, {
+				success: false,
+				message: 'Registrace přes Google selhala. Prosím zkuste znovu.'
+			} as FormResponseType);
+		}
+
+		if (data.url) {
+			redirect(303, data.url);
+		}
 	}
 };

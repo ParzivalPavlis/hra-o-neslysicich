@@ -19,7 +19,7 @@
 		green:
 			'hover:bg-green-500 bg-green-500 shadow-[0_8px_0_rgb(21,128,61)] hover:shadow-[0_10px_0_rgb(21,128,61)] active:shadow-[0_4px_0_rgb(21,128,61)]',
 		yellow:
-			'hover:bg-yellow-500 bg-yellow-500 shadow-[0_8px_0_rgb(234,179,8)] hover:shadow-[0_10px_0_rgb(234,179,8)] active:shadow-[0_4px_0_rgb(234,179,8)]'
+			'hover:bg-yellow-500 bg-yellow-500 shadow-[0_8px_0_rgb(161,98,7)] hover:shadow-[0_10px_0_rgb(161,98,7)] active:shadow-[0_4px_0_rgb(161,98,7)]'
 	};
 
 	const variant = $derived(
@@ -31,13 +31,6 @@
 					? 'green'
 					: 'blue'
 	);
-
-	const variantProgressColors = {
-		blue: 'rgb(59, 130, 246)',
-		gray: 'rgb(107, 114, 128)',
-		green: 'rgb(34, 197, 94)',
-		yellow: 'rgb(234, 179, 8)'
-	};
 
 	const circumference = 2 * Math.PI * 95;
 	const strokeDasharray = $derived(`${(attributes.stars / 3) * circumference} ${circumference}`);
@@ -59,7 +52,7 @@
 </script>
 
 <div class="relative z-20 flex h-96 w-full max-w-64 flex-col items-center" use:clickOutside>
-	{#if !attributes.locked}
+	{#if !attributes.locked && attributes.stars < 3}
 		<svg
 			class="pointer-events-none absolute -top-4 left-1/2 z-10 h-62 w-62 -translate-x-1/2"
 			viewBox="0 0 200 200"
@@ -95,7 +88,13 @@
 			variantClasses[variant]
 		)}
 	>
-		<div class="flex flex-col items-center gap-2">
+		{#if variant === 'yellow'}
+			<div
+				class="absolute inset-0 rounded-full opacity-30"
+				style="background: repeating-linear-gradient(-45deg, transparent, transparent 50px, rgba(120, 53, 15, 0.2) 50px, rgba(120, 53, 15, 0.2) 80px);"
+			></div>
+		{/if}
+		<div class="relative z-10 flex flex-col items-center gap-2">
 			<div class="flex h-14 w-14 items-center justify-center rounded-full bg-white/20 text-white">
 				{#if attributes.locked}
 					<Lock class="h-7 w-7" />

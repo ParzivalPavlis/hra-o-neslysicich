@@ -2,22 +2,6 @@ import { supabase, supabaseAdmin } from './supabaseClient';
 import type { GameProgressType, LevelProgressType } from '$types/supabase/gameProgress';
 
 /**
- * Get a user from auth.users by ID
- * @param {string} id - The user ID to fetch
- * @returns {Promise<any|null>} The user object or null if not found
- */
-export async function getUserById(id: string) {
-	const { data, error } = await supabase.auth.admin.getUserById(id);
-
-	if (error) {
-		console.error('Error fetching user by ID:', error);
-		return null;
-	}
-
-	return data.user || null;
-}
-
-/**
  * Get a user from auth.users by email
  * @param {string} email - The email address to search for
  * @returns {Promise<any|null>} The user object or null if not found
