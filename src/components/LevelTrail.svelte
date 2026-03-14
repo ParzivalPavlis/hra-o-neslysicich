@@ -1,8 +1,9 @@
 <script lang="ts">
+	import { colors } from '$lib/shared/colors';
 	import type { LevelTrailVariants } from '$types/levelTrails';
 
 	let {
-		color = 'rgb(217, 119, 6)',
+		color = colors.quaternary,
 		strokeWidth = 12,
 		variant = 3
 	}: { color?: string; strokeWidth?: number; variant?: LevelTrailVariants } = $props();

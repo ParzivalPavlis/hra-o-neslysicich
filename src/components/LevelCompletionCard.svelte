@@ -5,7 +5,7 @@
 	import { Star } from '@lucide/svelte';
 
 	type Props = {
-		correctAnswers: number;
+		correctAnswers?: number;
 		totalQuestions: number;
 		onRetry: () => void;
 		onBackToLevels: () => void;
@@ -16,6 +16,9 @@
 			good: string;
 			tryAgain: string;
 		};
+		variant?: 'correctAnswers' | 'lives';
+		maxLives?: number;
+		lives?: number;
 	};
 
 	let {
@@ -25,7 +28,10 @@
 		onBackToLevels,
 		title = 'Úroveň dokončena!',
 		stars,
-		messages
+		messages,
+		variant = 'correctAnswers',
+		maxLives,
+		lives
 	}: Props = $props();
 
 	let message = $derived(() => {
@@ -39,29 +45,39 @@
 	});
 </script>
 
-<div class="relative flex w-full max-w-180 flex-col items-center gap-8">
+<div class="relative flex w-full max-w-180 flex-col items-center gap-4">
 	<div class="flex flex-col text-center">
 		<Heading variant={2}>{title}</Heading>
 	</div>
 	<div class="rounded-2xl border-2 border-foreground bg-white p-8 text-center">
 		<div class="mb-4 text-6xl font-bold text-foreground">
-			{correctAnswers}/{totalQuestions}
+			{#if variant === 'correctAnswers'}
+				{correctAnswers}/{totalQuestions}
+			{:else if variant === 'lives'}
+				{lives}/{maxLives}
+			{/if}
 		</div>
-		<Paragraph>Správných odpovědí</Paragraph>
+		<Paragraph>
+			{#if variant === 'correctAnswers'}
+				Správných odpovědí
+			{:else if variant === 'lives'}
+				Životů zbylo
+			{/if}
+		</Paragraph>
 	</div>
 	<div class="flex gap-2">
 		{#each Array(3) as _, i}
 			<div class="flex">
 				{#if i < stars}
-					<Star size={55} color="gold" fill="gold" />
+					<Star size={40} color="gold" fill="gold" />
 				{:else}
-					<Star size={55} />
+					<Star size={40} />
 				{/if}
 			</div>
 		{/each}
 	</div>
 	<div class="text-center">
-		<Paragraph variant={3}>
+		<Paragraph variant={2}>
 			{message()}
 		</Paragraph>
 	</div>

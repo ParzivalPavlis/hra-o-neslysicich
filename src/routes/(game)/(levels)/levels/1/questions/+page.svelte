@@ -1,5 +1,6 @@
 <script lang="ts">
 	import { goto } from '$app/navigation';
+	import Layout1 from '$components/layouts/Layout1.svelte';
 	import QuestionCard from '$components/QuestionCard.svelte';
 	import questions from '$lib/levels/1/questions';
 	import { selectRandomOptions } from '$lib/shared/utils';
@@ -114,7 +115,7 @@
 	});
 </script>
 
-<div class="relative flex min-h-screen flex-col items-center px-5 py-5 md:p-10">
+<Layout1>
 	<QuestionCard
 		{currentQuestion}
 		{currentQuestionIndex}
@@ -124,4 +125,4 @@
 		{totalQuestions}
 		answers={answersMap}
 	/>
-</div>
+</Layout1>

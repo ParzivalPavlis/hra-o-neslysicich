@@ -1,5 +1,5 @@
 <script lang="ts">
-	import LevelCompletionScreen from '$components/LevelCompletionScreen.svelte';
+	import LevelCompletionCard from '$components/LevelCompletionCard.svelte';
 	import { level1QuestionsState } from '$lib/stores/level1';
 	import { goto, invalidate } from '$app/navigation';
 	import Layout1 from '$components/layouts/Layout1.svelte';
@@ -61,8 +61,8 @@
 	});
 </script>
 
-<Layout1>
-	<LevelCompletionScreen
+<Layout1 centered={false}>
+	<LevelCompletionCard
 		{correctAnswers}
 		{totalQuestions}
 		onRetry={handleRetry}

@@ -61,8 +61,8 @@
 	</div>
 	<img
 		src={personImagePath}
-		style="transform: scaleX(-1)"
-		class="z-[-1] max-h-100 w-full object-contain md:max-h-180"
+		style="transform: scaleX(-1); max-height: calc(100vh - 400px)"
+		class="z-[-1] w-full object-contain"
 		alt="Question Character"
 	/>
 </div>
