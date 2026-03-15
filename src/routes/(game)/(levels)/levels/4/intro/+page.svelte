@@ -5,6 +5,7 @@
 	import { goto } from '$app/navigation';
 	import GameButton from '$components/GameButton.svelte';
 	import Layout1 from '$components/layouts/Layout1.svelte';
+	import { setLastPlayed } from '$lib/stores/lastPlayed';
 
 	let fadeAnimations = $state(false);
 
@@ -13,6 +14,7 @@
 	}
 
 	onMount(() => {
+		setLastPlayed(4);
 		fadeAnimations = true;
 	});
 </script>

@@ -3,6 +3,7 @@
 	import LevelButton from '$components/LevelButton.svelte';
 	import Button from '$components/ui/button/button.svelte';
 	import { levels } from '$lib/levels';
+	import { lastPlayedStore } from '$lib/stores/lastPlayed';
 	import type { GameProgressType } from '$types/supabase/gameProgress';
 	import { ArrowUp, ArrowDown, ChevronUp, ChevronDown } from '@lucide/svelte';
 	import type { PageData } from './$types';
@@ -33,7 +34,17 @@
 	);
 
 	afterNavigate(() => {
-		window.scrollTo(0, 0);
+		if ($lastPlayedStore.levelNumber) {
+			setTimeout(() => {
+				const levelButton = document.getElementById(`level-${$lastPlayedStore.levelNumber}`);
+				if (levelButton) {
+					levelButton.scrollIntoView({ behavior: 'smooth', block: 'center' });
+					console.log(`Scrolled to level ${$lastPlayedStore.levelNumber} on page load.`);
+				}
+			}, 200);
+		} else {
+			window.scrollTo(0, 0);
+		}
 	});
 
 	function scrollToTop() {

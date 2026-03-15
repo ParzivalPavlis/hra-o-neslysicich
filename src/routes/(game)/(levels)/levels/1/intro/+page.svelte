@@ -8,6 +8,7 @@
 	import { beforeNavigate } from '$app/navigation';
 	import GameButton from '$components/GameButton.svelte';
 	import Layout1 from '$components/layouts/Layout1.svelte';
+	import { setLastPlayed } from '$lib/stores/lastPlayed';
 
 	let fadeAnimations = $state(false);
 	let manAudio: HTMLAudioElement;
@@ -149,6 +150,7 @@
 	});
 
 	onMount(() => {
+		setLastPlayed(1);
 		// Initialize audio elements
 		manAudio = new Audio('/assets/level1/man_voice.mp3');
 		womanAudio = new Audio('/assets/level1/woman_voice.mp3');

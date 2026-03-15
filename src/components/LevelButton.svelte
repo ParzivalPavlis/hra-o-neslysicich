@@ -7,11 +7,22 @@
 	import Paragraph from '$components/typography/Paragraph.svelte';
 	import type { ButtonVariantType, LevelButtonType } from '$types/levelButton';
 
-	let { attributes }: { attributes: LevelButtonType } = $props();
+	// Animation timing constants
+	const CIRCLE_ANIMATION_DURATION = 800;
+	const TOTAL_ANIMATION_DURATION = 2000;
+	const CIRCLE_RADIUS = 95;
+	const CIRCUMFERENCE_VALUE = 2 * Math.PI * CIRCLE_RADIUS;
+
+	let {
+		attributes,
+		justCompleted: initialJustCompleted = false
+	}: { attributes: LevelButtonType; justCompleted?: boolean } = $props();
 
 	let clickCount = $state(0);
-	// svelte-ignore state_referenced_locally
-	let IconComponent = attributes.icon;
+	let animating = $state(false);
+	let showYellow = $state(false);
+	let devAnimationTrigger = $state(0);
+	const IconComponent = $derived(attributes.icon);
 
 	const variantClasses: Record<ButtonVariantType, string> = {
 		blue: 'hover:bg-secondary bg-secondary shadow-[0_8px_0_var(--secondary-2)] hover:shadow-[0_10px_0_var(--secondary-2)] active:shadow-[0_4px_0_var(--secondary-2)]',
@@ -32,8 +43,9 @@
 					: 'blue'
 	);
 
-	const circumference = 2 * Math.PI * 95;
-	const strokeDasharray = $derived(`${(attributes.stars / 3) * circumference} ${circumference}`);
+	const strokeDasharray = $derived(
+		`${(attributes.stars / 3) * CIRCUMFERENCE_VALUE} ${CIRCUMFERENCE_VALUE}`
+	);
 
 	function handleClick(e: MouseEvent, node: HTMLElement) {
 		if (clickCount === 1 && !node.contains(e.target as Node)) {
@@ -49,10 +61,40 @@
 			}
 		};
 	}
+
+	function playAnimation() {
+		animating = true;
+		showYellow = false;
+
+		setTimeout(() => {
+			showYellow = true;
+		}, CIRCLE_ANIMATION_DURATION);
+
+		setTimeout(() => {
+			animating = false;
+		}, TOTAL_ANIMATION_DURATION);
+	}
+
+	$effect(() => {
+		if (initialJustCompleted && attributes.stars === 3) {
+			playAnimation();
+		}
+	});
+
+	// DEV: Play animation on button click
+	$effect(() => {
+		if (devAnimationTrigger > 0) {
+			playAnimation();
+		}
+	});
 </script>
 
-<div class="relative z-20 flex h-96 w-full max-w-64 flex-col items-center" use:clickOutside>
-	{#if !attributes.locked && attributes.stars < 3}
+<div
+	id="level-{attributes.level}"
+	class="relative z-20 flex h-96 w-full max-w-64 flex-col items-center"
+	use:clickOutside
+>
+	{#if !attributes.locked && attributes.stars < 3 && !animating}
 		<svg
 			class="pointer-events-none absolute -top-4 left-1/2 z-10 h-62 w-62 -translate-x-1/2"
 			viewBox="0 0 200 200"
@@ -74,40 +116,66 @@
 			{/if}
 		</svg>
 	{/if}
-	<Button
-		type="button"
-		disabled={attributes.locked}
-		onclick={() => {
-			clickCount++;
-			if (clickCount === 2) {
-				goto(attributes.href);
-			}
-		}}
-		class={cn(
-			'group relative flex h-52 w-52 cursor-pointer flex-col items-center justify-center overflow-hidden rounded-full transition-all hover:-translate-y-0.5 hover:opacity-100 active:translate-y-1',
-			variantClasses[variant]
-		)}
-	>
-		{#if variant === 'yellow'}
-			<div
-				class="absolute inset-0 rounded-full opacity-30"
-				style="background: repeating-linear-gradient(-45deg, transparent, transparent 50px, rgba(120, 53, 15, 0.2) 50px, rgba(120, 53, 15, 0.2) 80px);"
-			></div>
-		{/if}
-		<div class="relative z-10 flex flex-col items-center gap-2">
-			<div class="flex h-14 w-14 items-center justify-center rounded-full bg-white/20 text-white">
-				{#if attributes.locked}
-					<Lock class="h-7 w-7" />
-				{:else}
-					<IconComponent class="h-7 w-7" />
-				{/if}
+
+	{#if animating && !showYellow}
+		<svg
+			class="pointer-events-none absolute -top-4 left-1/2 z-10 h-62 w-62 -translate-x-1/2"
+			viewBox="0 0 200 200"
+		>
+			<circle cx="100" cy="100" r="96" fill="none" stroke="rgb(209, 213, 219)" stroke-width="6" />
+			<circle
+				cx="100"
+				cy="100"
+				r="96"
+				fill="none"
+				stroke="rgb(234, 179, 8)"
+				stroke-width="6"
+				stroke-linecap="round"
+				class="animate-circle-complete"
+				style="transform-origin: 100px 100px; transform: rotate(-90deg); stroke-dasharray: 0 {CIRCUMFERENCE_VALUE} {CIRCUMFERENCE_VALUE};"
+			/>
+		</svg>
+	{/if}
+
+	<div class={animating ? 'animate-celebrate' : ''}>
+		<Button
+			type="button"
+			disabled={attributes.locked}
+			onclick={() => {
+				clickCount++;
+				if (clickCount === 2) {
+					goto(attributes.href);
+				}
+			}}
+			class={cn(
+				'group relative flex h-52 w-52 cursor-pointer flex-col items-center justify-center overflow-hidden rounded-full hover:-translate-y-0.5 hover:opacity-100 active:translate-y-1',
+				!animating && 'transition-all',
+				showYellow ? variantClasses['yellow'] : variantClasses[variant]
+			)}
+		>
+			{#if variant === 'yellow' || showYellow}
+				<div
+					class="absolute inset-0 rounded-full opacity-30"
+					style="background: repeating-linear-gradient(-45deg, transparent, transparent 50px, rgba(120, 53, 15, 0.2) 50px, rgba(120, 53, 15, 0.2) 80px);"
+				></div>
+			{/if}
+			<div class="relative z-10 flex flex-col items-center gap-2">
+				<div class="flex h-14 w-14 items-center justify-center rounded-full bg-white/20 text-white">
+					{#if attributes.locked}
+						<Lock class="h-7 w-7" />
+					{:else}
+						<IconComponent class="h-7 w-7" />
+					{/if}
+				</div>
+				<div class="text-2xl font-extrabold text-white uppercase drop-shadow">
+					Úroveň {attributes.level}
+				</div>
 			</div>
-			<div class="text-2xl font-extrabold text-white uppercase drop-shadow">
-				Úroveň {attributes.level}
-			</div>
-		</div>
-	</Button>
+		</Button>
+	</div>
+
 	{#if clickCount === 1}
+		<!-- Double-click to navigate: first click shows hint, second click navigates -->
 		<div
 			class="chat-bubble border-gray/20 mt-10 w-full rounded-lg border-3 bg-white px-4 py-3"
 			style="z-index: inherit;"
@@ -116,9 +184,18 @@
 			<p class="text-center text-sm leading-relaxed text-foreground"></p>
 		</div>
 	{/if}
+
 	{#if attributes.trails}
 		<LevelTrail variant={attributes.trails} />
 	{/if}
+
+	<!-- DEV: Animation test button -->
+	<button
+		onclick={() => devAnimationTrigger++}
+		class="mt-4 rounded bg-purple-600 px-3 py-1 text-sm text-white hover:bg-purple-700"
+	>
+		▶ Play Animation
+	</button>
 </div>
 
 <style>
@@ -133,7 +210,46 @@
 		}
 	}
 
+	@keyframes animateCircle {
+		to {
+			stroke-dasharray: 604 604;
+		}
+	}
+
+	@keyframes celebrate {
+		0% {
+			transform: scale(1);
+		}
+		15% {
+			transform: scale(1.25);
+		}
+		35% {
+			transform: scale(1);
+		}
+		50% {
+			transform: scale(1.12);
+		}
+		70% {
+			transform: scale(1);
+		}
+		85% {
+			transform: scale(1.05);
+		}
+		100% {
+			transform: scale(1);
+		}
+	}
+
 	.chat-bubble {
 		animation: slideInUp 0.4s ease-out;
+	}
+
+	.animate-circle-complete {
+		animation: animateCircle 0.8s linear forwards !important;
+	}
+
+	.animate-celebrate {
+		animation: celebrate 1s cubic-bezier(0.34, 1.56, 0.64, 1) 0.8s forwards !important;
+		transform-origin: center !important;
 	}
 </style>
