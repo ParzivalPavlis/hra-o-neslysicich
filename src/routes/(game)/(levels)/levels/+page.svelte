@@ -39,7 +39,6 @@
 				const levelButton = document.getElementById(`level-${$lastPlayedStore.levelNumber}`);
 				if (levelButton) {
 					levelButton.scrollIntoView({ behavior: 'smooth', block: 'center' });
-					console.log(`Scrolled to level ${$lastPlayedStore.levelNumber} on page load.`);
 				}
 			}, 200);
 		} else {
