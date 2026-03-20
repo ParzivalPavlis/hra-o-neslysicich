@@ -21,7 +21,6 @@
 	let clickCount = $state(0);
 	let animating = $state(false);
 	let showYellow = $state(false);
-	let devAnimationTrigger = $state(0);
 	const IconComponent = $derived(attributes.icon);
 
 	const variantClasses: Record<ButtonVariantType, string> = {
@@ -77,13 +76,6 @@
 
 	$effect(() => {
 		if (initialJustCompleted && attributes.stars === 3) {
-			playAnimation();
-		}
-	});
-
-	// DEV: Play animation on button click
-	$effect(() => {
-		if (devAnimationTrigger > 0) {
 			playAnimation();
 		}
 	});
@@ -188,14 +180,6 @@
 	{#if attributes.trails}
 		<LevelTrail variant={attributes.trails} />
 	{/if}
-
-	<!-- DEV: Animation test button -->
-	<button
-		onclick={() => devAnimationTrigger++}
-		class="mt-4 rounded bg-purple-600 px-3 py-1 text-sm text-white hover:bg-purple-700"
-	>
-		▶ Play Animation
-	</button>
 </div>
 
 <style>

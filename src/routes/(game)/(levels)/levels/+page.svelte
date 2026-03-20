@@ -4,6 +4,7 @@
 	import Button from '$components/ui/button/button.svelte';
 	import { levels } from '$lib/levels';
 	import { lastPlayedStore } from '$lib/stores/lastPlayed';
+	import { levelFirstThreeStarsStore } from '$lib/stores/levelFirstThreeStars';
 	import type { GameProgressType } from '$types/supabase/gameProgress';
 	import { ArrowUp, ArrowDown, ChevronUp, ChevronDown } from '@lucide/svelte';
 	import type { PageData } from './$types';
@@ -32,6 +33,8 @@
 			};
 		})
 	);
+
+	console.log($levelFirstThreeStarsStore);
 
 	afterNavigate(() => {
 		if ($lastPlayedStore.levelNumber) {

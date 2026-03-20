@@ -1,6 +1,7 @@
 <script lang="ts">
 	import LevelCompletionCard from '$components/LevelCompletionCard.svelte';
 	import { level1QuestionsState } from '$lib/stores/level1';
+	import { setFirstThreeStars } from '$lib/stores/levelFirstThreeStars';
 	import { goto, invalidate } from '$app/navigation';
 	import Layout1 from '$components/layouts/Layout1.svelte';
 	import { onMount } from 'svelte';
@@ -45,9 +46,17 @@
 			});
 
 			const result = await response.json();
+			const data = JSON.parse(result.data);
+			const actionResult = data[0];
+
+			// Update store if first time getting 3 stars
+			if (actionResult?.firstTimeThreeStars) {
+				setFirstThreeStars(1);
+				console.log('First time 3 stars on level 1! Store updated.');
+			}
 
 			// Force reload the game:progress cache
-			if (result.data?.success) {
+			if (actionResult?.success) {
 				progressSaved = true;
 				await invalidate('game:progress');
 			}
