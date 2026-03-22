@@ -2,6 +2,7 @@
 	import GameButton from '$components/GameButton.svelte';
 	import Layout1 from '$components/layouts/Layout1.svelte';
 	import TalkingPerson from '$components/TalkingPerson.svelte';
+	import TalkingPersonTutorial from '$components/tutorials/TalkingPerson.svelte';
 	import Paragraph from '$components/typography/Paragraph.svelte';
 	import Button from '$components/ui/button/button.svelte';
 	import characterGroups from '$lib/levels/1/characterGroups';
@@ -247,20 +248,15 @@
 
 <Layout1>
 	{#if !conversationStarted}
-		<div class="flex w-full max-w-150 flex-col items-center gap-3 text-center">
-			<Paragraph>Nacházíte se v roli neslyšícího člověka v kavárně.</Paragraph>
+		<div class="flex w-full max-w-150 flex-col items-center gap-3 text-justify">
 			<Paragraph>
-				Okolo sebe máte další návštěvníky, kteří si povídají a jelikož čekáte na kamaráda, nenapadne
-				vás nic lepšího než mezitím zjistit, o čem si ostatní povídají.
+				Nacházíte se v roli neslyšícího člověka v kavárně. Okolo sebe máte další návštěvníky, kteří
+				si povídají a jelikož čekáte na kamaráda, nenapadne vás nic lepšího než mezitím zjistit, o
+				čem si ostatní povídají. Na konci je vaším cílem odpovědět na sérii otázek vztahující se k
+				tématům, o kterých si postavy povídaly.
 			</Paragraph>
-			<Paragraph>
-				Kliknutím na jednotlivé postavy se na ně začnete soustředit a odezírat z jejich úst o čem se
-				konkrétně baví.
-			</Paragraph>
-			<Paragraph>
-				Na konci je vaším cílem odpovědět na sérii otázek vztahující se k tématům, o kterých si
-				postavy povídaly.
-			</Paragraph>
+			<Paragraph variant={3} className="font-bold">Vysvětlivky:</Paragraph>
+			<TalkingPersonTutorial />
 			<GameButton onclick={startConversation} class="w-full max-w-[80%] md:max-w-150">
 				Začít
 			</GameButton>
@@ -291,6 +287,11 @@
 							isSpeaking={currentlySpeaking.has(globalCharacter.globalId)}
 							finishedSpeaking={finishedGroups.has(globalCharacter.groupId)}
 							onclick={() => handleCharacterClick(globalCharacter)}
+							showModal={selectedCharacter?.globalId === globalCharacter.globalId}
+							dialogText={selectedCharacter?.globalId === globalCharacter.globalId
+								? selectedCharacterDialog
+								: ''}
+							onCloseModal={closeModal}
 						/>
 					{/if}
 				{/each}
@@ -311,51 +312,6 @@
 				</div>
 			</div>
 		{/if}
-	{/if}
-	{#if selectedCharacter}
-		<div
-			class="bg-opacity-50 fixed inset-0 z-50 flex justify-center backdrop-blur-md transition-opacity md:items-center"
-			role="presentation"
-			onclick={closeModal}
-			onkeydown={(e) => e.key === 'Escape' && closeModal()}
-		>
-			<div
-				class="animate-zoom flex max-w-[80%] flex-col items-center gap-4"
-				role="dialog"
-				onclick={(e) => e.stopPropagation()}
-				onkeydown={(e) => e.stopPropagation()}
-				tabindex="0"
-			>
-				<div
-					class="animate-zoom-image mt-5 h-62.5 overflow-hidden rounded-lg bg-white shadow-2xl md:mt-0"
-				>
-					<img
-						src={`/assets/level1/${selectedCharacter.variant}.png`}
-						alt={selectedCharacter.name}
-						class="h-full w-50 object-cover"
-						style={`transform: scaleX(${selectedCharacter.rotation === 'left' ? -1 : 1});`}
-					/>
-				</div>
-				<div class="animate-bubble-in relative max-w-md">
-					<div class="absolute -top-2 left-1/2 -translate-x-1/2 transform">
-						<div
-							class="h-0 w-0 border-r-8 border-b-8 border-l-8 border-r-transparent border-b-white border-l-transparent"
-						></div>
-					</div>
-					<div class="rounded-2xl bg-white px-6 py-4 shadow-lg">
-						<p class="text-center text-lg font-semibold text-gray-800">
-							{selectedCharacter.name}
-						</p>
-						<p class="mt-1 text-center text-[15px] text-gray-700 italic">
-							"{selectedCharacterDialog}"
-						</p>
-					</div>
-				</div>
-				<GameButton onclick={closeModal} class="animate-bubble-in w-full max-w-[256px]">
-					Zavřít
-				</GameButton>
-			</div>
-		</div>
 	{/if}
 </Layout1>
 
