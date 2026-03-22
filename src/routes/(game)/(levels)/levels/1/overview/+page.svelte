@@ -1,7 +1,7 @@
 <script lang="ts">
 	import LevelCompletionCard from '$components/LevelCompletionCard.svelte';
 	import { level1QuestionsState } from '$lib/stores/level1';
-	import { setFirstThreeStars } from '$lib/stores/levelFirstThreeStars';
+	import { setFirstThreeStars } from '$lib/stores/lastPlayed';
 	import { goto, invalidate } from '$app/navigation';
 	import Layout1 from '$components/layouts/Layout1.svelte';
 	import { onMount } from 'svelte';
@@ -52,7 +52,6 @@
 			// Update store if first time getting 3 stars
 			if (actionResult?.firstTimeThreeStars) {
 				setFirstThreeStars(1);
-				console.log('First time 3 stars on level 1! Store updated.');
 			}
 
 			// Force reload the game:progress cache
@@ -69,6 +68,10 @@
 		saveLevelProgress();
 	});
 </script>
+
+<svelte:head>
+	<title>Úroveň 1 | Deafio</title>
+</svelte:head>
 
 <Layout1 centered={false}>
 	<LevelCompletionCard

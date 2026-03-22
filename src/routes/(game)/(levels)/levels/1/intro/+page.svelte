@@ -176,6 +176,10 @@
 	});
 </script>
 
+<svelte:head>
+	<title>Úroveň 1 | Deafio</title>
+</svelte:head>
+
 <Layout1>
 	<div class="flex w-full max-w-150 flex-col items-center">
 		{#if introState === 1 && fadeAnimations}

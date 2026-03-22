@@ -115,6 +115,10 @@
 	});
 </script>
 
+<svelte:head>
+	<title>Úroveň 1 | Deafio</title>
+</svelte:head>
+
 <Layout1>
 	<QuestionCard
 		{currentQuestion}

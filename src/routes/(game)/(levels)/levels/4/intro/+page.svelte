@@ -19,6 +19,10 @@
 	});
 </script>
 
+<svelte:head>
+	<title>Úroveň 4 | Deafio</title>
+</svelte:head>
+
 <Layout1>
 	{#if fadeAnimations}
 		<div class="flex w-full max-w-150 flex-col gap-3">

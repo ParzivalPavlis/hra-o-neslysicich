@@ -66,9 +66,9 @@
 	}
 
 	afterNavigate(() => {
-		if ($lastPlayedStore.levelNumber) {
+		if ($lastPlayedStore.level) {
 			setTimeout(() => {
-				const levelButton = document.getElementById(`level-${$lastPlayedStore.levelNumber}`);
+				const levelButton = document.getElementById(`level-${$lastPlayedStore.level}`);
 				if (levelButton) {
 					levelButton.scrollIntoView({ behavior: 'smooth', block: 'center' });
 				}
@@ -119,8 +119,8 @@
 	$effect(() => {
 		if (currentViewedLevelIndex !== null) {
 			const levelNumber = currentViewedLevelIndex + 1;
-			const isLastPlayed = levelNumber === $lastPlayedStore.levelNumber;
-			const matchesFirstThreeStars = levelNumber === $lastPlayedStore.firstThreeStarsLevelNumber;
+			const isLastPlayed = levelNumber === $lastPlayedStore.level;
+			const matchesFirstThreeStars = levelNumber === $lastPlayedStore.firstThreeStars;
 
 			if (isLastPlayed && matchesFirstThreeStars) {
 				shouldPlayAnimation = true;
@@ -134,7 +134,7 @@
 </script>
 
 <svelte:head>
-	<title>Úrovně</title>
+	<title>Úrovně | Deafio</title>
 </svelte:head>
 
 <div class="relative flex min-h-screen flex-col items-center gap-50 overflow-x-hidden p-10">

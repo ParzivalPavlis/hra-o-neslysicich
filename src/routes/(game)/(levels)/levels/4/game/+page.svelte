@@ -120,7 +120,7 @@
 </script>
 
 <svelte:head>
-	<title>Úroveň 4</title>
+	<title>Úroveň 4 | Deafio</title>
 </svelte:head>
 
 <svelte:window on:orientationchange={updateOrientation} on:resize={updateOrientation} />

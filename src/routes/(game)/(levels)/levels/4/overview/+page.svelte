@@ -72,6 +72,10 @@
 	});
 </script>
 
+<svelte:head>
+	<title>Úroveň 4 | Deafio</title>
+</svelte:head>
+
 <Layout1 centered={false}>
 	<LevelCompletionCard
 		{totalQuestions}
