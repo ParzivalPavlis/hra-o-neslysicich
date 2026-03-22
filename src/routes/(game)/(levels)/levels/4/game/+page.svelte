@@ -1,10 +1,11 @@
 <script lang="ts">
 	import GameButton from '$components/GameButton.svelte';
 	import ReplayButton from '$components/ReplayButton.svelte';
+	import AnswerTab from '$components/AnswerTab.svelte';
 	import Layout2 from '$components/layouts/Layout2.svelte';
 	import Paragraph from '$components/typography/Paragraph.svelte';
 	import { fly, fade } from 'svelte/transition';
-	import { Play, HeartHandshake, ChevronUp } from '@lucide/svelte';
+	import { Play, HeartHandshake } from '@lucide/svelte';
 	import { shuffleArray } from '$lib/shared/utils';
 	import { onMount } from 'svelte';
 	import { goto } from '$app/navigation';
@@ -17,6 +18,7 @@
 		decreaseLives,
 		addAnswer
 	} from '$lib/stores/level4';
+	import LivesIndicator from '$components/LivesIndicator.svelte';
 
 	let isPortrait = $state(true);
 	let isMobile = $state(false);
@@ -105,6 +107,7 @@
 	});
 
 	$effect(() => {
+		videoEnded = false;
 		if (videoElement && answers[currentAnswerIndex]) {
 			// Wait for video to be loaded and play
 			videoElement.play().catch(() => {
@@ -118,7 +121,7 @@
 </script>
 
 <svelte:head>
-	<title>Úroveň 4</title>
+	<title>Úroveň 4 | Deafio</title>
 </svelte:head>
 
 <svelte:window on:orientationchange={updateOrientation} on:resize={updateOrientation} />
@@ -145,7 +148,7 @@
 			{#if !isMobile}
 				<div class="relative w-full max-w-6xl">
 					<div
-						class="aspect-video overflow-hidden rounded-lg border-2 border-foreground bg-transparent landscape:h-auto landscape:max-h-[calc(100vh-2rem)]"
+						class="relative aspect-video overflow-hidden rounded-lg border-2 border-foreground bg-transparent landscape:h-auto landscape:max-h-[calc(100vh-2rem)]"
 					>
 						{#if autoplayPrevented}
 							<div class="flex h-full w-full items-center justify-center">
@@ -156,7 +159,7 @@
 											videoElement.play();
 										}
 									}}
-									class="flex h-14 w-14 cursor-pointer items-center justify-center rounded-full border-0 bg-blue-500 shadow-[0_6px_0_rgb(29,78,216)] transition-all hover:-translate-y-0.5 hover:shadow-[0_8px_0_rgb(29,78,216)] active:translate-y-0.5 active:shadow-[0_4px_0_rgb(29,78,216)]"
+									class="flex h-14 w-14 cursor-pointer items-center justify-center rounded-full border-0 bg-secondary shadow-[0_6px_0_var(--secondary-2)] transition-all hover:-translate-y-0.5 hover:shadow-[0_8px_0_var(--secondary-2)] active:translate-y-0.5 active:shadow-[0_4px_0_var(--secondary-2)]"
 								>
 									<Play size={24} color="white" fill="white" />
 								</button>
@@ -165,7 +168,9 @@
 							{#key answers[currentAnswerIndex].videoSrc}
 								<video
 									bind:this={videoElement}
-									class="h-full w-full object-cover"
+									class="h-full w-full object-cover transition-opacity duration-300 {videoEnded
+										? 'opacity-50'
+										: 'opacity-100'}"
 									playsinline
 									muted
 									transition:fade={{ duration: 400 }}
@@ -175,25 +180,19 @@
 									Your browser does not support the video tag.
 								</video>
 							{/key}
+							{#if videoEnded}
+								<div
+									class="absolute inset-0 flex items-center justify-center"
+									transition:fade={{ duration: 200 }}
+								>
+									<ReplayButton onclick={replayVideo} disabled={helpUses === 0} {helpUses} />
+								</div>
+							{/if}
 						{/if}
 					</div>
-					<!-- Help button for desktop - absolute positioned -->
-					<div class="absolute top-4 right-4 flex flex-col items-center gap-3">
-						<div class="flex flex-col gap-2">
-							{#each Array(4) as _, i}
-								<HeartHandshake
-									size={30}
-									class="transition-all duration-500 {i < lives
-										? ' text-red-600'
-										: 'text-gray-300'}"
-								/>
-							{/each}
-						</div>
-						<ReplayButton
-							onclick={replayVideo}
-							disabled={!videoEnded || helpUses === 0}
-							{helpUses}
-						/>
+					<!-- Lives indicator for desktop - absolute positioned -->
+					<div class="absolute top-4 right-4 flex flex-col gap-2">
+						<LivesIndicator {lives} />
 					</div>
 				</div>
 			{/if}
@@ -201,7 +200,7 @@
 			<!-- Mobile layout with video only -->
 			{#if isMobile}
 				<div
-					class="aspect-video w-full max-w-6xl overflow-hidden rounded-lg border-2 border-foreground bg-transparent landscape:h-auto landscape:max-h-[calc(100vh-2rem)]"
+					class="relative aspect-video w-full max-w-6xl overflow-hidden rounded-lg border-2 border-foreground bg-transparent landscape:h-auto landscape:max-h-[calc(100vh-2rem)]"
 				>
 					{#if autoplayPrevented}
 						<div class="flex h-full w-full items-center justify-center">
@@ -212,7 +211,7 @@
 										videoElement.play();
 									}
 								}}
-								class="flex h-14 w-14 cursor-pointer items-center justify-center rounded-full border-0 bg-blue-500 shadow-[0_6px_0_rgb(29,78,216)] transition-all hover:-translate-y-0.5 hover:shadow-[0_8px_0_rgb(29,78,216)] active:translate-y-0.5 active:shadow-[0_4px_0_rgb(29,78,216)]"
+								class="flex h-14 w-14 cursor-pointer items-center justify-center rounded-full border-0 bg-secondary shadow-[0_6px_0_var(--secondary-2)] transition-all hover:-translate-y-0.5 hover:shadow-[0_8px_0_var(--secondary-2)] active:translate-y-0.5 active:shadow-[0_4px_0_var(--secondary-2)]"
 							>
 								<Play size={24} color="white" fill="white" />
 							</button>
@@ -221,7 +220,9 @@
 						{#key answers[currentAnswerIndex].videoSrc}
 							<video
 								bind:this={videoElement}
-								class="h-full w-full object-cover"
+								class="h-full w-full object-cover transition-opacity duration-300 {videoEnded
+									? 'opacity-50'
+									: 'opacity-100'}"
 								playsinline
 								muted
 								transition:fade={{ duration: 400 }}
@@ -231,6 +232,14 @@
 								Your browser does not support the video tag.
 							</video>
 						{/key}
+						{#if videoEnded}
+							<div
+								class="absolute inset-0 flex items-center justify-center"
+								transition:fade={{ duration: 200 }}
+							>
+								<ReplayButton onclick={replayVideo} disabled={helpUses === 0} {helpUses} />
+							</div>
+						{/if}
 					{/if}
 				</div>
 			{/if}
@@ -250,50 +259,22 @@
 		</div>
 	{/if}
 	{#if isMobile && !isPortrait}
-		<div class="fixed right-4 bottom-4 flex flex-col items-center gap-3">
+		<div class="fixed right-8 bottom-9 flex flex-col items-center gap-3">
 			<div class="flex flex-col gap-2">
-				{#each Array(4) as _, i}
-					<HeartHandshake
-						size={30}
-						class="transition-all duration-500 {i < lives ? ' text-red-600' : 'text-gray-300'}"
-					/>
-				{/each}
+				<LivesIndicator {lives} />
 			</div>
-			<ReplayButton onclick={replayVideo} disabled={!videoEnded || helpUses === 0} {helpUses} />
 		</div>
 	{/if}
 	<!-- Answer tab -->
-	{#if showAnswerTab && !isPortrait && isMobile}
-		<div
-			class="fixed right-0 bottom-0 left-0 z-40 transition-all duration-300"
-			class:max-h-96={!answerTabCollapsed}
-			class:max-h-20={answerTabCollapsed}
-		>
-			<button
-				onclick={() => (answerTabCollapsed = !answerTabCollapsed)}
-				class="mx-auto flex items-center justify-center rounded-t-lg border-t-2 border-r-2 border-l-2 border-foreground bg-white p-1"
-			>
-				<ChevronUp
-					size={30}
-					class="transition-transform duration-300 {answerTabCollapsed ? 'rotate-180' : ''}"
-				/>
-			</button>
-			{#if !answerTabCollapsed}
-				<div
-					class="flex flex-col gap-4 overflow-y-auto border-t-2 border-foreground bg-white p-4"
-					transition:fly={{ y: 100, duration: 300 }}
-				>
-					{#each shuffledOptions as option (option.id)}
-						<GameButton
-							size="small"
-							onclick={() => handleAnswerClick(option.id)}
-							variant={showColorFeedback(option.id)}
-						>
-							{option.text}
-						</GameButton>
-					{/each}
-				</div>
-			{/if}
-		</div>
-	{/if}
+	<AnswerTab
+		bind:showAnswerTab
+		bind:answerTabCollapsed
+		text="ODPOVĚDI"
+		onCollapsedChange={(collapsed) => (answerTabCollapsed = collapsed)}
+		{shuffledOptions}
+		onAnswerClick={handleAnswerClick}
+		{showColorFeedback}
+		{isPortrait}
+		{isMobile}
+	/>
 </Layout2>

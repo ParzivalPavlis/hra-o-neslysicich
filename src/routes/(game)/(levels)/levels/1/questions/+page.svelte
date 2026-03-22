@@ -1,6 +1,7 @@
 <script lang="ts">
 	import { goto } from '$app/navigation';
-	import GameButton from '$components/GameButton.svelte';
+	import Layout1 from '$components/layouts/Layout1.svelte';
+	import QuestionCard from '$components/QuestionCard.svelte';
 	import questions from '$lib/levels/1/questions';
 	import { selectRandomOptions } from '$lib/shared/utils';
 	import {
@@ -10,7 +11,6 @@
 		addQuestionAnswer
 	} from '$lib/stores/level1';
 	import type { QuestionOptionType } from '$types/question';
-	import { fade } from 'svelte/transition';
 
 	let selectedAnswer = $state<string | null>(null);
 	let showingFeedback = $state(false);
@@ -45,6 +45,18 @@
 	let currentQuestion = $derived(
 		selectedQuestions().find((q) => q && q.id === currentQuestionIndex) || null
 	);
+
+	let personImagePath = $derived(`/assets/level1/${personImage}.png`);
+
+	let answersMap = $derived.by(() => {
+		const map: Record<number, boolean> = {};
+		questionsState.answers.forEach((answer) => {
+			map[answer.questionId] = answer.isCorrect;
+		});
+		return map;
+	});
+
+	let totalQuestions = $derived(selectedQuestions().length);
 
 	function handleAnswerSelect(option: QuestionOptionType) {
 		if (showingFeedback) return;
@@ -103,37 +115,18 @@
 	});
 </script>
 
-<div class="relative flex min-h-screen flex-col items-center px-5 py-5 md:p-10">
-	<div class="relative flex w-full max-w-180 flex-col">
-		<div
-			class="flex h-40 w-full items-center justify-center rounded-2xl border-2 border-foreground bg-white p-3"
-		>
-			{#if currentQuestion}
-				{#key currentQuestionIndex}
-					<span class="text-center" in:fade>{currentQuestion.question}</span>
-				{/key}
-			{/if}
-		</div>
+<svelte:head>
+	<title>Úroveň 1 | Deafio</title>
+</svelte:head>
 
-		<div class="mt-4 flex flex-col gap-3">
-			{#if currentQuestion}
-				{#each currentQuestion.options as option}
-					<GameButton
-						class="w-full"
-						onclick={() => handleAnswerSelect(option)}
-						size="small"
-						variant={showColorFeedback(option.id)}
-					>
-						{option.text}
-					</GameButton>
-				{/each}
-			{/if}
-		</div>
-		<img
-			src="/assets/level1/{personImage}.png"
-			style="transform: scaleX(-1)"
-			class="z-[-1] max-h-100 w-full object-contain md:max-h-180"
-			alt="Question Character"
-		/>
-	</div>
-</div>
+<Layout1>
+	<QuestionCard
+		{currentQuestion}
+		{currentQuestionIndex}
+		{personImagePath}
+		onAnswerSelect={handleAnswerSelect}
+		{showColorFeedback}
+		{totalQuestions}
+		answers={answersMap}
+	/>
+</Layout1>

@@ -1,85 +1,184 @@
 <script lang="ts">
-	import { onMount } from 'svelte';
 	import { Button } from '$components/ui/button';
 	import LevelTrail from '$components/LevelTrail.svelte';
-	import { Star } from '@lucide/svelte';
 	import { goto } from '$app/navigation';
-	import type { LevelButtonType } from '$types/levelButton';
+	import { cn } from '$lib/utils';
+	import { Lock } from '@lucide/svelte';
+	import Paragraph from '$components/typography/Paragraph.svelte';
+	import type { ButtonVariantType, LevelButtonType } from '$types/levelButton';
+	import { clearFirstThreeStars } from '$lib/stores/lastPlayed';
 
-	let {
-		attributes,
-		levelInfoOpen = $bindable(false)
-	}: { attributes: LevelButtonType; levelInfoOpen?: boolean } = $props();
+	// Animation timing constants
+	const CIRCLE_ANIMATION_DURATION = 800;
+	const TOTAL_ANIMATION_DURATION = 2000;
+	const CIRCLE_RADIUS = 95;
+	const CIRCUMFERENCE_VALUE = 2 * Math.PI * CIRCLE_RADIUS;
+
+	let { attributes, playAnimation }: { attributes: LevelButtonType; playAnimation?: boolean } =
+		$props();
 
 	let clickCount = $state(0);
-	let containerRef: HTMLDivElement;
-	// svelte-ignore state_referenced_locally
-	let IconComponent = attributes.icon;
+	let animating = $state(false);
+	let showYellow = $state(false);
+	const IconComponent = $derived(attributes.icon);
 
-	function handleClick() {
-		if (levelInfoOpen) {
-			// If info is open, navigate directly with single click
-			goto(attributes.href);
-		} else {
-			// Otherwise require 2 clicks
-			clickCount++;
-			if (clickCount === 2) {
-				goto(attributes.href);
-			}
-		}
-	}
+	const variantClasses: Record<ButtonVariantType, string> = {
+		blue: 'hover:bg-secondary bg-secondary shadow-[0_8px_0_var(--secondary-2)] hover:shadow-[0_10px_0_var(--secondary-2)] active:shadow-[0_4px_0_var(--secondary-2)]',
+		gray: 'hover:bg-gray-500 bg-gray-500 shadow-[0_8px_0_rgb(55,65,81)] hover:shadow-[0_10px_0_rgb(55,65,81)] active:shadow-[0_4px_0_rgb(55,65,81)]',
+		green:
+			'hover:bg-green-500 bg-green-500 shadow-[0_8px_0_rgb(21,128,61)] hover:shadow-[0_10px_0_rgb(21,128,61)] active:shadow-[0_4px_0_rgb(21,128,61)]',
+		yellow:
+			'hover:bg-yellow-500 bg-yellow-500 shadow-[0_8px_0_rgb(161,98,7)] hover:shadow-[0_10px_0_rgb(161,98,7)] active:shadow-[0_4px_0_rgb(161,98,7)]'
+	};
 
-	function handleDocumentClick(e: MouseEvent) {
-		if (clickCount === 1 && containerRef && !containerRef.contains(e.target as Node)) {
+	const variant = $derived(
+		attributes.locked
+			? 'gray'
+			: attributes.stars === 3
+				? 'yellow'
+				: attributes.stars > 0
+					? 'green'
+					: 'blue'
+	);
+
+	const strokeDasharray = $derived(
+		`${(attributes.stars / 3) * CIRCUMFERENCE_VALUE} ${CIRCUMFERENCE_VALUE}`
+	);
+
+	function handleClick(e: MouseEvent, node: HTMLElement) {
+		if (clickCount === 1 && !node.contains(e.target as Node)) {
 			clickCount = 0;
 		}
 	}
 
-	onMount(() => {
-		document.addEventListener('click', handleDocumentClick);
-		return () => document.removeEventListener('click', handleDocumentClick);
+	function clickOutside(node: HTMLElement) {
+		document.addEventListener('click', (e) => handleClick(e, node));
+		return {
+			destroy() {
+				document.removeEventListener('click', (e) => handleClick(e, node));
+			}
+		};
+	}
+
+	function triggerAnimation() {
+		animating = true;
+		showYellow = false;
+
+		setTimeout(() => {
+			showYellow = true;
+		}, CIRCLE_ANIMATION_DURATION);
+
+		setTimeout(() => {
+			animating = false;
+		}, TOTAL_ANIMATION_DURATION);
+	}
+
+	$effect(() => {
+		if (playAnimation && attributes.stars === 3) {
+			triggerAnimation();
+			clearFirstThreeStars();
+		}
 	});
 </script>
 
-<div class="relative flex h-80 w-full max-w-50 flex-col items-center" bind:this={containerRef}>
+<div
+	id="level-{attributes.level}"
+	class="relative z-20 flex h-96 w-full max-w-64 flex-col items-center"
+	use:clickOutside
+>
+	{#if !attributes.locked && attributes.stars < 3 && !animating}
+		<svg
+			class="pointer-events-none absolute -top-4 left-1/2 z-10 h-62 w-62 -translate-x-1/2"
+			viewBox="0 0 200 200"
+		>
+			<circle cx="100" cy="100" r="96" fill="none" stroke="rgb(209, 213, 219)" stroke-width="6" />
+			{#if attributes.stars > 0}
+				<circle
+					cx="100"
+					cy="100"
+					r="96"
+					fill="none"
+					stroke="rgb(234, 179, 8)"
+					stroke-width="6"
+					stroke-dasharray={strokeDasharray}
+					stroke-linecap="round"
+					class="transition-all duration-300"
+					style="transform-origin: 100px 100px; transform: rotate(-90deg);"
+				/>
+			{/if}
+		</svg>
+	{/if}
+
+	{#if animating && !showYellow}
+		<svg
+			class="pointer-events-none absolute -top-4 left-1/2 z-10 h-62 w-62 -translate-x-1/2"
+			viewBox="0 0 200 200"
+		>
+			<circle cx="100" cy="100" r="96" fill="none" stroke="rgb(209, 213, 219)" stroke-width="6" />
+			<circle
+				cx="100"
+				cy="100"
+				r="96"
+				fill="none"
+				stroke="rgb(234, 179, 8)"
+				stroke-width="6"
+				stroke-linecap="round"
+				class="animate-circle-complete"
+				style="transform-origin: 100px 100px; transform: rotate(-90deg); stroke-dasharray: 0 {CIRCUMFERENCE_VALUE} {CIRCUMFERENCE_VALUE};"
+			/>
+		</svg>
+	{/if}
+
+	<div class={animating ? 'animate-celebrate' : ''}>
+		<Button
+			type="button"
+			disabled={attributes.locked}
+			onclick={() => {
+				clickCount++;
+				if (clickCount === 2) {
+					goto(attributes.href);
+				}
+			}}
+			class={cn(
+				'group relative flex h-52 w-52 cursor-pointer flex-col items-center justify-center overflow-hidden rounded-full hover:-translate-y-0.5 hover:opacity-100 active:translate-y-1',
+				!animating && 'transition-all',
+				showYellow ? variantClasses['yellow'] : variantClasses[variant]
+			)}
+		>
+			{#if variant === 'yellow' || showYellow}
+				<div
+					class="absolute inset-0 rounded-full opacity-30"
+					style="background: repeating-linear-gradient(-45deg, transparent, transparent 50px, rgba(120, 53, 15, 0.2) 50px, rgba(120, 53, 15, 0.2) 80px);"
+				></div>
+			{/if}
+			<div class="relative z-10 flex flex-col items-center gap-2">
+				<div class="flex h-14 w-14 items-center justify-center rounded-full bg-white/20 text-white">
+					{#if attributes.locked}
+						<Lock class="h-7 w-7" />
+					{:else}
+						<IconComponent class="h-7 w-7" />
+					{/if}
+				</div>
+				<div class="text-2xl font-extrabold text-white uppercase drop-shadow">
+					Úroveň {attributes.level}
+				</div>
+			</div>
+		</Button>
+	</div>
+
+	{#if clickCount === 1}
+		<!-- Double-click to navigate: first click shows hint, second click navigates -->
+		<div
+			class="chat-bubble border-gray/20 mt-10 w-full rounded-lg border-3 bg-white px-4 py-3"
+			style="z-index: inherit;"
+		>
+			<Paragraph className="text-center leading-relaxed">{attributes.description}</Paragraph>
+			<p class="text-center text-sm leading-relaxed text-foreground"></p>
+		</div>
+	{/if}
+
 	{#if attributes.trails}
 		<LevelTrail variant={attributes.trails} />
-	{/if}
-	<Button
-		type="button"
-		disabled={attributes.locked}
-		onclick={handleClick}
-		class="group relative flex h-40 w-40 cursor-pointer flex-col items-center justify-center overflow-hidden rounded-full
-          bg-blue-500
-          shadow-[0_8px_0_rgb(29,78,216)]
-          transition-all
-          hover:-translate-y-0.5 hover:bg-blue-500
-         hover:opacity-100 hover:shadow-[0_10px_0_rgb(29,78,216)]
-         active:translate-y-1 active:shadow-[0_4px_0_rgb(29,78,216)]
-         disabled:translate-y-0 disabled:bg-gray-500 disabled:opacity-100
-				 disabled:shadow-[0_8px_0_rgb(55,65,81)]"
-	>
-		<div class="flex flex-col items-center gap-2">
-			<div class="flex h-11 w-11 items-center justify-center rounded-full bg-white/10 text-white">
-				<IconComponent class="h-5 w-5" />
-			</div>
-			<div class="text-lg font-extrabold text-white uppercase drop-shadow">
-				Úroveň {attributes.level}
-			</div>
-			<div class="flex gap-1">
-				{#each Array(3) as _, i}
-					<Star
-						class={'h-4 w-4 ' +
-							(i < attributes.stars ? 'fill-yellow-300 text-yellow-300' : 'text-white/35')}
-					/>
-				{/each}
-			</div>
-		</div>
-	</Button>
-	{#if clickCount === 1 || levelInfoOpen}
-		<div class="chat-bubble mt-4 max-w-xs rounded-lg border border-foreground bg-white px-4 py-3">
-			<p class="text-center text-sm leading-relaxed text-foreground">{attributes.description}</p>
-		</div>
 	{/if}
 </div>
 
@@ -95,7 +194,46 @@
 		}
 	}
 
+	@keyframes animateCircle {
+		to {
+			stroke-dasharray: 604 604;
+		}
+	}
+
+	@keyframes celebrate {
+		0% {
+			transform: scale(1);
+		}
+		15% {
+			transform: scale(1.25);
+		}
+		35% {
+			transform: scale(1);
+		}
+		50% {
+			transform: scale(1.12);
+		}
+		70% {
+			transform: scale(1);
+		}
+		85% {
+			transform: scale(1.05);
+		}
+		100% {
+			transform: scale(1);
+		}
+	}
+
 	.chat-bubble {
 		animation: slideInUp 0.4s ease-out;
+	}
+
+	.animate-circle-complete {
+		animation: animateCircle 0.8s linear forwards !important;
+	}
+
+	.animate-celebrate {
+		animation: celebrate 1s cubic-bezier(0.34, 1.56, 0.64, 1) 0.8s forwards !important;
+		transform-origin: center !important;
 	}
 </style>

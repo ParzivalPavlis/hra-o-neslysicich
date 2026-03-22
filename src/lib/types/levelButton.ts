@@ -1,6 +1,8 @@
 import type { LevelTrailVariants } from '$lib/types/levelTrails';
 import type { Component } from 'svelte';
 
+export type ButtonVariantType = 'blue' | 'gray' | 'green' | 'yellow';
+
 export type LevelButtonType = {
 	icon: Component;
 	level?: number;
@@ -9,4 +11,5 @@ export type LevelButtonType = {
 	locked: boolean;
 	description: string;
 	trails?: LevelTrailVariants;
+	variant?: ButtonVariantType;
 };

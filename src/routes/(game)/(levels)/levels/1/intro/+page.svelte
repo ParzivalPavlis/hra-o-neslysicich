@@ -8,6 +8,7 @@
 	import { beforeNavigate } from '$app/navigation';
 	import GameButton from '$components/GameButton.svelte';
 	import Layout1 from '$components/layouts/Layout1.svelte';
+	import { setLastPlayed } from '$lib/stores/lastPlayed';
 
 	let fadeAnimations = $state(false);
 	let manAudio: HTMLAudioElement;
@@ -149,6 +150,7 @@
 	});
 
 	onMount(() => {
+		setLastPlayed(1);
 		// Initialize audio elements
 		manAudio = new Audio('/assets/level1/man_voice.mp3');
 		womanAudio = new Audio('/assets/level1/woman_voice.mp3');
@@ -174,17 +176,21 @@
 	});
 </script>
 
+<svelte:head>
+	<title>Úroveň 1 | Deafio</title>
+</svelte:head>
+
 <Layout1>
-	<div class="flex w-full max-w-150 flex-col items-center">
+	<div class="flex w-full max-w-150 flex-col items-center text-justify">
 		{#if introState === 1 && fadeAnimations}
 			<div in:fade={{ duration: 3000 }}>
-				<Paragraph className="text-center">
+				<Paragraph>
 					Zvuk je pro nás všudypřítomný a často si ani neuvědomujeme, jak moc ho ke každodennímu
 					životu potřebujeme.
 				</Paragraph>
 			</div>
 			<div in:fade={{ delay: 3000, duration: 3000 }}>
-				<Paragraph className="text-center mt-3">
+				<Paragraph>
 					Dokážeme se díky němu například orientovat v prostoru, užívat si hudbu a také hlavně
 					efektivně komunikovat s ostatními a dokážeme ihned zjistit, co se děje kolem nás a o čem
 					se lidé baví.

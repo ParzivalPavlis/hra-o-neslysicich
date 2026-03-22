@@ -1,19 +1,20 @@
 <script lang="ts">
-	import LevelCompletionScreen from '$components/LevelCompletionScreen.svelte';
+	import LevelCompletionCard from '$components/LevelCompletionCard.svelte';
 	import { level4GameState } from '$lib/stores/level4';
 	import { goto, invalidate } from '$app/navigation';
-	import Layout2 from '$components/layouts/Layout2.svelte';
 	import { onMount } from 'svelte';
+	import Layout1 from '$components/layouts/Layout1.svelte';
+	import { setFirstThreeStars } from '$lib/stores/lastPlayed';
 
 	let gameState = $derived($level4GameState);
 	let answers = $derived(gameState.answers);
 	let lives = $derived(gameState.lives);
-	let correctAnswers = $derived(answers.filter((answer) => answer.isCorrect).length);
 	let totalQuestions = $derived(answers.length);
+	let maxLives = 4;
 
 	let stars = $derived(() => {
 		// Stars based on remaining lives (out of 4)
-		if (lives === 4) return 3;
+		if (lives === maxLives) return 3;
 		if (lives >= 2) return 2;
 		if (lives === 1) return 1;
 		return 0;
@@ -47,9 +48,17 @@
 			});
 
 			const result = await response.json();
+			const data = JSON.parse(result.data);
+			const actionResult = data[0];
+
+			// Update store if first time getting 3 stars
+			if (actionResult?.firstTimeThreeStars) {
+				setFirstThreeStars(4);
+				console.log('First time 3 stars on level 4! Store updated.');
+			}
 
 			// Force reload the game:progress cache
-			if (result.data?.success) {
+			if (actionResult?.success) {
 				progressSaved = true;
 				await invalidate('game:progress');
 			}
@@ -63,14 +72,20 @@
 	});
 </script>
 
-<Layout2>
-	<LevelCompletionScreen
-		{correctAnswers}
+<svelte:head>
+	<title>Úroveň 4 | Deafio</title>
+</svelte:head>
+
+<Layout1 centered={false}>
+	<LevelCompletionCard
 		{totalQuestions}
 		onRetry={handleRetry}
 		onBackToLevels={handleBackToLevels}
 		title="Úroveň 4 dokončena!"
 		{messages}
 		stars={stars()}
+		variant="lives"
+		{maxLives}
+		{lives}
 	/>
-</Layout2>
+</Layout1>

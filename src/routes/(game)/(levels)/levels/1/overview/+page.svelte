@@ -1,6 +1,7 @@
 <script lang="ts">
-	import LevelCompletionScreen from '$components/LevelCompletionScreen.svelte';
+	import LevelCompletionCard from '$components/LevelCompletionCard.svelte';
 	import { level1QuestionsState } from '$lib/stores/level1';
+	import { setFirstThreeStars } from '$lib/stores/lastPlayed';
 	import { goto, invalidate } from '$app/navigation';
 	import Layout1 from '$components/layouts/Layout1.svelte';
 	import { onMount } from 'svelte';
@@ -45,9 +46,16 @@
 			});
 
 			const result = await response.json();
+			const data = JSON.parse(result.data);
+			const actionResult = data[0];
+
+			// Update store if first time getting 3 stars
+			if (actionResult?.firstTimeThreeStars) {
+				setFirstThreeStars(1);
+			}
 
 			// Force reload the game:progress cache
-			if (result.data?.success) {
+			if (actionResult?.success) {
 				progressSaved = true;
 				await invalidate('game:progress');
 			}
@@ -61,8 +69,12 @@
 	});
 </script>
 
-<Layout1>
-	<LevelCompletionScreen
+<svelte:head>
+	<title>Úroveň 1 | Deafio</title>
+</svelte:head>
+
+<Layout1 centered={false}>
+	<LevelCompletionCard
 		{correctAnswers}
 		{totalQuestions}
 		onRetry={handleRetry}

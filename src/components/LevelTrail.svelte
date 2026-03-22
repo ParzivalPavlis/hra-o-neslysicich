@@ -1,8 +1,9 @@
 <script lang="ts">
+	import { colors } from '$lib/shared/colors';
 	import type { LevelTrailVariants } from '$types/levelTrails';
 
 	let {
-		color = 'rgb(217, 119, 6)',
+		color = colors.quaternary,
 		strokeWidth = 12,
 		variant = 3
 	}: { color?: string; strokeWidth?: number; variant?: LevelTrailVariants } = $props();
@@ -18,7 +19,7 @@
 </script>
 
 <svg
-	class="absolute -top-95 left-1/2 h-100 w-25 -translate-x-1/2 transform"
+	class="absolute -bottom-48 left-1/2 z-10 h-85 w-25 -translate-x-1/2 transform"
 	viewBox="0 0 100 400"
 	style="overflow: visible;"
 >
@@ -28,6 +29,6 @@
 		stroke-width={strokeWidth}
 		fill="none"
 		stroke-linecap="round"
-		stroke-dasharray="26"
+		stroke-dasharray="27"
 	/>
 </svg>

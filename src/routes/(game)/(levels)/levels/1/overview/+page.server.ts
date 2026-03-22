@@ -26,9 +26,12 @@ export const actions: Actions = {
 		// Get current level progress
 		const currentProgress = await getLevelProgress(session.user.id, 1, supabase);
 
+		// Check if this is first time getting 3 stars
+		const firstTimeThreeStars = newStars === 3 && (!currentProgress || currentProgress.stars < 3);
+
 		// Only update if user got more stars than before
 		if (currentProgress && currentProgress.stars >= newStars) {
-			return { success: true };
+			return { success: true, firstTimeThreeStars: false };
 		}
 
 		const result = await updateLevelProgress(
@@ -43,9 +46,9 @@ export const actions: Actions = {
 		);
 
 		if (!result) {
-			return { success: false, error: 'Failed to save progress' };
+			return { success: false, error: 'Failed to save progress', firstTimeThreeStars: false };
 		}
 
-		return { success: true, message: 'Progress updated!' };
+		return { success: true, message: 'Progress updated!', firstTimeThreeStars };
 	}
 };

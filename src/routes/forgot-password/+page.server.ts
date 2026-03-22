@@ -11,15 +11,15 @@ export const load: PageServerLoad = async ({ locals: { safeGetSession } }) => {
 };
 
 export const actions: Actions = {
-	email: async (event) => {
+	default: async (event) => {
 		const {
 			request,
-			locals: { supabase }
+			locals: { supabase },
+			url
 		} = event;
 
 		const formData = await request.formData();
 		const email = formData.get('email') as string;
-		const password = formData.get('password') as string;
 
 		let errors: FormErrorsType = {};
 
@@ -27,11 +27,6 @@ export const actions: Actions = {
 		const validEmail = /^[\w\-.+]+@([\w-]+\.)+[\w-]{2,}$/.test(email);
 		if (!validEmail) {
 			errors.email = 'Prosím zadejte platnou e-mailovou adresu';
-		}
-
-		// Password validation
-		if (!password || password.length < 6) {
-			errors.password = 'Heslo musí mít alespoň 6 znaků';
 		}
 
 		// Return early if validation errors
@@ -42,46 +37,23 @@ export const actions: Actions = {
 			} as FormResponseType);
 		}
 
-		// Sign In logic
-		const { error } = await supabase.auth.signInWithPassword({
-			email,
-			password
+		// Send password reset email
+		const { error } = await supabase.auth.resetPasswordForEmail(email, {
+			redirectTo: `${url.origin}/reset-password`
 		});
 
 		if (error) {
-			return fail(401, {
-				success: false,
-				email,
-				message: 'Neplatný e-mail nebo heslo'
-			} as FormResponseType);
-		}
-
-		redirect(303, '/levels');
-	},
-	google: async (event) => {
-		const {
-			locals: { supabase },
-			url
-		} = event;
-
-		const { data, error } = await supabase.auth.signInWithOAuth({
-			provider: 'google',
-			options: {
-				redirectTo: `${url.origin}/api/v1/auth/callback`
-			}
-		});
-
-		console.log('Google Sign-In data:', data);
-
-		if (error) {
+			// Don't reveal whether the email exists for security reasons
 			return fail(400, {
 				success: false,
-				message: 'Přihlášení přes Google selhalo. Prosím zkuste znovu.'
+				email,
+				message: 'Pokud existuje účet s touto e-mailovou adresou, obdržíte odkaz na obnovu hesla.'
 			} as FormResponseType);
 		}
 
-		if (data.url) {
-			redirect(303, data.url);
-		}
+		return {
+			success: true,
+			message: 'Pokud existuje účet s touto e-mailovou adresou, obdržíte odkaz na obnovu hesla.'
+		} as FormResponseType;
 	}
 };
