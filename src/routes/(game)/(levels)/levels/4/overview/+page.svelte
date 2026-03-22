@@ -1,10 +1,10 @@
 <script lang="ts">
 	import LevelCompletionCard from '$components/LevelCompletionCard.svelte';
 	import { level4GameState } from '$lib/stores/level4';
-	import { setFirstThreeStars } from '$lib/stores/levelFirstThreeStars';
 	import { goto, invalidate } from '$app/navigation';
 	import { onMount } from 'svelte';
 	import Layout1 from '$components/layouts/Layout1.svelte';
+	import { setFirstThreeStars } from '$lib/stores/lastPlayed';
 
 	let gameState = $derived($level4GameState);
 	let answers = $derived(gameState.answers);

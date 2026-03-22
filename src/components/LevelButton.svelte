@@ -6,6 +6,7 @@
 	import { Lock } from '@lucide/svelte';
 	import Paragraph from '$components/typography/Paragraph.svelte';
 	import type { ButtonVariantType, LevelButtonType } from '$types/levelButton';
+	import { clearFirstThreeStars } from '$lib/stores/lastPlayed';
 
 	// Animation timing constants
 	const CIRCLE_ANIMATION_DURATION = 800;
@@ -13,10 +14,8 @@
 	const CIRCLE_RADIUS = 95;
 	const CIRCUMFERENCE_VALUE = 2 * Math.PI * CIRCLE_RADIUS;
 
-	let {
-		attributes,
-		justCompleted: initialJustCompleted = false
-	}: { attributes: LevelButtonType; justCompleted?: boolean } = $props();
+	let { attributes, playAnimation }: { attributes: LevelButtonType; playAnimation?: boolean } =
+		$props();
 
 	let clickCount = $state(0);
 	let animating = $state(false);
@@ -61,7 +60,7 @@
 		};
 	}
 
-	function playAnimation() {
+	function triggerAnimation() {
 		animating = true;
 		showYellow = false;
 
@@ -75,8 +74,9 @@
 	}
 
 	$effect(() => {
-		if (initialJustCompleted && attributes.stars === 3) {
-			playAnimation();
+		if (playAnimation && attributes.stars === 3) {
+			triggerAnimation();
+			clearFirstThreeStars();
 		}
 	});
 </script>

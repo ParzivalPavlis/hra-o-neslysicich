@@ -4,7 +4,6 @@
 	import Button from '$components/ui/button/button.svelte';
 	import { levels } from '$lib/levels';
 	import { lastPlayedStore } from '$lib/stores/lastPlayed';
-	import { levelFirstThreeStarsStore } from '$lib/stores/levelFirstThreeStars';
 	import type { GameProgressType } from '$types/supabase/gameProgress';
 	import { ArrowUp, ArrowDown, ChevronUp, ChevronDown } from '@lucide/svelte';
 	import type { PageData } from './$types';
@@ -12,6 +11,9 @@
 	let { data }: { data: PageData } = $props();
 	let gameProgress = $derived(data.gameProgress);
 	let levelButtonRefs: HTMLDivElement[] = $state([]);
+	let currentViewedLevelIndex: number | null = $state(null);
+	let shouldPlayAnimation: boolean = $state(false);
+	let animationLevelNumber: number | null = $state(null);
 	let levelMapImages = [
 		{ level: 1, src: '/assets/levelMap/manDrinking.png' },
 		{ level: 2, src: '/assets/levelMap/womanReading.png' },
@@ -19,7 +21,6 @@
 		{ level: 7, src: '/assets/levelMap/peopleSigning.png' }
 	];
 
-	// Merge game progress with levels data
 	const levelsWithProgress = $derived(
 		levels.map((level, index) => {
 			const levelKey = `level${index + 1}` as keyof GameProgressType['levels'];
@@ -33,21 +34,6 @@
 			};
 		})
 	);
-
-	console.log($levelFirstThreeStarsStore);
-
-	afterNavigate(() => {
-		if ($lastPlayedStore.levelNumber) {
-			setTimeout(() => {
-				const levelButton = document.getElementById(`level-${$lastPlayedStore.levelNumber}`);
-				if (levelButton) {
-					levelButton.scrollIntoView({ behavior: 'smooth', block: 'center' });
-				}
-			}, 200);
-		} else {
-			window.scrollTo(0, 0);
-		}
-	});
 
 	function scrollToTop() {
 		window.scrollTo({ top: 0, behavior: 'smooth' });
@@ -78,6 +64,73 @@
 			visibleButtons[0].scrollIntoView({ behavior: 'smooth', block: 'center' });
 		}
 	}
+
+	afterNavigate(() => {
+		if ($lastPlayedStore.levelNumber) {
+			setTimeout(() => {
+				const levelButton = document.getElementById(`level-${$lastPlayedStore.levelNumber}`);
+				if (levelButton) {
+					levelButton.scrollIntoView({ behavior: 'smooth', block: 'center' });
+				}
+			}, 200);
+		} else {
+			window.scrollTo(0, 0);
+		}
+	});
+
+	$effect(() => {
+		if (levelButtonRefs.length === 0) return;
+
+		// Check initially visible level (for level 1 at page load)
+		const firstVisibleIndex = levelButtonRefs.findIndex((ref) => {
+			if (!ref) return false;
+			const rect = ref.getBoundingClientRect();
+			return rect.top >= 0 && rect.top <= window.innerHeight;
+		});
+
+		if (firstVisibleIndex !== -1 && currentViewedLevelIndex === null) {
+			currentViewedLevelIndex = firstVisibleIndex;
+		}
+
+		const observer = new IntersectionObserver(
+			(entries) => {
+				entries.forEach((entry) => {
+					if (entry.isIntersecting) {
+						const index = levelButtonRefs.findIndex((ref) => ref === entry.target);
+						if (index !== -1) {
+							currentViewedLevelIndex = index;
+						}
+					}
+				});
+			},
+			{ threshold: 0.5 }
+		);
+
+		levelButtonRefs.forEach((ref) => {
+			if (ref) observer.observe(ref);
+		});
+
+		return () => {
+			observer.disconnect();
+		};
+	});
+
+	// Check if animation should play when level comes into view
+	$effect(() => {
+		if (currentViewedLevelIndex !== null) {
+			const levelNumber = currentViewedLevelIndex + 1;
+			const isLastPlayed = levelNumber === $lastPlayedStore.levelNumber;
+			const matchesFirstThreeStars = levelNumber === $lastPlayedStore.firstThreeStarsLevelNumber;
+
+			if (isLastPlayed && matchesFirstThreeStars) {
+				shouldPlayAnimation = true;
+				animationLevelNumber = levelNumber;
+			} else {
+				shouldPlayAnimation = false;
+				animationLevelNumber = null;
+			}
+		}
+	});
 </script>
 
 <svelte:head>
@@ -107,6 +160,7 @@
 			{/if}
 			<LevelButton
 				attributes={{ icon, stars, locked, description, trails, level: index + 1, href }}
+				playAnimation={shouldPlayAnimation && index + 1 === animationLevelNumber}
 			/>
 			<div class="hidden w-60 md:flex">
 				{#if index % 2 !== 0}
