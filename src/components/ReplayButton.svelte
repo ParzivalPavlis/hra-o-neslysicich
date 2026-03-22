@@ -10,7 +10,7 @@
 	let { onclick, disabled = false, helpUses = 0 }: Props = $props();
 </script>
 
-<div class="relative">
+<div class="relative w-fit">
 	<button
 		{onclick}
 		{disabled}

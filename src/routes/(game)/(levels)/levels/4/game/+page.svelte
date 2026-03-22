@@ -18,6 +18,7 @@
 		decreaseLives,
 		addAnswer
 	} from '$lib/stores/level4';
+	import LivesIndicator from '$components/LivesIndicator.svelte';
 
 	let isPortrait = $state(true);
 	let isMobile = $state(false);
@@ -191,12 +192,7 @@
 					</div>
 					<!-- Lives indicator for desktop - absolute positioned -->
 					<div class="absolute top-4 right-4 flex flex-col gap-2">
-						{#each Array(4) as _, i}
-							<HeartHandshake
-								size={30}
-								class="transition-all duration-500 {i < lives ? ' text-red-600' : 'text-gray-300'}"
-							/>
-						{/each}
+						<LivesIndicator {lives} />
 					</div>
 				</div>
 			{/if}
@@ -265,12 +261,7 @@
 	{#if isMobile && !isPortrait}
 		<div class="fixed right-8 bottom-9 flex flex-col items-center gap-3">
 			<div class="flex flex-col gap-2">
-				{#each Array(4) as _, i}
-					<HeartHandshake
-						size={35}
-						class="transition-all duration-500 {i < lives ? ' text-red-600' : 'text-gray-300'}"
-					/>
-				{/each}
+				<LivesIndicator {lives} />
 			</div>
 		</div>
 	{/if}

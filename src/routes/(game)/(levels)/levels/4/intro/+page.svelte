@@ -6,11 +6,18 @@
 	import GameButton from '$components/GameButton.svelte';
 	import Layout1 from '$components/layouts/Layout1.svelte';
 	import { setLastPlayed } from '$lib/stores/lastPlayed';
+	import ReplayButtonTutorial from '$components/tutorials/ReplayButton.svelte';
+	import LivesTutorial from '$components/tutorials/Lives.svelte';
 
 	let fadeAnimations = $state(false);
+	let introState = $state<1 | 2>(1);
 
 	function handleContinue() {
-		goto('/levels/4/game');
+		if (introState === 1) {
+			introState = 2;
+		} else {
+			goto('/levels/4/game');
+		}
 	}
 
 	onMount(() => {
@@ -24,8 +31,8 @@
 </svelte:head>
 
 <Layout1>
-	{#if fadeAnimations}
-		<div class="flex w-full max-w-150 flex-col gap-3 text-justify">
+	<div class="flex w-full max-w-150 flex-col gap-3 text-justify">
+		{#if introState === 1 && fadeAnimations}
 			<div in:fade={{ duration: 3000 }}>
 				<Paragraph>
 					Necítíte se dobře a rozhodl/a jste se navštívit praktického lékaře. Poslední dny máte tyto
@@ -51,9 +58,19 @@
 					správnou diagnózu a doporučení.
 				</Paragraph>
 			</div>
-		</div>
-		<div transition:fade={{ delay: 12000, duration: 3000 }}>
-			<GameButton onclick={handleContinue} class="mt-5">Pokračovat</GameButton>
-		</div>
-	{/if}
+			<div class="w-full" in:fade={{ delay: 12000, duration: 3000 }}>
+				<GameButton onclick={handleContinue} class="mt-5 w-full">Pokračovat</GameButton>
+			</div>
+		{/if}
+		{#if introState === 2}
+			<Paragraph variant={3} className="text-center font-bold">Vystvětlivky:</Paragraph>
+			<Paragraph>
+				V této úrovni budete sledovat videa, která simulují návštěvu lékaře, ale bez zvuku. Budete
+				muset doktorovi odezírat z úst.
+			</Paragraph>
+			<ReplayButtonTutorial />
+			<LivesTutorial />
+			<GameButton onclick={handleContinue} class="mt-5">Začít</GameButton>
+		{/if}
+	</div>
 </Layout1>
