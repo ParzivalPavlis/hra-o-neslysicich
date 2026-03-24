@@ -6,6 +6,7 @@
 	import TalkingPerson from '$components/TalkingPerson.svelte';
 	import { goto } from '$app/navigation';
 	import { beforeNavigate } from '$app/navigation';
+	import TalkingPersonTutorial from '$components/tutorials/TalkingPerson.svelte';
 	import GameButton from '$components/GameButton.svelte';
 	import Layout1 from '$components/layouts/Layout1.svelte';
 	import { setLastPlayed } from '$lib/stores/lastPlayed';
@@ -16,7 +17,7 @@
 	let currentSpeaker = $state<'anna' | 'tomas' | null>(null);
 	let dialogIndex = $state(0);
 	let conversationActive = $state(false);
-	let introState = $state<1 | 2>(1);
+	let introState = $state<1 | 2 | 3 | 4>(1);
 
 	const characters: TalkingPersonType[] = [
 		{
@@ -136,7 +137,11 @@
 			setTimeout(() => {
 				fadeOutAudio();
 			}, 7000);
-		} else {
+		} else if (introState === 2) {
+			introState = 3;
+		} else if (introState === 3) {
+			introState = 4;
+		} else if (introState === 4) {
 			manAudio.pause();
 			womanAudio.pause();
 			goto('/levels/1');
@@ -196,8 +201,8 @@
 					se lidé baví.
 				</Paragraph>
 			</div>
-			<div in:fade={{ delay: 6000, duration: 3000 }}>
-				<GameButton onclick={handleContinue} class="mt-5">Pokračovat</GameButton>
+			<div class="w-full" in:fade={{ delay: 6000, duration: 3000 }}>
+				<GameButton onclick={handleContinue} class="mt-5 w-full">Pokračovat</GameButton>
 			</div>
 		{/if}
 		{#if introState === 2}
@@ -217,8 +222,24 @@
 			</div>
 			<div class="flex flex-col items-center" in:fade={{ delay: 6000, duration: 3000 }}>
 				<Paragraph className="text-center">Co se ale stane, když o něj přijdeme?</Paragraph>
-				<GameButton onclick={handleContinue} class="mt-5">Pokračovat</GameButton>
+				<GameButton onclick={handleContinue} class="mt-5 w-full">Pokračovat</GameButton>
 			</div>
+		{/if}
+		{#if introState === 3}
+			<Paragraph>
+				Nacházíte se v roli neslyšícího člověka v kavárně. Okolo sebe máte další návštěvníky, kteří
+				si povídají a jelikož čekáte na kamaráda, nenapadne vás nic lepšího než mezitím zjistit, o
+				čem si ostatní povídají. Na konci je vaším cílem odpovědět na sérii otázek vztahující se k
+				tématům, o kterých si postavy povídaly.
+			</Paragraph>
+			<GameButton onclick={handleContinue} class="mt-5 w-full">Pokračovat</GameButton>
+		{/if}
+		{#if introState === 4}
+			<Paragraph variant={3} className="font-bold">Vysvětlivky:</Paragraph>
+			<TalkingPersonTutorial />
+			<GameButton class="w-full max-w-[80%] md:max-w-150" onclick={handleContinue}>
+				Začít
+			</GameButton>
 		{/if}
 	</div>
 </Layout1>

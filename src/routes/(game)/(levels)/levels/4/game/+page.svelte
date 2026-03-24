@@ -32,6 +32,7 @@
 	let selectedAnswer = $state<string | null>(null);
 	let showingFeedback = $state(false);
 	let isCorrect = $state(false);
+	let disabledButtons = $state<Record<string, boolean>>({});
 
 	// Derived state from store
 	let gameState = $derived($level4GameState);
@@ -69,6 +70,8 @@
 					}
 				} else {
 					decreaseLives();
+					// Disable incorrect answer button after feedback is shown
+					disabledButtons[optionId] = true;
 				}
 				showingFeedback = false;
 				selectedAnswer = null;
@@ -96,11 +99,6 @@
 		showAnswerTab = true;
 	}
 
-	function showColorFeedback(optionId: string) {
-		if (!showingFeedback || selectedAnswer !== optionId) return 1;
-		return isCorrect ? 2 : 3;
-	}
-
 	onMount(() => {
 		updateOrientation();
 		initializeLevel4Game();
@@ -108,6 +106,7 @@
 
 	$effect(() => {
 		videoEnded = false;
+		disabledButtons = {}; // Reset disabled buttons on new question
 		if (videoElement && answers[currentAnswerIndex]) {
 			// Wait for video to be loaded and play
 			videoElement.play().catch(() => {
@@ -243,18 +242,22 @@
 					{/if}
 				</div>
 			{/if}
+			<!-- Desktop answer tab -->
 			{#if !isMobile && videoEnded}
-				<div class="mt-4 flex w-full max-w-6xl flex-col gap-4" in:fly={{ y: 300, duration: 400 }}>
-					{#each shuffledOptions as option (option.id)}
-						<GameButton
-							size="small"
-							onclick={() => handleAnswerClick(option.id)}
-							variant={showColorFeedback(option.id)}
-						>
-							{option.text}
-						</GameButton>
-					{/each}
-				</div>
+				<AnswerTab
+					bind:showAnswerTab
+					bind:answerTabCollapsed
+					text="ODPOVĚDI"
+					onCollapsedChange={(collapsed) => (answerTabCollapsed = collapsed)}
+					{shuffledOptions}
+					onAnswerClick={handleAnswerClick}
+					{showingFeedback}
+					{selectedAnswer}
+					{isCorrect}
+					{isPortrait}
+					{isMobile}
+					{disabledButtons}
+				/>
 			{/if}
 		</div>
 	{/if}
@@ -265,16 +268,21 @@
 			</div>
 		</div>
 	{/if}
-	<!-- Answer tab -->
-	<AnswerTab
-		bind:showAnswerTab
-		bind:answerTabCollapsed
-		text="ODPOVĚDI"
-		onCollapsedChange={(collapsed) => (answerTabCollapsed = collapsed)}
-		{shuffledOptions}
-		onAnswerClick={handleAnswerClick}
-		{showColorFeedback}
-		{isPortrait}
-		{isMobile}
-	/>
+	<!-- Answer tab for mobile -->
+	{#if isMobile && !isPortrait}
+		<AnswerTab
+			bind:showAnswerTab
+			bind:answerTabCollapsed
+			text="ODPOVĚDI"
+			onCollapsedChange={(collapsed) => (answerTabCollapsed = collapsed)}
+			{shuffledOptions}
+			onAnswerClick={handleAnswerClick}
+			{showingFeedback}
+			{selectedAnswer}
+			{isCorrect}
+			{isPortrait}
+			{isMobile}
+			{disabledButtons}
+		/>
+	{/if}
 </Layout2>

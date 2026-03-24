@@ -238,6 +238,7 @@
 	}
 
 	onMount(() => {
+		startConversation();
 		clearLevel1QuestionsState();
 	});
 </script>
@@ -247,21 +248,7 @@
 </svelte:head>
 
 <Layout1>
-	{#if !conversationStarted}
-		<div class="flex w-full max-w-150 flex-col items-center gap-3 text-justify">
-			<Paragraph>
-				Nacházíte se v roli neslyšícího člověka v kavárně. Okolo sebe máte další návštěvníky, kteří
-				si povídají a jelikož čekáte na kamaráda, nenapadne vás nic lepšího než mezitím zjistit, o
-				čem si ostatní povídají. Na konci je vaším cílem odpovědět na sérii otázek vztahující se k
-				tématům, o kterých si postavy povídaly.
-			</Paragraph>
-			<Paragraph variant={3} className="font-bold">Vysvětlivky:</Paragraph>
-			<TalkingPersonTutorial />
-			<GameButton onclick={startConversation} class="w-full max-w-[80%] md:max-w-150">
-				Začít
-			</GameButton>
-		</div>
-	{:else}
+	{#if conversationStarted}
 		<!-- Development skip button -->
 		{#if !allConversationsFinished}
 			<div class="mb-6 flex justify-center">

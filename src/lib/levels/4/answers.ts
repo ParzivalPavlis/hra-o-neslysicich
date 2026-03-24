@@ -59,17 +59,17 @@ export const answers: AnswerType[] = [
 		options: [
 			{
 				id: 'a',
-				text: 'Odpověď 1',
+				text: 'Ano, teplotu jsem si naměřil a mám 38 °C',
 				correct: false
 			},
 			{
 				id: 'b',
-				text: 'Odpověď 2',
+				text: 'Bolesti břicha ani průjem nemám',
 				correct: false
 			},
 			{
 				id: 'c',
-				text: 'Odpověď 3',
+				text: 'Podobné potíže jsem neměl nikdy předtím',
 				correct: false
 			},
 			{
@@ -85,7 +85,7 @@ export const answers: AnswerType[] = [
 		options: [
 			{
 				id: 'a',
-				text: 'Odpověď 1',
+				text: 'Bolesti břicha ani průjem nemám',
 				correct: false
 			},
 			{
@@ -95,12 +95,12 @@ export const answers: AnswerType[] = [
 			},
 			{
 				id: 'c',
-				text: 'Odpověď 3',
+				text: 'Podobné potíže jsem neměl nikdy předtím',
 				correct: false
 			},
 			{
 				id: 'd',
-				text: 'Odpověď 4',
+				text: 'Ano, jsem tu poprvé',
 				correct: false
 			}
 		]
@@ -111,7 +111,7 @@ export const answers: AnswerType[] = [
 		options: [
 			{
 				id: 'a',
-				text: 'Odpověď 1',
+				text: 'Nejsem alergický na žádné léky',
 				correct: false
 			},
 			{
@@ -126,7 +126,7 @@ export const answers: AnswerType[] = [
 			},
 			{
 				id: 'd',
-				text: 'Odpověď 4',
+				text: 'Ne, nikdo v rodině podobné potíže neměl',
 				correct: false
 			}
 		]
@@ -142,17 +142,17 @@ export const answers: AnswerType[] = [
 			},
 			{
 				id: 'b',
-				text: 'Odpověď 2',
+				text: 'Ne, nikdo v rodině podobné potíže neměl',
 				correct: false
 			},
 			{
 				id: 'c',
-				text: 'Odpověď 3',
+				text: 'Podobné potíže jsem neměl nikdy předtím',
 				correct: false
 			},
 			{
 				id: 'd',
-				text: 'Odpověď 4',
+				text: 'Ano, jsem tu poprvé',
 				correct: false
 			}
 		]
@@ -163,7 +163,7 @@ export const answers: AnswerType[] = [
 		options: [
 			{
 				id: 'a',
-				text: 'Odpověď 1',
+				text: 'Ne, nikdo v rodině podobné potíže neměl',
 				correct: false
 			},
 			{
@@ -173,12 +173,12 @@ export const answers: AnswerType[] = [
 			},
 			{
 				id: 'c',
-				text: 'Odpověď 3',
+				text: 'Podobné potíže jsem neměl nikdy předtím',
 				correct: false
 			},
 			{
 				id: 'd',
-				text: 'Odpověď 4',
+				text: 'Žádné další příznaky nemám',
 				correct: false
 			}
 		]
