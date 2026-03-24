@@ -117,6 +117,12 @@
 			shuffledOptions = shuffleArray(answers[currentAnswerIndex].options);
 		}
 	});
+
+	$effect(() => {
+		if (lives === 0) {
+			goto('/levels/4/overview');
+		}
+	});
 </script>
 
 <svelte:head>

@@ -52,9 +52,8 @@
 			const actionResult = data[0];
 
 			// Update store if first time getting 3 stars
-			if (actionResult?.firstTimeThreeStars) {
+			if (actionResult?.firstTimeThreeStars === true) {
 				setFirstThreeStars(4);
-				console.log('First time 3 stars on level 4! Store updated.');
 			}
 
 			// Force reload the game:progress cache
