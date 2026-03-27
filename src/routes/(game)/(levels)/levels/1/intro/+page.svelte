@@ -23,7 +23,7 @@
 		{
 			name: 'Anna',
 			dialog: [{ duration: 5000 }, { duration: 6000 }, { duration: 10000 }, { duration: 11000 }],
-			variant: 'woman1_standing',
+			imageSrc: '/assets/level1/woman1_standing.png',
 			rotation: 'left',
 			pauseBetween: { min: 1, max: 1 },
 			pauseStart: 0
@@ -31,7 +31,7 @@
 		{
 			name: 'Tomáš',
 			dialog: [{ duration: 5500 }, { duration: 5500 }, { duration: 3000 }, { duration: 6000 }],
-			variant: 'man1_standing',
+			imageSrc: '/assets/level1/man1_standing.png',
 			rotation: 'right',
 			pauseBetween: { min: 1, max: 1 }
 		}
@@ -227,10 +227,10 @@
 		{/if}
 		{#if introState === 3}
 			<Paragraph>
-				Nacházíte se v roli neslyšícího člověka v kavárně. Okolo sebe máte další návštěvníky, kteří
-				si povídají a jelikož čekáte na kamaráda, nenapadne vás nic lepšího než mezitím zjistit, o
-				čem si ostatní povídají. Na konci je vaším cílem odpovědět na sérii otázek vztahující se k
-				tématům, o kterých si postavy povídaly.
+				Nacházíte se v roli neslyšícího člověka ve škole. Čekáte na začátek hodiny a nedaleko od vás
+				si dva vaši kamarádi spolu povídají. Protože máte chvíli času, začnete sledovat jejich
+				konverzaci a snažíte se odezírat, o čem mluví. Na konci je vaším cílem odpovědět na sérii
+				otázek vztahujících se k tématům, o kterých si kamarádi mluvili.
 			</Paragraph>
 			<GameButton onclick={handleContinue} class="mt-5 w-full">Pokračovat</GameButton>
 		{/if}

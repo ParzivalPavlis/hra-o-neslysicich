@@ -15,8 +15,8 @@
 	let shouldPlayAnimation: boolean = $state(false);
 	let animationLevelNumber: number | null = $state(null);
 	let levelMapImages = [
-		{ level: 1, src: '/assets/levelMap/manDrinking.png' },
-		{ level: 2, src: '/assets/levelMap/womanReading.png' },
+		{ level: 1, src: '/assets/levelMap/manStudying.png' },
+		{ level: 2, src: '/assets/levelMap/manDrinking.png' },
 		{ level: 4, src: '/assets/levelMap/manDoctor.png' },
 		{ level: 7, src: '/assets/levelMap/peopleSigning.png' }
 	];

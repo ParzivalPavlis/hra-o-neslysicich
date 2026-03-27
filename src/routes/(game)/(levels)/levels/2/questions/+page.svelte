@@ -2,14 +2,14 @@
 	import { goto } from '$app/navigation';
 	import Layout1 from '$components/layouts/Layout1.svelte';
 	import QuestionCard from '$components/QuestionCard.svelte';
-	import questions from '$lib/levels/1/questions';
+	import questions from '$lib/levels/2/questions';
 	import { selectRandomOptions } from '$lib/shared/utils';
 	import {
-		level1QuestionsState,
-		initializeLevel1Questions,
+		level2QuestionsState,
+		initializeLevel2Questions,
 		updateCurrentQuestion,
 		addQuestionAnswer
-	} from '$lib/stores/level1';
+	} from '$lib/stores/level2';
 	import type { QuestionOptionType } from '$types/question';
 
 	let selectedAnswer = $state<string | null>(null);
@@ -18,7 +18,7 @@
 	let personImage = $state<'man_thinking' | 'man_correct' | 'man_wrong'>('man_thinking');
 
 	// Get questions state from store
-	let questionsState = $derived($level1QuestionsState);
+	let questionsState = $derived($level2QuestionsState);
 	let questionIds = $derived(questionsState.questionIds);
 	let currentQuestionIndex = $derived(questionsState.currentQuestionIndex);
 
@@ -26,7 +26,8 @@
 	let selectedQuestions = $derived(() => {
 		if (!questionIds || questionIds.length === 0) return [];
 
-		const allQuestions = questions.group1;
+		// Combine both groups for searching
+		const allQuestions = [...questions.group1, ...questions.group2];
 
 		// Get the original questions by ID and regenerate with randomized options
 		const originalQuestions = questionIds
@@ -83,7 +84,7 @@
 			const nextIndex = currentQuestionIndex + 1;
 			updateCurrentQuestion(nextIndex);
 		} else {
-			goto('/levels/1/overview');
+			goto('/levels/2/overview');
 		}
 	}
 
@@ -94,22 +95,28 @@
 
 	// Initialize questions from store or generate new ones
 	$effect(() => {
-		const storedState = $level1QuestionsState;
+		const storedState = $level2QuestionsState;
 		if (!storedState.questionIds || storedState.questionIds.length === 0) {
 			// Select 4 random from group1
 			const shuffledGroup1 = [...questions.group1].sort(() => 0.5 - Math.random());
 			const selectedFromGroup1 = shuffledGroup1.slice(0, 4);
 
+			// Select 4 random from group2
+			const shuffledGroup2 = [...questions.group2].sort(() => 0.5 - Math.random());
+			const selectedFromGroup2 = shuffledGroup2.slice(0, 4);
+
 			// Combine and shuffle all selected questions
-			const combinedQuestions = selectedFromGroup1.sort(() => 0.5 - Math.random());
+			const combinedQuestions = [...selectedFromGroup1, ...selectedFromGroup2].sort(
+				() => 0.5 - Math.random()
+			);
 			const originalIds = combinedQuestions.map((q) => q.id);
-			initializeLevel1Questions(originalIds);
+			initializeLevel2Questions(originalIds);
 		}
 	});
 </script>
 
 <svelte:head>
-	<title>Úroveň 1 | Deafio</title>
+	<title>Úroveň 2 | Deafio</title>
 </svelte:head>
 
 <Layout1>

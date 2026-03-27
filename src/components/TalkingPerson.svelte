@@ -29,7 +29,7 @@
 	}
 </script>
 
-<div class="relative">
+<div class="relative w-fit">
 	{#if isSpeaking}
 		<div class="absolute -top-3 left-1/2 z-40 -translate-x-1/2">
 			<div class="relative">
@@ -53,7 +53,7 @@
 		disabled={finishedSpeaking}
 	>
 		<img
-			src={`/assets/level1/${person.variant}.png`}
+			src={person.imageSrc}
 			alt="Character"
 			class="h-full w-full"
 			style={`transform: scaleX(${person.rotation === 'left' ? -1 : 1});`}
@@ -78,7 +78,7 @@
 					class="animate-zoom-image mt-5 h-62.5 overflow-hidden rounded-lg bg-white shadow-2xl md:mt-0"
 				>
 					<img
-						src={`/assets/level1/${person.variant}.png`}
+						src={person.imageSrc}
 						alt={person.name}
 						class="h-full w-50 object-cover"
 						style={`transform: scaleX(${person.rotation === 'left' ? -1 : 1});`}

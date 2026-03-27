@@ -3,8 +3,8 @@
 	import Layout1 from '$components/layouts/Layout1.svelte';
 	import TalkingPerson from '$components/TalkingPerson.svelte';
 	import Button from '$components/ui/button/button.svelte';
-	import characterGroups from '$lib/levels/1/characterGroups';
-	import { deleteFromMap, getRandomDuration, updateMap } from '$lib/shared/utils';
+	import characterGroups from '$lib/levels/2/characterGroups';
+	import { getRandomDuration } from '$lib/shared/utils';
 	import { clearLevel1QuestionsState } from '$lib/stores/level1';
 	import { RotateCcw } from '@lucide/svelte';
 	import { onMount } from 'svelte';
@@ -97,6 +97,16 @@
 	});
 
 	let selectedCharacterDialog = $derived(selectedCharacterTyped);
+
+	function updateMap<K, V>(map: Map<K, V>, key: K, value: V): Map<K, V> {
+		map.set(key, value);
+		return new Map(map);
+	}
+
+	function deleteFromMap<K, V>(map: Map<K, V>, key: K): Map<K, V> {
+		map.delete(key);
+		return new Map(map);
+	}
 
 	function resetConversationState() {
 		typingIntervals.forEach((interval) => clearInterval(interval));
@@ -281,7 +291,7 @@
 							<RotateCcw />
 						</GameButton>
 					{/if}
-					<GameButton href="/levels/1/questions" class="mt-3 bg-gray-600 hover:bg-gray-700">
+					<GameButton href="/levels/2/questions" class="mt-3 bg-gray-600 hover:bg-gray-700">
 						Pokračovat
 					</GameButton>
 				</div>

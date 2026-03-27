@@ -43,3 +43,13 @@ export function shuffleArray<T>(array: T[]): T[] {
 	}
 	return shuffled;
 }
+
+export function updateMap<K, V>(map: Map<K, V>, key: K, value: V): Map<K, V> {
+	map.set(key, value);
+	return new Map(map);
+}
+
+export function deleteFromMap<K, V>(map: Map<K, V>, key: K): Map<K, V> {
+	map.delete(key);
+	return new Map(map);
+}
