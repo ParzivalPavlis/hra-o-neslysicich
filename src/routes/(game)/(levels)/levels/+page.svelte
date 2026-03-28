@@ -70,6 +70,10 @@
 
 	afterNavigate(() => {
 		if ($lastPlayedStore.level) {
+			// Set the viewed level index immediately so animation can trigger
+			const index = $lastPlayedStore.level - 1;
+			currentViewedLevelIndex = index;
+
 			setTimeout(() => {
 				const levelButton = document.getElementById(`level-${$lastPlayedStore.level}`);
 				if (levelButton) {
