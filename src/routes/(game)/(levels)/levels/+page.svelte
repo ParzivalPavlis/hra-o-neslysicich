@@ -7,6 +7,7 @@
 	import type { GameProgressType } from '$types/supabase/gameProgress';
 	import { ArrowUp, ArrowDown, ChevronUp, ChevronDown } from '@lucide/svelte';
 	import type { PageData } from './$types';
+	import Particles from '$components/Particles.svelte';
 
 	let { data }: { data: PageData } = $props();
 	let gameProgress = $derived(data.gameProgress);
@@ -137,51 +138,54 @@
 	<title>Úrovně | Deafio</title>
 </svelte:head>
 
-<div class="relative flex min-h-screen flex-col items-center gap-50 overflow-x-hidden p-10">
-	{#each levelsWithProgress as { icon, stars, locked, completed, description, trails, href }, index}
-		<div class="relative flex w-full justify-center" bind:this={levelButtonRefs[index]}>
-			<div class="hidden w-60 md:flex">
+<div class="relative min-h-screen">
+	<Particles className="fixed inset-0" />
+	<div class="relative flex min-h-screen flex-col items-center gap-50 overflow-x-hidden p-10">
+		{#each levelsWithProgress as { icon, stars, locked, completed, description, trails, href }, index}
+			<div class="relative flex w-full justify-center" bind:this={levelButtonRefs[index]}>
+				<div class="hidden w-60 md:flex">
+					{#if index % 2 === 0}
+						{#if levelMapImages.find((img) => img.level === index + 1)}
+							<!-- svelte-ignore a11y_missing_attribute -->
+							<img
+								src={levelMapImages.find((img) => img.level === index + 1)?.src || ''}
+								class="hidden h-full w-full object-contain md:flex"
+							/>
+						{/if}
+					{/if}
+				</div>
 				{#if index % 2 === 0}
-					{#if levelMapImages.find((img) => img.level === index + 1)}
-						<!-- svelte-ignore a11y_missing_attribute -->
-						<img
-							src={levelMapImages.find((img) => img.level === index + 1)?.src || ''}
-							class="hidden h-full w-full object-contain md:flex"
-						/>
-					{/if}
+					<!-- svelte-ignore a11y_missing_attribute -->
+					<img
+						src={levelMapImages.find((img) => img.level === index + 1)?.src || ''}
+						class="absolute top-45 -left-12.5 flex h-70 md:hidden"
+					/>
 				{/if}
-			</div>
-			{#if index % 2 === 0}
-				<!-- svelte-ignore a11y_missing_attribute -->
-				<img
-					src={levelMapImages.find((img) => img.level === index + 1)?.src || ''}
-					class="absolute top-45 -left-12.5 flex h-70 md:hidden"
+				<LevelButton
+					attributes={{ icon, stars, locked, description, trails, level: index + 1, href }}
+					playAnimation={shouldPlayAnimation && index + 1 === animationLevelNumber}
 				/>
-			{/if}
-			<LevelButton
-				attributes={{ icon, stars, locked, description, trails, level: index + 1, href }}
-				playAnimation={shouldPlayAnimation && index + 1 === animationLevelNumber}
-			/>
-			<div class="hidden w-60 md:flex">
+				<div class="hidden w-60 md:flex">
+					{#if index % 2 !== 0}
+						{#if levelMapImages.find((img) => img.level === index + 1)}
+							<!-- svelte-ignore a11y_missing_attribute -->
+							<img
+								src={levelMapImages.find((img) => img.level === index + 1)?.src || ''}
+								class="hidden h-full w-full object-contain md:flex"
+							/>
+						{/if}
+					{/if}
+				</div>
 				{#if index % 2 !== 0}
-					{#if levelMapImages.find((img) => img.level === index + 1)}
-						<!-- svelte-ignore a11y_missing_attribute -->
-						<img
-							src={levelMapImages.find((img) => img.level === index + 1)?.src || ''}
-							class="hidden h-full w-full object-contain md:flex"
-						/>
-					{/if}
+					<!-- svelte-ignore a11y_missing_attribute -->
+					<img
+						src={levelMapImages.find((img) => img.level === index + 1)?.src || ''}
+						class="absolute top-45 -right-12.5 flex h-70 md:hidden"
+					/>
 				{/if}
 			</div>
-			{#if index % 2 !== 0}
-				<!-- svelte-ignore a11y_missing_attribute -->
-				<img
-					src={levelMapImages.find((img) => img.level === index + 1)?.src || ''}
-					class="absolute top-45 -right-12.5 flex h-70 md:hidden"
-				/>
-			{/if}
-		</div>
-	{/each}
+		{/each}
+	</div>
 </div>
 <div class="fixed top-1/2 right-4 hidden -translate-y-1/2 transform flex-col gap-2 md:flex">
 	<Button class="cursor-pointer" size="icon-lg" onclick={scrollToTop}><ArrowUp /></Button>
