@@ -6,7 +6,7 @@
 	import { Lock } from '@lucide/svelte';
 	import Paragraph from '$components/typography/Paragraph.svelte';
 	import type { ButtonVariantType, LevelButtonType } from '$types/levelButton';
-	import { clearFirstThreeStars } from '$lib/stores/lastPlayed';
+	import { clearFirstThreeStars, clearJustUnlockedLevel } from '$lib/stores/lastPlayed';
 
 	// Animation timing constants
 	const CIRCLE_ANIMATION_DURATION = 800;
@@ -14,12 +14,16 @@
 	const CIRCLE_RADIUS = 95;
 	const CIRCUMFERENCE_VALUE = 2 * Math.PI * CIRCLE_RADIUS;
 
-	let { attributes, playAnimation }: { attributes: LevelButtonType; playAnimation?: boolean } =
+	let {
+		attributes,
+		playYellowAnimation,
+		playUnlockAnimation
+	}: { attributes: LevelButtonType; playYellowAnimation?: boolean; playUnlockAnimation?: boolean } =
 		$props();
 
 	let clickCount = $state(0);
-	let animating = $state(false);
-	let showYellow = $state(false);
+	let isPlayingYellow = $state(false);
+	let isPlayingUnlock = $state(false);
 	const IconComponent = $derived(attributes.icon);
 
 	const variantClasses: Record<ButtonVariantType, string> = {
@@ -60,24 +64,46 @@
 		};
 	}
 
-	function triggerAnimation() {
-		animating = true;
-		showYellow = false;
+	function triggerYellowAnimation() {
+		isPlayingYellow = true;
 
 		setTimeout(() => {
-			showYellow = true;
+			// Add circle animation here if needed
 		}, CIRCLE_ANIMATION_DURATION);
 
 		setTimeout(() => {
-			animating = false;
+			isPlayingYellow = false;
 		}, TOTAL_ANIMATION_DURATION);
 	}
 
+	function triggerUnlockAnimation() {
+		isPlayingUnlock = true;
+
+		setTimeout(() => {
+			isPlayingUnlock = false;
+			clearJustUnlockedLevel();
+		}, 1000);
+	}
+
+	// Track previous values to detect when animations change to true
+	let prevPlayYellowAnimation = $state(false);
+	let prevPlayUnlockAnimation = $state(false);
+
 	$effect(() => {
-		if (playAnimation && attributes.stars === 3) {
-			triggerAnimation();
+		// Trigger yellow animation when playYellowAnimation changes from false to true
+		if (playYellowAnimation && !prevPlayYellowAnimation && attributes.stars === 3) {
+			triggerYellowAnimation();
 			clearFirstThreeStars();
 		}
+		prevPlayYellowAnimation = playYellowAnimation ?? false;
+	});
+
+	$effect(() => {
+		// Trigger unlock animation when playUnlockAnimation changes from false to true
+		if (playUnlockAnimation && !prevPlayUnlockAnimation) {
+			triggerUnlockAnimation();
+		}
+		prevPlayUnlockAnimation = playUnlockAnimation ?? false;
 	});
 </script>
 
@@ -86,7 +112,7 @@
 	class="relative z-20 flex h-96 w-full max-w-64 flex-col items-center"
 	use:clickOutside
 >
-	{#if !attributes.locked && attributes.stars < 3 && !animating}
+	{#if !attributes.locked && attributes.stars < 3 && !isPlayingYellow}
 		<svg
 			class="pointer-events-none absolute -top-4 left-1/2 z-10 h-62 w-62 -translate-x-1/2"
 			viewBox="0 0 200 200"
@@ -109,7 +135,7 @@
 		</svg>
 	{/if}
 
-	{#if animating && !showYellow}
+	{#if isPlayingYellow}
 		<svg
 			class="pointer-events-none absolute -top-4 left-1/2 z-10 h-62 w-62 -translate-x-1/2"
 			viewBox="0 0 200 200"
@@ -129,7 +155,9 @@
 		</svg>
 	{/if}
 
-	<div class={animating ? 'animate-celebrate' : ''}>
+	<div
+		class={isPlayingYellow ? 'animate-celebrate' : isPlayingUnlock ? 'animate-unlock-level' : ''}
+	>
 		<Button
 			type="button"
 			disabled={attributes.locked}
@@ -141,11 +169,11 @@
 			}}
 			class={cn(
 				'group relative flex h-52 w-52 cursor-pointer flex-col items-center justify-center overflow-hidden rounded-full hover:-translate-y-0.5 hover:opacity-100 active:translate-y-1',
-				!animating && 'transition-all',
-				showYellow ? variantClasses['yellow'] : variantClasses[variant]
+				!isPlayingYellow && !isPlayingUnlock && 'transition-all',
+				isPlayingYellow ? variantClasses['yellow'] : variantClasses[variant]
 			)}
 		>
-			{#if variant === 'yellow' || showYellow}
+			{#if variant === 'yellow' || isPlayingYellow}
 				<div
 					class="absolute inset-0 rounded-full opacity-30"
 					style="background: repeating-linear-gradient(-45deg, transparent, transparent 50px, rgba(120, 53, 15, 0.2) 50px, rgba(120, 53, 15, 0.2) 80px);"
@@ -224,6 +252,30 @@
 		}
 	}
 
+	@keyframes unlockLevel {
+		0% {
+			transform: scale(1);
+		}
+		15% {
+			transform: scale(1.25);
+		}
+		35% {
+			transform: scale(1);
+		}
+		50% {
+			transform: scale(1.12);
+		}
+		70% {
+			transform: scale(1);
+		}
+		85% {
+			transform: scale(1.05);
+		}
+		100% {
+			transform: scale(1);
+		}
+	}
+
 	.chat-bubble {
 		animation: slideInUp 0.4s ease-out;
 	}
@@ -235,5 +287,9 @@
 	.animate-celebrate {
 		animation: celebrate 1s cubic-bezier(0.34, 1.56, 0.64, 1) 0.8s forwards !important;
 		transform-origin: center !important;
+	}
+
+	.animate-unlock-level {
+		animation: unlockLevel 1s ease-in-out forwards !important;
 	}
 </style>

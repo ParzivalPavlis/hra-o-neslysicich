@@ -2,11 +2,13 @@
 	import { goto } from '$app/navigation';
 	import { enhance } from '$app/forms';
 	import AlertMessage from '$components/AlertMessage.svelte';
+	import FormInput from '$components/FormInput.svelte';
 	import GameButton from '$components/GameButton.svelte';
 	import Layout1 from '$components/layouts/Layout1.svelte';
 	import Paragraph from '$components/typography/Paragraph.svelte';
 	import type { ActionData, SubmitFunction } from './$types';
 	import Logo from '$components/Logo.svelte';
+	import Particles from '$components/Particles.svelte';
 
 	let { form }: { form: ActionData } = $props();
 
@@ -30,9 +32,10 @@
 </script>
 
 <svelte:head>
-	<title>Nastavit nové heslo</title>
+	<title>Nastavit nové heslo | Deafio</title>
 </svelte:head>
 
+<Particles className="fixed inset-0" />
 <Layout1>
 	<Logo class="mb-5" />
 	<form class="flex w-full max-w-md flex-col gap-5" method="POST" use:enhance={handleSubmit}>
@@ -41,40 +44,24 @@
 		{/if}
 		{#if !form?.success}
 			<Paragraph className="text-gray-600 text-center">Zadejte nové heslo pro váš účet.</Paragraph>
-			<div>
-				<label for="password" class="block text-sm font-medium text-gray-700">Nové heslo</label>
-				<input
-					id="password"
-					name="password"
-					class="mt-2 w-full rounded-md border border-gray-300 px-3 py-2 placeholder-gray-400 shadow-sm focus:border-blue-500 focus:ring-1 focus:ring-blue-500 focus:outline-none"
-					type="password"
-					placeholder="••••••••"
-					required
-				/>
-				{#if form?.errors?.password}
-					<span class="mt-1 flex items-center text-sm text-red-600">
-						{form?.errors?.password}
-					</span>
-				{/if}
-			</div>
-			<div>
-				<label for="confirmPassword" class="block text-sm font-medium text-gray-700">
-					Potvrzení hesla
-				</label>
-				<input
-					id="confirmPassword"
-					name="confirmPassword"
-					class="mt-2 w-full rounded-md border border-gray-300 px-3 py-2 placeholder-gray-400 shadow-sm focus:border-blue-500 focus:ring-1 focus:ring-blue-500 focus:outline-none"
-					type="password"
-					placeholder="••••••••"
-					required
-				/>
-				{#if form?.errors?.confirmPassword}
-					<span class="mt-1 flex items-center text-sm text-red-600">
-						{form?.errors?.confirmPassword}
-					</span>
-				{/if}
-			</div>
+			<FormInput
+				id="password"
+				name="password"
+				label="Nové heslo"
+				type="password"
+				placeholder="••••••••"
+				error={form?.errors?.password}
+				required
+			/>
+			<FormInput
+				id="confirmPassword"
+				name="confirmPassword"
+				label="Potvrzení hesla"
+				type="password"
+				placeholder="••••••••"
+				error={form?.errors?.confirmPassword}
+				required
+			/>
 			<GameButton type="submit" class="w-full" disabled={loading}>Nastavit nové heslo</GameButton>
 		{:else}
 			<Paragraph className="text-center">

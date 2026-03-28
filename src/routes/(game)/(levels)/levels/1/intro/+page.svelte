@@ -6,6 +6,7 @@
 	import TalkingPerson from '$components/TalkingPerson.svelte';
 	import { goto } from '$app/navigation';
 	import { beforeNavigate } from '$app/navigation';
+	import TalkingPersonTutorial from '$components/tutorials/TalkingPerson.svelte';
 	import GameButton from '$components/GameButton.svelte';
 	import Layout1 from '$components/layouts/Layout1.svelte';
 	import { setLastPlayed } from '$lib/stores/lastPlayed';
@@ -16,13 +17,13 @@
 	let currentSpeaker = $state<'anna' | 'tomas' | null>(null);
 	let dialogIndex = $state(0);
 	let conversationActive = $state(false);
-	let introState = $state<1 | 2>(1);
+	let introState = $state<1 | 2 | 3 | 4>(1);
 
 	const characters: TalkingPersonType[] = [
 		{
 			name: 'Anna',
 			dialog: [{ duration: 5000 }, { duration: 6000 }, { duration: 10000 }, { duration: 11000 }],
-			variant: 'woman1_standing',
+			imageSrc: '/assets/level1/woman1_standing.png',
 			rotation: 'left',
 			pauseBetween: { min: 1, max: 1 },
 			pauseStart: 0
@@ -30,7 +31,7 @@
 		{
 			name: 'Tomáš',
 			dialog: [{ duration: 5500 }, { duration: 5500 }, { duration: 3000 }, { duration: 6000 }],
-			variant: 'man1_standing',
+			imageSrc: '/assets/level1/man1_standing.png',
 			rotation: 'right',
 			pauseBetween: { min: 1, max: 1 }
 		}
@@ -136,7 +137,11 @@
 			setTimeout(() => {
 				fadeOutAudio();
 			}, 7000);
-		} else {
+		} else if (introState === 2) {
+			introState = 3;
+		} else if (introState === 3) {
+			introState = 4;
+		} else if (introState === 4) {
 			manAudio.pause();
 			womanAudio.pause();
 			goto('/levels/1');
@@ -196,8 +201,8 @@
 					se lidé baví.
 				</Paragraph>
 			</div>
-			<div in:fade={{ delay: 6000, duration: 3000 }}>
-				<GameButton onclick={handleContinue} class="mt-5">Pokračovat</GameButton>
+			<div class="w-full" in:fade={{ delay: 6000, duration: 3000 }}>
+				<GameButton onclick={handleContinue} class="mt-5 w-full">Pokračovat</GameButton>
 			</div>
 		{/if}
 		{#if introState === 2}
@@ -217,8 +222,24 @@
 			</div>
 			<div class="flex flex-col items-center" in:fade={{ delay: 6000, duration: 3000 }}>
 				<Paragraph className="text-center">Co se ale stane, když o něj přijdeme?</Paragraph>
-				<GameButton onclick={handleContinue} class="mt-5">Pokračovat</GameButton>
+				<GameButton onclick={handleContinue} class="mt-5 w-full">Pokračovat</GameButton>
 			</div>
+		{/if}
+		{#if introState === 3}
+			<Paragraph>
+				Nacházíte se v roli neslyšícího člověka ve škole. Čekáte na začátek hodiny a nedaleko od vás
+				si dva vaši kamarádi spolu povídají. Protože máte chvíli času, začnete sledovat jejich
+				konverzaci a snažíte se odezírat, o čem mluví. Na konci je vaším cílem odpovědět na sérii
+				otázek vztahujících se k tématům, o kterých si kamarádi mluvili.
+			</Paragraph>
+			<GameButton onclick={handleContinue} class="mt-5 w-full">Pokračovat</GameButton>
+		{/if}
+		{#if introState === 4}
+			<Paragraph variant={3} className="font-bold">Vysvětlivky:</Paragraph>
+			<TalkingPersonTutorial />
+			<GameButton class="w-full max-w-[80%] md:max-w-150" onclick={handleContinue}>
+				Začít
+			</GameButton>
 		{/if}
 	</div>
 </Layout1>

@@ -211,3 +211,48 @@ export async function getLevelProgress(
 	// Return the specific level's attributes
 	return gameProgress.levels[levelKey] || null;
 }
+
+/**
+ * Unlock the next level if it exists and is locked
+ * @param {string} userId - The user ID to update progress for
+ * @param {number} currentLevelNumber - The current level number
+ * @param {any} client - The authenticated Supabase client
+ * @returns {Promise<boolean>} True if next level was unlocked or was already unlocked, false if failed
+ */
+export async function unlockNextLevel(
+	userId: string,
+	currentLevelNumber: number,
+	client: any = supabase
+): Promise<boolean> {
+	const nextLevelNumber = currentLevelNumber + 1;
+	const nextLevelKey = `level${nextLevelNumber}` as keyof GameProgressType['levels'];
+
+	// Get current progress
+	const gameProgress = await getGameProgress(userId, client);
+
+	if (!gameProgress) {
+		console.error('No game progress found for user:', userId);
+		return false;
+	}
+
+	// Check if next level exists
+	if (!gameProgress.levels[nextLevelKey]) {
+		console.warn(`Level ${nextLevelNumber} does not exist`);
+		return false;
+	}
+
+	// Check if next level is already unlocked
+	if (!gameProgress.levels[nextLevelKey].locked) {
+		return true;
+	}
+
+	// Unlock the next level
+	const result = await updateLevelProgress(
+		userId,
+		nextLevelNumber,
+		{ stars: 0, completed: false, locked: false },
+		client
+	);
+
+	return result !== null;
+}

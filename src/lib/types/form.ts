@@ -10,3 +10,11 @@ export interface FormResponseType {
 	success?: boolean;
 	message?: string;
 }
+
+export type FormSaveLevelProgressResponseType = {
+	success: boolean;
+	message?: string;
+	error?: string;
+	firstTimeThreeStars?: boolean;
+	unlockedLevel?: number;
+};

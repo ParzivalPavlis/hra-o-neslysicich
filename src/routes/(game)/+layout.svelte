@@ -1,5 +1,5 @@
 <script lang="ts">
-	import { ChevronUp, Menu, Play, X } from '@lucide/svelte';
+	import { Menu, Play, X } from '@lucide/svelte';
 	import { page } from '$app/state';
 	import { levels } from '$lib/levels';
 	import { onMount } from 'svelte';

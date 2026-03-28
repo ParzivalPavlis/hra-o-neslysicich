@@ -1,6 +1,6 @@
 <script lang="ts">
 	import LevelCompletionCard from '$components/LevelCompletionCard.svelte';
-	import { level1QuestionsState } from '$lib/stores/level1';
+	import { level2QuestionsState } from '$lib/stores/level2';
 	import { setFirstThreeStars, setJustUnlockedLevel } from '$lib/stores/lastPlayed';
 	import { goto, invalidate } from '$app/navigation';
 	import Layout1 from '$components/layouts/Layout1.svelte';
@@ -8,10 +8,10 @@
 	import { onMount } from 'svelte';
 	import type { FormSaveLevelProgressResponseType } from '$lib/types/form';
 
-	let questionsState = $derived($level1QuestionsState);
+	let questionsState = $derived($level2QuestionsState);
 	let answers = $derived(questionsState.answers);
 	let correctAnswers = $derived(answers.filter((answer) => answer.isCorrect).length);
-	let totalQuestions = $derived(Math.max(answers.length, 4));
+	let totalQuestions = $derived(Math.max(answers.length, 6));
 
 	let stars = $derived(() => {
 		const percentage = (correctAnswers / totalQuestions) * 100;
@@ -29,7 +29,7 @@
 	};
 
 	function handleRetry() {
-		goto('/levels/1');
+		goto('/levels/2');
 	}
 
 	function handleBackToLevels() {
@@ -44,7 +44,7 @@
 </script>
 
 <svelte:head>
-	<title>Úroveň 1 | Deafio</title>
+	<title>Úroveň 2 | Deafio</title>
 </svelte:head>
 
 <form
@@ -56,7 +56,7 @@
 				const actionResult = result.data as FormSaveLevelProgressResponseType;
 
 				if (actionResult.firstTimeThreeStars === true) {
-					setFirstThreeStars(1);
+					setFirstThreeStars(2);
 				}
 				if (actionResult.unlockedLevel) {
 					setJustUnlockedLevel(actionResult.unlockedLevel);
@@ -79,7 +79,7 @@
 		{totalQuestions}
 		onRetry={handleRetry}
 		onBackToLevels={handleBackToLevels}
-		title="Úroveň 1 dokončena!"
+		title="Úroveň 2 dokončena!"
 		stars={stars()}
 		{messages}
 	/>

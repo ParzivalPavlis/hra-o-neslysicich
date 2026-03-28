@@ -7,7 +7,7 @@
 
 	const person: TalkingPersonType = {
 		name: 'Petr Novák',
-		variant: 'man1',
+		imageSrc: '/assets/common/man_tutorial.png',
 		rotation: 'right',
 		pauseBetween: {
 			min: 1000,
@@ -35,7 +35,7 @@
 		Postava která právě mluví je označena bublinou. Kliknutím na ni uvidíte, o čem právě mluví.
 		Zkuste kliknout na postavu níže:
 	</Paragraph>
-	<div class="mx-auto mt-5 w-60 md:w-80">
+	<div class="mx-auto mt-5 mb-5 flex w-60 justify-center md:w-80">
 		<TalkingPerson
 			id={1}
 			{person}

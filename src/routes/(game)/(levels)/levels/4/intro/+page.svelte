@@ -70,7 +70,7 @@
 			</Paragraph>
 			<ReplayButtonTutorial />
 			<LivesTutorial />
-			<GameButton onclick={handleContinue} class="mt-5">Začít</GameButton>
+			<GameButton onclick={handleContinue} class="mt-5 w-full">Začít</GameButton>
 		{/if}
 	</div>
 </Layout1>
