@@ -1,5 +1,5 @@
 import type { PageServerLoad, Actions } from './$types';
-import { updateLevelProgress, getLevelProgress } from '$lib/server/services';
+import { updateLevelProgress, getLevelProgress, unlockNextLevel } from '$lib/server/services';
 
 export const load: PageServerLoad = async ({ locals: { safeGetSession } }) => {
 	const { session } = await safeGetSession();
@@ -31,7 +31,7 @@ export const actions: Actions = {
 
 		// Only update if user got more stars than before
 		if (currentProgress && currentProgress.stars >= newStars) {
-			return { success: true, firstTimeThreeStars: false };
+			return { success: true };
 		}
 
 		const result = await updateLevelProgress(
@@ -46,9 +46,19 @@ export const actions: Actions = {
 		);
 
 		if (!result) {
-			return { success: false, error: 'Failed to save progress', firstTimeThreeStars: false };
+			return {
+				success: false,
+				error: 'Failed to save progress'
+			};
 		}
 
-		return { success: true, message: 'Progress updated!', firstTimeThreeStars };
+		const wasUnlocked = newStars >= 1 && (await unlockNextLevel(session.user.id, 2, supabase));
+
+		return {
+			success: true,
+			message: 'Progress updated!',
+			firstTimeThreeStars,
+			unlockedLevel: wasUnlocked ? 3 : undefined
+		};
 	}
 };

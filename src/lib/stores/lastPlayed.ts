@@ -3,12 +3,14 @@ import { persisted } from 'svelte-persisted-store';
 export interface LastPlayedState {
 	level: number | null;
 	firstThreeStars: number | null;
+	justUnlockedLevel: number | null;
 }
 
 // Store for persisting the last played level and first level with 3 stars
 export const lastPlayedStore = persisted<LastPlayedState>('last-played-level', {
 	level: null,
-	firstThreeStars: null
+	firstThreeStars: null,
+	justUnlockedLevel: null
 });
 
 // Helper function to update last played level
@@ -43,10 +45,27 @@ export function clearFirstThreeStars() {
 	}));
 }
 
+// Helper function to set just unlocked level
+export function setJustUnlockedLevel(levelNumber: number) {
+	lastPlayedStore.update((state) => ({
+		...state,
+		justUnlockedLevel: levelNumber
+	}));
+}
+
+// Helper function to clear just unlocked level
+export function clearJustUnlockedLevel() {
+	lastPlayedStore.update((state) => ({
+		...state,
+		justUnlockedLevel: null
+	}));
+}
+
 // Helper function to clear all
 export function clearAll() {
 	lastPlayedStore.set({
 		level: null,
-		firstThreeStars: null
+		firstThreeStars: null,
+		justUnlockedLevel: null
 	});
 }

@@ -31,7 +31,7 @@ export const actions: Actions = {
 
 		// Only update if user got more stars than before
 		if (currentProgress && currentProgress.stars >= newStars) {
-			return { success: true, firstTimeThreeStars: false };
+			return { success: true };
 		}
 
 		const result = await updateLevelProgress(
@@ -46,7 +46,11 @@ export const actions: Actions = {
 		);
 
 		if (!result) {
-			return { success: false, error: 'Failed to save progress', firstTimeThreeStars: false };
+			return {
+				success: false,
+				error: 'Failed to save progress',
+				firstTimeThreeStars: false
+			};
 		}
 
 		return { success: true, message: 'Progress updated!', firstTimeThreeStars };

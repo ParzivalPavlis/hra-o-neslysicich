@@ -5,7 +5,7 @@
 	import Button from '$components/ui/button/button.svelte';
 	import characterGroups from '$lib/levels/2/characterGroups';
 	import { getRandomDuration } from '$lib/shared/utils';
-	import { clearLevel1QuestionsState } from '$lib/stores/level1';
+	import { clearLevel2QuestionsState } from '$lib/stores/level2';
 	import { RotateCcw } from '@lucide/svelte';
 	import { onMount } from 'svelte';
 
@@ -237,12 +237,12 @@
 
 	onMount(() => {
 		startConversation();
-		clearLevel1QuestionsState();
+		clearLevel2QuestionsState();
 	});
 </script>
 
 <svelte:head>
-	<title>Úroveň 1</title>
+	<title>Úroveň 2</title>
 </svelte:head>
 
 <Layout1>

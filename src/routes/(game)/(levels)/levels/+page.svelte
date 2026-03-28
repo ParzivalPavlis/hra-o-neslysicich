@@ -13,8 +13,10 @@
 	let gameProgress = $derived(data.gameProgress);
 	let levelButtonRefs: HTMLDivElement[] = $state([]);
 	let currentViewedLevelIndex: number | null = $state(null);
-	let shouldPlayAnimation: boolean = $state(false);
-	let animationLevelNumber: number | null = $state(null);
+	let shouldPlayYellowAnimation: boolean = $state(false);
+	let yellowAnimationLevelNumber: number | null = $state(null);
+	let shouldPlayUnlockAnimation: boolean = $state(false);
+	let unlockAnimationLevelNumber: number | null = $state(null);
 	let levelMapImages = [
 		{ level: 1, src: '/assets/levelMap/manStudying.png' },
 		{ level: 2, src: '/assets/levelMap/manDrinking.png' },
@@ -116,20 +118,32 @@
 		};
 	});
 
-	// Check if animation should play when level comes into view
+	// Check for first 3 stars animation when user views the specific level
 	$effect(() => {
-		if (currentViewedLevelIndex !== null) {
+		if (currentViewedLevelIndex !== null && $lastPlayedStore.firstThreeStars) {
 			const levelNumber = currentViewedLevelIndex + 1;
 			const isLastPlayed = levelNumber === $lastPlayedStore.level;
 			const matchesFirstThreeStars = levelNumber === $lastPlayedStore.firstThreeStars;
 
+			// Yellow animation: when level is last played and first time getting 3 stars
 			if (isLastPlayed && matchesFirstThreeStars) {
-				shouldPlayAnimation = true;
-				animationLevelNumber = levelNumber;
+				shouldPlayYellowAnimation = true;
+				yellowAnimationLevelNumber = levelNumber;
 			} else {
-				shouldPlayAnimation = false;
-				animationLevelNumber = null;
+				shouldPlayYellowAnimation = false;
+				yellowAnimationLevelNumber = null;
 			}
+		}
+	});
+
+	// Check for unlock animation independently of which level is viewed
+	$effect(() => {
+		if ($lastPlayedStore.justUnlockedLevel) {
+			shouldPlayUnlockAnimation = true;
+			unlockAnimationLevelNumber = $lastPlayedStore.justUnlockedLevel;
+		} else {
+			shouldPlayUnlockAnimation = false;
+			unlockAnimationLevelNumber = null;
 		}
 	});
 </script>
@@ -163,7 +177,10 @@
 				{/if}
 				<LevelButton
 					attributes={{ icon, stars, locked, description, trails, level: index + 1, href }}
-					playAnimation={shouldPlayAnimation && index + 1 === animationLevelNumber}
+					playYellowAnimation={shouldPlayYellowAnimation &&
+						index + 1 === yellowAnimationLevelNumber}
+					playUnlockAnimation={shouldPlayUnlockAnimation &&
+						index + 1 === unlockAnimationLevelNumber}
 				/>
 				<div class="hidden w-60 md:flex">
 					{#if index % 2 !== 0}

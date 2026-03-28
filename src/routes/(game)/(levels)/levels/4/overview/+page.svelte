@@ -5,6 +5,8 @@
 	import { onMount } from 'svelte';
 	import Layout1 from '$components/layouts/Layout1.svelte';
 	import { setFirstThreeStars } from '$lib/stores/lastPlayed';
+	import { enhance } from '$app/forms';
+	import type { FormSaveLevelProgressResponseType } from '$lib/types/form';
 
 	let gameState = $derived($level4GameState);
 	let answers = $derived(gameState.answers);
@@ -36,44 +38,39 @@
 		goto('/levels');
 	}
 
-	async function saveLevelProgress() {
-		const formData = new FormData();
-		formData.append('stars', stars().toString());
-		formData.append('completed', 'true');
-
-		try {
-			const response = await fetch('?/saveLevelProgress', {
-				method: 'POST',
-				body: formData
-			});
-
-			const result = await response.json();
-			const data = JSON.parse(result.data);
-			const actionResult = data[0];
-
-			// Update store if first time getting 3 stars
-			if (actionResult?.firstTimeThreeStars === true) {
-				setFirstThreeStars(4);
-			}
-
-			// Force reload the game:progress cache
-			if (actionResult?.success) {
-				progressSaved = true;
-				await invalidate('game:progress');
-			}
-		} catch (error) {
-			console.error('Error saving level progress:', error);
-		}
-	}
-
 	onMount(() => {
-		saveLevelProgress();
+		// Auto-submit the form on mount
+		const form = document.querySelector('form');
+		if (form) form.requestSubmit();
 	});
 </script>
 
 <svelte:head>
 	<title>Úroveň 4 | Deafio</title>
 </svelte:head>
+
+<form
+	method="POST"
+	action="?/saveLevelProgress"
+	use:enhance={() => {
+		return async ({ result }) => {
+			if (result.type === 'success' && result.data) {
+				const actionResult = result.data as FormSaveLevelProgressResponseType;
+
+				if (actionResult.firstTimeThreeStars === true) {
+					setFirstThreeStars(4);
+				}
+				if (actionResult.success) {
+					progressSaved = true;
+					await invalidate('game:progress');
+				}
+			}
+		};
+	}}
+>
+	<input type="hidden" name="stars" value={stars()} />
+	<input type="hidden" name="completed" value="true" />
+</form>
 
 <Layout1 centered={false}>
 	<LevelCompletionCard

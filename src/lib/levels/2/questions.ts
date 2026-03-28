@@ -147,11 +147,11 @@ const group2: QuestionType[] = [
 	},
 	{
 		id: 13,
-		question: 'Jak vysoký je Luciin měsíční nájem a jak daleko to má do práce?',
+		question: 'Jak vysoký je Luciin měsíční nájem?',
 		options: [
-			{ id: 'a', text: '18 000 Kč a 10 minut pěšky', correct: true },
-			{ id: 'b', text: '15 000 Kč a 10 minut pěšky', correct: false },
-			{ id: 'c', text: '18 000 Kč a 20 minut tramvají', correct: false }
+			{ id: 'a', text: '18 000 Kč', correct: true },
+			{ id: 'b', text: '15 000 Kč', correct: false },
+			{ id: 'c', text: '17 000 Kč', correct: false }
 		]
 	},
 	{

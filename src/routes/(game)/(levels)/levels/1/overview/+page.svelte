@@ -1,15 +1,17 @@
 <script lang="ts">
 	import LevelCompletionCard from '$components/LevelCompletionCard.svelte';
 	import { level1QuestionsState } from '$lib/stores/level1';
-	import { setFirstThreeStars } from '$lib/stores/lastPlayed';
+	import { setFirstThreeStars, setJustUnlockedLevel } from '$lib/stores/lastPlayed';
 	import { goto, invalidate } from '$app/navigation';
 	import Layout1 from '$components/layouts/Layout1.svelte';
+	import { enhance } from '$app/forms';
 	import { onMount } from 'svelte';
+	import type { FormSaveLevelProgressResponseType } from '$lib/types/form';
 
 	let questionsState = $derived($level1QuestionsState);
 	let answers = $derived(questionsState.answers);
 	let correctAnswers = $derived(answers.filter((answer) => answer.isCorrect).length);
-	let totalQuestions = $derived(Math.max(answers.length, 6));
+	let totalQuestions = $derived(Math.max(answers.length, 4));
 
 	let stars = $derived(() => {
 		const percentage = (correctAnswers / totalQuestions) * 100;
@@ -34,44 +36,42 @@
 		goto('/levels');
 	}
 
-	async function saveLevelProgress() {
-		const formData = new FormData();
-		formData.append('stars', stars().toString());
-		formData.append('completed', 'true');
-
-		try {
-			const response = await fetch('?/saveLevelProgress', {
-				method: 'POST',
-				body: formData
-			});
-
-			const result = await response.json();
-			const data = JSON.parse(result.data);
-			const actionResult = data[0];
-
-			// Update store if first time getting 3 stars
-			if (actionResult?.firstTimeThreeStars === true) {
-				setFirstThreeStars(1);
-			}
-
-			// Force reload the game:progress cache
-			if (actionResult?.success) {
-				progressSaved = true;
-				await invalidate('game:progress');
-			}
-		} catch (error) {
-			console.error('Error saving level progress:', error);
-		}
-	}
-
 	onMount(() => {
-		saveLevelProgress();
+		// Auto-submit the form on mount
+		const form = document.querySelector('form');
+		if (form) form.requestSubmit();
 	});
 </script>
 
 <svelte:head>
 	<title>Úroveň 1 | Deafio</title>
 </svelte:head>
+
+<form
+	method="POST"
+	action="?/saveLevelProgress"
+	use:enhance={() => {
+		return async ({ result }) => {
+			if (result.type === 'success' && result.data) {
+				const actionResult = result.data as FormSaveLevelProgressResponseType;
+
+				if (actionResult.firstTimeThreeStars === true) {
+					setFirstThreeStars(1);
+				}
+				if (actionResult.unlockedLevel) {
+					setJustUnlockedLevel(actionResult.unlockedLevel);
+				}
+				if (actionResult.success) {
+					progressSaved = true;
+					await invalidate('game:progress');
+				}
+			}
+		};
+	}}
+>
+	<input type="hidden" name="stars" value={stars()} />
+	<input type="hidden" name="completed" value="true" />
+</form>
 
 <Layout1 centered={false}>
 	<LevelCompletionCard
