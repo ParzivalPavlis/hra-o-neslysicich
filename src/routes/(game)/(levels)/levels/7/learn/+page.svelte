@@ -1,3 +1,181 @@
+<script lang="ts">
+	import AnswerTab from '$components/AnswerTab.svelte';
+	import Layout2 from '$components/layouts/Layout2.svelte';
+	import LearningMenu from '$components/LearningMenu.svelte';
+	import PortraitOrientationWarning from '$components/PortraitOrientationWarning.svelte';
+	import VideoPlayer from '$components/VideoPlayer.svelte';
+	import { getOrientationInfo, shuffleArray } from '$lib/shared/utils';
+	import { answers } from '$lib/levels/7/answers';
+	import type { AnswerOptionType } from '$types/answer';
+	import {
+		initializeLevel7Game,
+		level7GameState,
+		modifyAnswer,
+		updateCurrentAnswer
+	} from '$lib/stores/level7';
+	import { onMount } from 'svelte';
+
+	let isPortrait = $state(true);
+	let isMobile = $state(false);
+	let showAnswerTab = $state(false);
+	let answerTabCollapsed = $state(false);
+	let videoEnded = $state(false);
+	let autoplayPrevented = $state(false);
+	let shuffledOptions = $state<AnswerOptionType[]>([]);
+	let selectedAnswer = $state<string | null>(null);
+	let showingFeedback = $state(false);
+	let isCorrect = $state(false);
+	let videoPlayerRef: any = $state(null);
+	let shuffledVideos = $state<number[]>([]);
+
+	let gameState = $derived($level7GameState);
+	let currentAnswerIndex = $derived(gameState.currentAnswerIndex);
+	let actualAnswerIndex = $derived(shuffledVideos[currentAnswerIndex] ?? currentAnswerIndex);
+
+	function updateOrientation() {
+		const orientation = getOrientationInfo();
+		isMobile = orientation.isMobile;
+		isPortrait = orientation.isPortrait;
+	}
+
+	function handleAnswerClick(optionId: string) {
+		if (showingFeedback) return;
+
+		const currentAnswer = answers[actualAnswerIndex];
+		const selectedOption = currentAnswer.options.find((opt) => opt.id === optionId);
+
+		if (selectedOption) {
+			selectedAnswer = optionId;
+			isCorrect = selectedOption.correct;
+			showingFeedback = true;
+
+			// Record the answer in the store
+			modifyAnswer(currentAnswerIndex, optionId, isCorrect);
+
+			setTimeout(() => {
+				showAnswerTab = false;
+				if (currentAnswerIndex < answers.length - 1) {
+					updateCurrentAnswer(currentAnswerIndex + 1);
+				} else {
+					console.log('Game completed!');
+				}
+				showingFeedback = false;
+				selectedAnswer = null;
+			}, 1500);
+		}
+	}
+
+	function handleSelectQuestion(questionIndex: number) {
+		if (questionIndex !== currentAnswerIndex) {
+			updateCurrentAnswer(questionIndex);
+			videoEnded = false;
+			showAnswerTab = false;
+		}
+	}
+
+	function handleVideoEnd() {
+		videoEnded = true;
+		showAnswerTab = true;
+	}
+
+	onMount(() => {
+		updateOrientation();
+		initializeLevel7Game();
+		// Create shuffled array of video indices [0, 1, 2, ..., 17]
+		const indices = Array.from({ length: answers.length }, (_, i) => i);
+		shuffledVideos = shuffleArray(indices);
+	});
+
+	$effect(() => {
+		videoEnded = false;
+		autoplayPrevented = false;
+		if (answers[actualAnswerIndex]) {
+			shuffledOptions = shuffleArray(answers[actualAnswerIndex].options);
+		}
+	});
+</script>
+
 <svelte:head>
 	<title>Úroveň 7 | Deafio</title>
 </svelte:head>
+
+<svelte:window on:orientationchange={updateOrientation} on:resize={updateOrientation} />
+<Layout2>
+	{#if isMobile && isPortrait}
+		<PortraitOrientationWarning />
+	{:else}
+		<LearningMenu
+			answers={gameState.answers}
+			{currentAnswerIndex}
+			totalQuestions={answers.length}
+			onSelectQuestion={handleSelectQuestion}
+		/>
+		<div class="flex w-full flex-col items-center justify-center landscape:gap-2">
+			<!-- Desktop layout with video and help button side by side -->
+			{#if !isMobile}
+				<div class="relative w-full max-w-6xl">
+					<div
+						class="relative aspect-video overflow-hidden rounded-lg border-2 border-foreground bg-transparent landscape:h-auto landscape:max-h-[calc(100vh-2rem)]"
+					>
+						<VideoPlayer
+							bind:this={videoPlayerRef}
+							videoSrc={answers[actualAnswerIndex].videoSrc}
+							bind:videoEnded
+							bind:autoplayPrevented
+							showSkipButton={true}
+							onVideoEnd={handleVideoEnd}
+						/>
+					</div>
+				</div>
+			{/if}
+
+			<!-- Mobile layout with video only -->
+			{#if isMobile}
+				<div
+					class="relative aspect-video w-full max-w-6xl overflow-hidden rounded-lg border-2 border-foreground bg-transparent landscape:h-auto landscape:max-h-[calc(100vh-2rem)]"
+				>
+					<VideoPlayer
+						bind:this={videoPlayerRef}
+						videoSrc={answers[actualAnswerIndex].videoSrc}
+						bind:videoEnded
+						bind:autoplayPrevented
+						showSkipButton={true}
+						onVideoEnd={handleVideoEnd}
+					/>
+				</div>
+			{/if}
+			<!-- Desktop answer tab -->
+			{#if !isMobile && videoEnded}
+				<AnswerTab
+					bind:showAnswerTab
+					bind:answerTabCollapsed
+					text="MOŽNOSTI"
+					onCollapsedChange={(collapsed) => (answerTabCollapsed = collapsed)}
+					{shuffledOptions}
+					onAnswerClick={handleAnswerClick}
+					{showingFeedback}
+					{selectedAnswer}
+					{isCorrect}
+					{isPortrait}
+					{isMobile}
+				/>
+			{/if}
+		</div>
+	{/if}
+	<!-- Answer tab for mobile -->
+	{#if isMobile && !isPortrait}
+		<AnswerTab
+			bind:showAnswerTab
+			bind:answerTabCollapsed
+			text="MOŽNOSTI"
+			onCollapsedChange={(collapsed) => (answerTabCollapsed = collapsed)}
+			{shuffledOptions}
+			onAnswerClick={handleAnswerClick}
+			{showingFeedback}
+			{selectedAnswer}
+			{isCorrect}
+			{isPortrait}
+			{isMobile}
+		/>
+	{/if}
+</Layout2>

@@ -3,7 +3,7 @@
 	import AnswerTab from '$components/AnswerTab.svelte';
 	import Layout2 from '$components/layouts/Layout2.svelte';
 	import PortraitOrientationWarning from '$components/PortraitOrientationWarning.svelte';
-	import { shuffleArray } from '$lib/shared/utils';
+	import { shuffleArray, getOrientationInfo } from '$lib/shared/utils';
 	import { onMount } from 'svelte';
 	import { goto } from '$app/navigation';
 	import { answers } from '$lib/levels/4/answers';
@@ -37,9 +37,9 @@
 	let lives = $derived(gameState.lives);
 
 	function updateOrientation() {
-		const userAgent = navigator.userAgent.toLowerCase();
-		isMobile = /android|webos|iphone|ipad|ipod|blackberry|iemobile|opera mini/.test(userAgent);
-		isPortrait = window.innerHeight > window.innerWidth;
+		const orientation = getOrientationInfo();
+		isMobile = orientation.isMobile;
+		isPortrait = orientation.isPortrait;
 	}
 
 	function handleAnswerClick(optionId: string) {

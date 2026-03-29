@@ -49,6 +49,13 @@ export function updateMap<K, V>(map: Map<K, V>, key: K, value: V): Map<K, V> {
 	return new Map(map);
 }
 
+export function getOrientationInfo() {
+	const userAgent = navigator.userAgent.toLowerCase();
+	const isMobile = /android|webos|iphone|ipad|ipod|blackberry|iemobile|opera mini/.test(userAgent);
+	const isPortrait = window.innerHeight > window.innerWidth;
+	return { isMobile, isPortrait };
+}
+
 export function deleteFromMap<K, V>(map: Map<K, V>, key: K): Map<K, V> {
 	map.delete(key);
 	return new Map(map);

@@ -58,8 +58,8 @@
 		{#if introState === 2}
 			<Paragraph variant={3} className="font-bold">Vysvětlivky:</Paragraph>
 			<Paragraph>
-				Tato úrověn je rozdělena na dvě části. V první části se naučíte několik základních znaků
-				znakového jazyka a ve druhé části bude vaším cílem porozumět konverzacím mezi neslyšícími.
+				Tato úrověn je rozdělena na dvě části. První část je zaměřena na učení znakového jazyka a
+				druhá část je test, kde si vyzkoušíte své znalosti.
 			</Paragraph>
 			<ReplayButton />
 			<GameButton class="mt-5 w-full max-w-[80%] md:max-w-150" onclick={handleContinue}>
@@ -74,9 +74,9 @@
 				</GameButton>
 			</div>
 			<div class="mt-10 flex w-full flex-col items-center gap-3">
-				<Paragraph variant={3} className="text-center">Přejít rovnou na konverzace:</Paragraph>
+				<Paragraph variant={3} className="text-center">Přejít rovnou na test:</Paragraph>
 				<GameButton class="w-full max-w-[80%] md:max-w-150" onclick={handleContinue}>
-					Konverzace
+					Testovat znalosti
 				</GameButton>
 			</div>
 		{/if}

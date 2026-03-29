@@ -20,9 +20,11 @@
 	>
 		<RotateCcw size={55} color="white" />
 	</button>
-	<div
-		class="absolute -right-1 -bottom-1 flex h-7 w-7 items-center justify-center rounded-full border-2 border-white bg-black"
-	>
-		<span class="text-xs font-bold text-white">{helpUses}</span>
-	</div>
+	{#if helpUses > 0}
+		<div
+			class="absolute -right-1 -bottom-1 flex h-7 w-7 items-center justify-center rounded-full border-2 border-white bg-black"
+		>
+			<span class="text-xs font-bold text-white">{helpUses}</span>
+		</div>
+	{/if}
 </div>

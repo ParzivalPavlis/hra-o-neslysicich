@@ -18,7 +18,7 @@
 		videoSrc,
 		videoEnded = $bindable(false),
 		autoplayPrevented = $bindable(false),
-		helpUses = 3,
+		helpUses,
 		showSkipButton = false,
 		onReplay,
 		onVideoEnd,
