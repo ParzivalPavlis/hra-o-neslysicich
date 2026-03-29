@@ -25,6 +25,7 @@
 	let selectedAnswer = $state<string | null>(null);
 	let showingFeedback = $state(false);
 	let isCorrect = $state(false);
+	let correctAnswerId = $state<string | null>(null);
 	let videoPlayerRef: any = $state(null);
 	let shuffledVideos = $state<number[]>([]);
 
@@ -91,6 +92,9 @@
 		autoplayPrevented = false;
 		if (answers[actualAnswerIndex]) {
 			shuffledOptions = shuffleArray(answers[actualAnswerIndex].options);
+			// Find the correct answer ID
+			const correctOption = answers[actualAnswerIndex].options.find((opt) => opt.correct);
+			correctAnswerId = correctOption?.id ?? null;
 		}
 	});
 </script>
@@ -109,6 +113,7 @@
 			{currentAnswerIndex}
 			totalQuestions={answers.length}
 			onSelectQuestion={handleSelectQuestion}
+			{isMobile}
 		/>
 		<div class="flex w-full flex-col items-center justify-center landscape:gap-2">
 			<!-- Desktop layout with video and help button side by side -->
@@ -156,6 +161,7 @@
 					{showingFeedback}
 					{selectedAnswer}
 					{isCorrect}
+					{correctAnswerId}
 					{isPortrait}
 					{isMobile}
 				/>
@@ -174,8 +180,14 @@
 			{showingFeedback}
 			{selectedAnswer}
 			{isCorrect}
+			{correctAnswerId}
 			{isPortrait}
 			{isMobile}
+			showQuestionsMenu={true}
+			answers={gameState.answers}
+			{currentAnswerIndex}
+			totalQuestions={answers.length}
+			onSelectQuestion={handleSelectQuestion}
 		/>
 	{/if}
 </Layout2>
