@@ -1,5 +1,5 @@
 import type { PageServerLoad, Actions } from './$types';
-import { updateLevelProgress, getLevelProgress } from '$lib/server/services';
+import { updateLevelProgress, getLevelProgress, unlockNextLevel } from '$lib/server/services';
 
 export const load: PageServerLoad = async ({ locals: { safeGetSession } }) => {
 	const { session } = await safeGetSession();
@@ -24,7 +24,7 @@ export const actions: Actions = {
 		const newStars = parseInt(formData.get('stars') as string) as 0 | 1 | 2 | 3;
 
 		// Get current level progress
-		const currentProgress = await getLevelProgress(session.user.id, 4, supabase);
+		const currentProgress = await getLevelProgress(session.user.id, 7, supabase);
 
 		// Check if this is first time getting 3 stars
 		const firstTimeThreeStars = newStars === 3 && (!currentProgress || currentProgress.stars < 3);
@@ -36,7 +36,7 @@ export const actions: Actions = {
 
 		const result = await updateLevelProgress(
 			session.user.id,
-			4,
+			7,
 			{
 				stars: newStars,
 				completed: true,
@@ -52,6 +52,13 @@ export const actions: Actions = {
 			};
 		}
 
-		return { success: true, message: 'Progress updated!', firstTimeThreeStars };
+		const wasUnlocked = newStars >= 1 && (await unlockNextLevel(session.user.id, 7, supabase));
+
+		return {
+			success: true,
+			message: 'Progress updated!',
+			firstTimeThreeStars,
+			unlockedLevel: wasUnlocked ? 8 : undefined
+		};
 	}
 };

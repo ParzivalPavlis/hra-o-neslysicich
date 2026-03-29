@@ -54,7 +54,7 @@ export const levels: LevelButtonType[] = [
 		icon: Hand,
 		stars: 0,
 		locked: false,
-		description: 'Naučte se znakovou řeč',
+		description: 'Zkuste si znakovou řeč',
 		href: '/levels/7/intro',
 		trails: 3
 	},
@@ -62,7 +62,7 @@ export const levels: LevelButtonType[] = [
 		icon: Hand,
 		stars: 0,
 		locked: true,
-		description: 'Kliknutím znovu pro spuštění',
+		description: 'Porozumějte znakované konverzaci',
 		href: '/levels/8',
 		trails: 5
 	},
