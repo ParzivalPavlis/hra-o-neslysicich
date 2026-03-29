@@ -195,7 +195,7 @@
 				</Paragraph>
 			</div>
 			<div in:fade={{ delay: 3000, duration: 3000 }}>
-				<Paragraph>
+				<Paragraph className="mt-5">
 					Dokážeme se díky němu například orientovat v prostoru, užívat si hudbu a také hlavně
 					efektivně komunikovat s ostatními a dokážeme ihned zjistit, co se děje kolem nás a o čem
 					se lidé baví.
