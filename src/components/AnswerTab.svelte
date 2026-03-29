@@ -4,6 +4,7 @@
 	import GameButton from '$components/GameButton.svelte';
 	import type { AnswerOptionType } from '$types/answer';
 	import type { LevelAnswersState } from '$types/store';
+	import { goto } from '$app/navigation';
 
 	type Props = {
 		showAnswerTab: boolean;
@@ -23,6 +24,7 @@
 		currentAnswerIndex?: number;
 		totalQuestions?: number;
 		onSelectQuestion?: (index: number) => void;
+		compleationLink?: string;
 	};
 
 	let {
@@ -42,7 +44,8 @@
 		answers = [],
 		currentAnswerIndex = 0,
 		totalQuestions = 0,
-		onSelectQuestion
+		onSelectQuestion,
+		compleationLink
 	}: Props = $props();
 
 	let listTabCollapsed = $state(true);
@@ -63,6 +66,18 @@
 		const answer = answers.find((a) => a.questionId === questionIndex);
 		if (!answer) return 'unanswered';
 		return answer.isCorrect ? 'correct' : 'incorrect';
+	}
+
+	function isLastQuestionAnswered(): boolean {
+		if (totalQuestions === 0) return false;
+		const lastAnswer = answers.find((a) => a.questionId === totalQuestions - 1);
+		return !!lastAnswer;
+	}
+
+	function handleContinue() {
+		if (compleationLink) {
+			goto(compleationLink);
+		}
 	}
 
 	$effect(() => {
@@ -140,29 +155,34 @@
 							{/each}
 						</div>
 					{:else if !listTabCollapsed && totalQuestions > 0}
-						<div class="grid w-full grid-cols-6 gap-2">
-							{#each Array.from({ length: totalQuestions }, (_, i) => i) as questionIndex (questionIndex)}
-								<button
-									type="button"
-									onclick={() => onSelectQuestion?.(questionIndex)}
-									class={`flex min-w-15 cursor-pointer flex-col items-center gap-1 rounded-lg p-2 transition-all ${
-										currentAnswerIndex === questionIndex
-											? 'border-2 border-secondary bg-secondary/5'
-											: 'border-2 border-gray-300 bg-gray-200 text-foreground hover:bg-gray-300'
-									}`}
-								>
-									<span class="text-1xl font-bold">{questionIndex + 1}</span>
-									<div
-										class={`h-2 w-2 rounded-full ${
-											getStatus(questionIndex) === 'correct'
-												? 'bg-green-500'
-												: getStatus(questionIndex) === 'incorrect'
-													? 'bg-red-500'
-													: 'bg-gray-400'
+						<div class="flex w-full flex-col">
+							<div class="grid w-full grid-cols-6 gap-2">
+								{#each Array.from({ length: totalQuestions }, (_, i) => i) as questionIndex (questionIndex)}
+									<button
+										type="button"
+										onclick={() => onSelectQuestion?.(questionIndex)}
+										class={`flex min-w-15 cursor-pointer flex-col items-center gap-1 rounded-lg p-2 transition-all ${
+											currentAnswerIndex === questionIndex
+												? 'border-2 border-secondary bg-secondary/5'
+												: 'border-2 border-gray-300 bg-gray-200 text-foreground hover:bg-gray-300'
 										}`}
-									></div>
-								</button>
-							{/each}
+									>
+										<span class="text-1xl font-bold">{questionIndex + 1}</span>
+										<div
+											class={`h-2 w-2 rounded-full ${
+												getStatus(questionIndex) === 'correct'
+													? 'bg-green-500'
+													: getStatus(questionIndex) === 'incorrect'
+														? 'bg-red-500'
+														: 'bg-gray-400'
+											}`}
+										></div>
+									</button>
+								{/each}
+							</div>
+							{#if isLastQuestionAnswered() && compleationLink}
+								<GameButton class="mt-4" onclick={handleContinue}>Pokračovat</GameButton>
+							{/if}
 						</div>
 					{/if}
 				</div>

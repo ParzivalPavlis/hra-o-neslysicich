@@ -1,5 +1,7 @@
 <script lang="ts">
+	import { goto } from '$app/navigation';
 	import type { LevelAnswersState } from '$types/store';
+	import GameButton from './GameButton.svelte';
 
 	type Props = {
 		answers: LevelAnswersState[];
@@ -7,6 +9,7 @@
 		totalQuestions: number;
 		onSelectQuestion: (index: number) => void;
 		isMobile?: boolean;
+		compleationLink?: string;
 	};
 
 	let {
@@ -14,13 +17,26 @@
 		currentAnswerIndex,
 		totalQuestions,
 		onSelectQuestion,
-		isMobile = false
+		isMobile = false,
+		compleationLink
 	}: Props = $props();
 
 	function getStatus(questionIndex: number) {
 		const answer = answers.find((a) => a.questionId === questionIndex);
 		if (!answer) return 'unanswered';
 		return answer.isCorrect ? 'correct' : 'incorrect';
+	}
+
+	function isLastQuestionAnswered(): boolean {
+		if (totalQuestions === 0) return false;
+		const lastAnswer = answers.find((a) => a.questionId === totalQuestions - 1);
+		return !!lastAnswer;
+	}
+
+	function handleContinue() {
+		if (compleationLink) {
+			goto(compleationLink);
+		}
 	}
 </script>
 
@@ -51,5 +67,8 @@
 				</button>
 			{/each}
 		</div>
+		{#if isLastQuestionAnswered() && compleationLink}
+			<GameButton onclick={handleContinue}>Pokračovat</GameButton>
+		{/if}
 	</div>
 {/if}

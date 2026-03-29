@@ -58,7 +58,7 @@
 				if (currentAnswerIndex < answers.length - 1) {
 					updateCurrentAnswer(currentAnswerIndex + 1);
 				} else {
-					console.log('Game completed!');
+					showAnswerTab = true;
 				}
 				showingFeedback = false;
 				selectedAnswer = null;
@@ -113,6 +113,7 @@
 			{currentAnswerIndex}
 			totalQuestions={answers.length}
 			onSelectQuestion={handleSelectQuestion}
+			compleationLink="/levels/7/game"
 			{isMobile}
 		/>
 		<div class="flex w-full flex-col items-center justify-center landscape:gap-2">
@@ -187,6 +188,7 @@
 			{currentAnswerIndex}
 			totalQuestions={answers.length}
 			onSelectQuestion={handleSelectQuestion}
+			compleationLink="/levels/7/game"
 		/>
 	{/if}
 </Layout2>
