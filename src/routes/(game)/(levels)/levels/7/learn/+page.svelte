@@ -183,7 +183,6 @@
 			{correctAnswerId}
 			{isPortrait}
 			{isMobile}
-			showQuestionsMenu={true}
 			answers={gameState.answers}
 			{currentAnswerIndex}
 			totalQuestions={answers.length}

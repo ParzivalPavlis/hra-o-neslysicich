@@ -19,7 +19,6 @@
 		isPortrait?: boolean;
 		isMobile?: boolean;
 		disabledButtons?: Record<string, boolean>;
-		showQuestionsMenu?: boolean;
 		answers?: LevelAnswersState[];
 		currentAnswerIndex?: number;
 		totalQuestions?: number;
@@ -40,14 +39,13 @@
 		isPortrait = true,
 		isMobile = false,
 		disabledButtons,
-		showQuestionsMenu = false,
 		answers = [],
 		currentAnswerIndex = 0,
 		totalQuestions = 0,
 		onSelectQuestion
 	}: Props = $props();
 
-	let menuCollapsed = $state(true);
+	let listTabCollapsed = $state(true);
 
 	function showColorFeedback(optionId: string): 1 | 2 | 3 {
 		// Show red for disabled (incorrect) buttons
@@ -68,7 +66,10 @@
 	}
 
 	$effect(() => {
-		// Reset when new question loads
+		if (showAnswerTab) {
+			listTabCollapsed = true;
+			answerTabCollapsed = false;
+		}
 		shuffledOptions;
 	});
 </script>
@@ -78,15 +79,15 @@
 		<!-- Mobile landscape: collapsible tab at bottom -->
 		<div
 			class="fixed right-0 bottom-0 left-0 z-40 transition-all duration-300"
-			class:max-h-96={!answerTabCollapsed || !menuCollapsed}
-			class:max-h-20={answerTabCollapsed && menuCollapsed}
+			class:max-h-96={!answerTabCollapsed || !listTabCollapsed}
+			class:max-h-20={answerTabCollapsed && listTabCollapsed}
 		>
 			<div class="flex gap-2 border-foreground px-2 pt-1">
 				<button
 					onclick={() => {
 						answerTabCollapsed = !answerTabCollapsed;
 						onCollapsedChange(answerTabCollapsed);
-						menuCollapsed = true;
+						listTabCollapsed = true;
 					}}
 					class="flex flex-1 items-center justify-center gap-2 rounded-t-lg border-2 border-foreground px-2 py-1 transition-all {answerTabCollapsed
 						? 'border-black bg-white'
@@ -100,19 +101,19 @@
 					/>
 					{text}
 				</button>
-				{#if showQuestionsMenu && totalQuestions > 0}
+				{#if totalQuestions > 0}
 					<button
 						onclick={() => {
-							menuCollapsed = !menuCollapsed;
+							listTabCollapsed = !listTabCollapsed;
 							answerTabCollapsed = true;
 						}}
-						class="flex flex-1 items-center justify-center gap-2 rounded-t-lg border-2 border-foreground px-2 py-1 transition-all {menuCollapsed
+						class="flex flex-1 items-center justify-center gap-2 rounded-t-lg border-2 border-foreground px-2 py-1 transition-all {listTabCollapsed
 							? 'border-black bg-white'
 							: 'border-primary bg-primary text-white'}"
 					>
 						<ChevronUp
 							size={24}
-							class="rotate-180 transition-transform duration-300 {menuCollapsed
+							class="rotate-180 transition-transform duration-300 {listTabCollapsed
 								? 'rotate-360'
 								: ''}"
 						/>
@@ -120,7 +121,7 @@
 					</button>
 				{/if}
 			</div>
-			{#if !answerTabCollapsed || !menuCollapsed}
+			{#if !answerTabCollapsed || !listTabCollapsed}
 				<div
 					class="flex overflow-y-auto border-t-2 border-foreground bg-white p-4"
 					transition:fly={{ y: 100, duration: 300 }}
@@ -138,8 +139,8 @@
 								</GameButton>
 							{/each}
 						</div>
-					{:else if !menuCollapsed && showQuestionsMenu && totalQuestions > 0}
-						<div class="flex w-full flex-wrap gap-2">
+					{:else if !listTabCollapsed && totalQuestions > 0}
+						<div class="grid w-full grid-cols-6 gap-2">
 							{#each Array.from({ length: totalQuestions }, (_, i) => i) as questionIndex (questionIndex)}
 								<button
 									type="button"
@@ -150,7 +151,7 @@
 											: 'border-2 border-gray-300 bg-gray-200 text-foreground hover:bg-gray-300'
 									}`}
 								>
-									<span class="text-xs font-bold">{questionIndex + 1}</span>
+									<span class="text-1xl font-bold">{questionIndex + 1}</span>
 									<div
 										class={`h-2 w-2 rounded-full ${
 											getStatus(questionIndex) === 'correct'
