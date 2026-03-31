@@ -1,20 +1,22 @@
 <script lang="ts">
 	import { HeartHandshake } from '@lucide/svelte';
+	import { cn } from '$lib/utils';
 
 	type Props = {
-		lives: number;
+		lives?: number;
 		size?: number;
 		maxLives?: number;
+		orientation?: 'horizontal' | 'vertical';
 	};
 
-	let { lives = 4, maxLives = 4, size = 30 }: Props = $props();
+	let { lives = 4, maxLives = 4, size = 30, orientation = 'vertical' }: Props = $props();
 </script>
 
-<div class="w-fit">
+<div class={cn('w-fit', orientation === 'vertical' ? 'flex flex-col' : 'flex flex-row gap-1')}>
 	{#each Array(maxLives) as _, i}
 		<HeartHandshake
 			{size}
-			class="transition-all duration-500 {i < lives ? 'text-red-600' : 'text-gray-300'}"
+			class="transition-all duration-500 {i < maxLives - lives ? 'text-gray-300' : 'text-red-600'}"
 		/>
 	{/each}
 </div>

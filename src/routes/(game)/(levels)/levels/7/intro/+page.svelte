@@ -2,7 +2,7 @@
 	import { goto } from '$app/navigation';
 	import GameButton from '$components/GameButton.svelte';
 	import Layout1 from '$components/layouts/Layout1.svelte';
-	import ReplayButton from '$components/tutorials/ReplayButton.svelte';
+	import ReplayButtonTutorial from '$components/tutorials/ReplayButton.svelte';
 	import Paragraph from '$components/typography/Paragraph.svelte';
 	import { setLastPlayed } from '$lib/stores/lastPlayed';
 	import { onMount } from 'svelte';
@@ -36,7 +36,7 @@
 </svelte:head>
 
 <Layout1>
-	<div class="flex w-full max-w-150 flex-col items-center text-justify">
+	<div class="text-justif flex w-full max-w-150 flex-col items-center gap-3">
 		{#if introState === 1 && fadeAnimations}
 			<div in:fade={{ duration: 3000 }}>
 				<Paragraph>
@@ -45,7 +45,7 @@
 				</Paragraph>
 			</div>
 			<div in:fade={{ delay: 3000, duration: 3000 }}>
-				<Paragraph className="mt-5">
+				<Paragraph>
 					Díky znakové řeči mohou neslyšící lidé sdílet informace, vyjadřovat emoce a plnohodnotně
 					komunikovat s ostatními. Zároveň jim umožňuje lépe porozumět světu kolem sebe a aktivně se
 					zapojit do běžných situací, které jsou pro slyšící samozřejmé.
@@ -61,21 +61,17 @@
 				Tato úrověn je rozdělena na dvě části. První část je zaměřena na učení znakového jazyka a
 				druhá část je test, kde si vyzkoušíte své znalosti.
 			</Paragraph>
-			<ReplayButton />
-			<GameButton class="mt-5 w-full max-w-[80%] md:max-w-150" onclick={handleContinue}>
-				Pokračovat
-			</GameButton>
+			<ReplayButtonTutorial />
+			<GameButton class="w-full md:max-w-150" onclick={handleContinue}>Pokračovat</GameButton>
 		{/if}
 		{#if introState === 3}
 			<div class="flex w-full flex-col items-center gap-3">
 				<Paragraph variant={3} className="text-center">Začít se učit znakový jazyk:</Paragraph>
-				<GameButton class="w-full max-w-[80%] md:max-w-150" onclick={handleLearn}>
-					Učit se
-				</GameButton>
+				<GameButton class="w-full md:max-w-150" onclick={handleLearn}>Učit se</GameButton>
 			</div>
 			<div class="mt-10 flex w-full flex-col items-center gap-3">
 				<Paragraph variant={3} className="text-center">Přejít rovnou na test:</Paragraph>
-				<GameButton class="w-full max-w-[80%] md:max-w-150" onclick={handleContinue}>
+				<GameButton class="w-full md:max-w-150" onclick={handleContinue}>
 					Testovat znalosti
 				</GameButton>
 			</div>

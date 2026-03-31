@@ -38,6 +38,6 @@
 		životy, budete muset začít úroveň znovu.
 	</Paragraph>
 	<div class="mx-auto">
-		<LivesIndicator {lives} size={30} />
+		<LivesIndicator {lives} {maxLives} size={30} />
 	</div>
 </div>

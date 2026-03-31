@@ -1,8 +1,10 @@
 <script lang="ts">
-	import { ChevronUp } from '@lucide/svelte';
 	import { fly } from 'svelte/transition';
 	import GameButton from '$components/GameButton.svelte';
-	import type { AnswerOptionType } from '$types/answer';
+	import ConversationNavigator from '$components/ConversationNavigator.svelte';
+	import QuestionSelector from '$components/QuestionSelector.svelte';
+	import MobileQuestionSelector from '$components/MobileQuestionSelector.svelte';
+	import type { AnswerOptionType, ConversationOptionType } from '$types/answer';
 	import type { LevelAnswersState } from '$types/store';
 	import { goto } from '$app/navigation';
 
@@ -11,7 +13,7 @@
 		answerTabCollapsed: boolean;
 		text?: string;
 		onCollapsedChange: (collapsed: boolean) => void;
-		shuffledOptions: AnswerOptionType[];
+		shuffledOptions: AnswerOptionType[] | ConversationOptionType[];
 		onAnswerClick: (optionId: string) => void;
 		showingFeedback: boolean;
 		selectedAnswer: string | null;
@@ -49,6 +51,17 @@
 	}: Props = $props();
 
 	let listTabCollapsed = $state(true);
+	let currentConversationIndex = $state(0);
+
+	function isConversationOption(option: any): option is ConversationOptionType {
+		return 'dialogue' in option && !('text' in option);
+	}
+
+	function isConversationOptions(
+		options: AnswerOptionType[] | ConversationOptionType[]
+	): options is ConversationOptionType[] {
+		return options.length > 0 && isConversationOption(options[0]);
+	}
 
 	function showColorFeedback(optionId: string): 1 | 2 | 3 {
 		// Show red for disabled (incorrect) buttons
@@ -60,12 +73,6 @@
 		// Highlight selected wrong answer in red
 		if (selectedAnswer === optionId) return isCorrect ? 2 : 3;
 		return 1;
-	}
-
-	function getStatus(questionIndex: number) {
-		const answer = answers.find((a) => a.questionId === questionIndex);
-		if (!answer) return 'unanswered';
-		return answer.isCorrect ? 'correct' : 'incorrect';
 	}
 
 	function isLastQuestionAnswered(): boolean {
@@ -85,8 +92,23 @@
 			listTabCollapsed = true;
 			answerTabCollapsed = false;
 		}
-		shuffledOptions;
 	});
+
+	$effect(() => {
+		currentConversationIndex = 0;
+		currentAnswerIndex;
+	});
+
+	function toggleAnswerTab() {
+		answerTabCollapsed = !answerTabCollapsed;
+		onCollapsedChange(answerTabCollapsed);
+		listTabCollapsed = true;
+	}
+
+	function toggleQuestionTab() {
+		listTabCollapsed = !listTabCollapsed;
+		answerTabCollapsed = true;
+	}
 </script>
 
 {#if showAnswerTab}
@@ -97,110 +119,83 @@
 			class:max-h-96={!answerTabCollapsed || !listTabCollapsed}
 			class:max-h-20={answerTabCollapsed && listTabCollapsed}
 		>
-			<div class="flex gap-2 border-foreground px-2 pt-1">
-				<button
-					onclick={() => {
-						answerTabCollapsed = !answerTabCollapsed;
-						onCollapsedChange(answerTabCollapsed);
-						listTabCollapsed = true;
-					}}
-					class="flex flex-1 items-center justify-center gap-2 rounded-t-lg border-2 border-foreground px-2 py-1 transition-all {answerTabCollapsed
-						? 'border-black bg-white'
-						: 'border-primary bg-primary text-white'}"
-				>
-					<ChevronUp
-						size={24}
-						class="rotate-180 transition-transform duration-300 {answerTabCollapsed
-							? 'rotate-360'
-							: ''}"
-					/>
-					{text}
-				</button>
-				{#if totalQuestions > 0}
-					<button
-						onclick={() => {
-							listTabCollapsed = !listTabCollapsed;
-							answerTabCollapsed = true;
-						}}
-						class="flex flex-1 items-center justify-center gap-2 rounded-t-lg border-2 border-foreground px-2 py-1 transition-all {listTabCollapsed
-							? 'border-black bg-white'
-							: 'border-primary bg-primary text-white'}"
-					>
-						<ChevronUp
-							size={24}
-							class="rotate-180 transition-transform duration-300 {listTabCollapsed
-								? 'rotate-360'
-								: ''}"
-						/>
-						SEZNAM
-					</button>
-				{/if}
-			</div>
+			<MobileQuestionSelector
+				{answerTabCollapsed}
+				{listTabCollapsed}
+				{text}
+				{totalQuestions}
+				onToggleAnswers={toggleAnswerTab}
+				onToggleQuestions={toggleQuestionTab}
+			/>
 			{#if !answerTabCollapsed || !listTabCollapsed}
 				<div
 					class="flex overflow-y-auto border-t-2 border-foreground bg-white p-4"
 					transition:fly={{ y: 100, duration: 300 }}
 				>
 					{#if !answerTabCollapsed}
-						<div class="flex w-full flex-col gap-4">
-							{#each shuffledOptions as option (option.id)}
-								<GameButton
-									size="small"
-									onclick={() => onAnswerClick(option.id)}
-									variant={showColorFeedback(option.id)}
-									disabled={disabledButtons?.[option.id] ?? false}
-								>
-									{option.text}
-								</GameButton>
-							{/each}
-						</div>
-					{:else if !listTabCollapsed && totalQuestions > 0}
-						<div class="flex w-full flex-col">
-							<div class="grid w-full grid-cols-6 gap-2">
-								{#each Array.from({ length: totalQuestions }, (_, i) => i) as questionIndex (questionIndex)}
-									<button
-										type="button"
-										onclick={() => onSelectQuestion?.(questionIndex)}
-										class={`flex min-w-15 cursor-pointer flex-col items-center gap-1 rounded-lg p-2 transition-all ${
-											currentAnswerIndex === questionIndex
-												? 'border-2 border-secondary bg-secondary/5'
-												: 'border-2 border-gray-300 bg-gray-200 text-foreground hover:bg-gray-300'
-										}`}
+						{#if isConversationOptions(shuffledOptions)}
+							<ConversationNavigator
+								options={shuffledOptions}
+								selectedIndex={currentConversationIndex}
+								disabled={false}
+								onOptionClick={(index) => onAnswerClick(shuffledOptions[index].id)}
+								variant={showColorFeedback}
+								getDisabledOption={(optionId) => disabledButtons?.[optionId] ?? false}
+							/>
+						{:else}
+							<div class="flex w-full flex-col gap-4">
+								{#each shuffledOptions as option (option.id)}
+									<GameButton
+										size="small"
+										onclick={() => onAnswerClick(option.id)}
+										variant={showColorFeedback(option.id)}
+										disabled={disabledButtons?.[option.id] ?? false}
 									>
-										<span class="text-1xl font-bold">{questionIndex + 1}</span>
-										<div
-											class={`h-2 w-2 rounded-full ${
-												getStatus(questionIndex) === 'correct'
-													? 'bg-green-500'
-													: getStatus(questionIndex) === 'incorrect'
-														? 'bg-red-500'
-														: 'bg-gray-400'
-											}`}
-										></div>
-									</button>
+										{option.text}
+									</GameButton>
 								{/each}
 							</div>
-							{#if isLastQuestionAnswered() && compleationLink}
-								<GameButton class="mt-4" onclick={handleContinue}>Pokračovat</GameButton>
-							{/if}
-						</div>
+						{/if}
+					{:else if !listTabCollapsed && totalQuestions > 0}
+						<QuestionSelector
+							{totalQuestions}
+							{currentAnswerIndex}
+							{answers}
+							{onSelectQuestion}
+							isLastQuestionAnswered={isLastQuestionAnswered()}
+							{compleationLink}
+							onContinue={handleContinue}
+						/>
 					{/if}
 				</div>
 			{/if}
 		</div>
 	{:else if !isMobile}
 		<!-- Desktop: regular layout -->
-		<div class="mx-auto mt-4 flex w-full max-w-6xl flex-col gap-4">
-			{#each shuffledOptions as option (option.id)}
-				<GameButton
-					size="small"
-					onclick={() => onAnswerClick(option.id)}
-					variant={showColorFeedback(option.id)}
-					disabled={disabledButtons?.[option.id] ?? false}
-				>
-					{option.text}
-				</GameButton>
-			{/each}
-		</div>
+		{#if isConversationOptions(shuffledOptions)}
+			<div class="mx-auto mt-4 flex w-full max-w-6xl flex-col gap-4">
+				<ConversationNavigator
+					options={shuffledOptions}
+					selectedIndex={currentConversationIndex}
+					disabled={false}
+					onOptionClick={(index) => onAnswerClick(shuffledOptions[index].id)}
+					variant={showColorFeedback}
+					getDisabledOption={(optionId) => disabledButtons?.[optionId] ?? false}
+				/>
+			</div>
+		{:else}
+			<div class="mx-auto mt-4 flex w-full max-w-6xl flex-col gap-4">
+				{#each shuffledOptions as option (option.id)}
+					<GameButton
+						size="small"
+						onclick={() => onAnswerClick(option.id)}
+						variant={showColorFeedback(option.id)}
+						disabled={disabledButtons?.[option.id] ?? false}
+					>
+						{option.text}
+					</GameButton>
+				{/each}
+			</div>
+		{/if}
 	{/if}
 {/if}

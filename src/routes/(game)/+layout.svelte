@@ -17,7 +17,12 @@
 	});
 
 	// Pages that should be landscape-only
-	const landscapeOnlyPages = ['/levels/4/game', '/levels/7/game', '/levels/7/learn'];
+	const landscapeOnlyPages = [
+		'/levels/4/game',
+		'/levels/7/game',
+		'/levels/7/learn',
+		'/levels/8/game'
+	];
 
 	function shouldBeLandscapeOnly(pathname: string): boolean {
 		return landscapeOnlyPages.some((p) => pathname.includes(p));

@@ -63,7 +63,7 @@ export const levels: LevelButtonType[] = [
 		stars: 0,
 		locked: true,
 		description: 'Porozumějte znakované konverzaci',
-		href: '/levels/8',
+		href: '/levels/8/intro',
 		trails: 5
 	},
 	{

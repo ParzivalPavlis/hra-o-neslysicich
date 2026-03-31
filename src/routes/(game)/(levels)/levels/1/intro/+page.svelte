@@ -186,7 +186,7 @@
 </svelte:head>
 
 <Layout1>
-	<div class="flex w-full max-w-150 flex-col items-center text-justify">
+	<div class="text-justif flex w-full max-w-150 flex-col items-center gap-3">
 		{#if introState === 1 && fadeAnimations}
 			<div in:fade={{ duration: 3000 }}>
 				<Paragraph>
@@ -195,14 +195,14 @@
 				</Paragraph>
 			</div>
 			<div in:fade={{ delay: 3000, duration: 3000 }}>
-				<Paragraph className="mt-5">
+				<Paragraph>
 					Dokážeme se díky němu například orientovat v prostoru, užívat si hudbu a také hlavně
 					efektivně komunikovat s ostatními a dokážeme ihned zjistit, co se děje kolem nás a o čem
 					se lidé baví.
 				</Paragraph>
 			</div>
 			<div class="w-full" in:fade={{ delay: 6000, duration: 3000 }}>
-				<GameButton onclick={handleContinue} class="mt-5 w-full">Pokračovat</GameButton>
+				<GameButton onclick={handleContinue} class="w-full">Pokračovat</GameButton>
 			</div>
 		{/if}
 		{#if introState === 2}
@@ -232,14 +232,12 @@
 				konverzaci a snažíte se odezírat, o čem mluví. Na konci je vaším cílem odpovědět na sérii
 				otázek vztahujících se k tématům, o kterých si kamarádi mluvili.
 			</Paragraph>
-			<GameButton onclick={handleContinue} class="mt-5 w-full">Pokračovat</GameButton>
+			<GameButton onclick={handleContinue} class="w-full">Pokračovat</GameButton>
 		{/if}
 		{#if introState === 4}
 			<Paragraph variant={3} className="font-bold">Vysvětlivky:</Paragraph>
 			<TalkingPersonTutorial />
-			<GameButton class="w-full max-w-[80%] md:max-w-150" onclick={handleContinue}>
-				Začít
-			</GameButton>
+			<GameButton class="w-full md:max-w-150" onclick={handleContinue}>Začít</GameButton>
 		{/if}
 	</div>
 </Layout1>
