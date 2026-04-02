@@ -7,7 +7,7 @@
 	import { onMount } from 'svelte';
 	import { goto } from '$app/navigation';
 	import { answers } from '$lib/levels/7/answers';
-	import type { AnswerOptionType } from '$types/answer';
+	import type { AnswerOptionType, AnswerType } from '$types/answer';
 	import {
 		level7GameState,
 		initializeLevel7Game,
@@ -30,7 +30,7 @@
 	let isCorrect = $state(false);
 	let disabledButtons = $state<Record<string, boolean>>({});
 	let videoPlayerRef: any = $state(null);
-	let shuffledVideos = $state<typeof answers>([]);
+	let shuffledVideos = $state<AnswerType[]>([]);
 
 	// Derived state from store
 	let gameState = $derived($level7GameState);

@@ -26,10 +26,10 @@
 	}: Props = $props();
 
 	const variantClasses: Record<1 | 2 | 3 | 4, string> = {
-		1: 'bg-primary shadow-[0_6px_0_var(--color-secondary)] hover:bg-primary hover:shadow-[0_8px_0_var(--color-secondary)] active:translate-y-0.5 hover:-translate-y-0.5 active:shadow-[0_4px_0_var(--color-secondary)] disabled:bg-gray-500 disabled:shadow-[0_6px_0_rgb(55,65,81)]',
-		2: 'bg-green-500 shadow-[0_6px_0_rgb(21,128,61)] hover:bg-green-500 hover:shadow-[0_8px_0_rgb(21,128,61)] active:translate-y-0.5 hover:-translate-y-0.5 active:shadow-[0_4px_0_rgb(21,128,61)] disabled:bg-gray-500 disabled:shadow-[0_6px_0_rgb(55,65,81)]',
-		3: 'bg-red-500 shadow-[0_6px_0_rgb(185,28,28)] hover:bg-red-500 hover:shadow-[0_8px_0_rgb(185,28,28)] active:translate-y-0.5 hover:-translate-y-0.5 active:shadow-[0_4px_0_rgb(185,28,28)] disabled:bg-gray-500 disabled:shadow-[0_6px_0_rgb(55,65,81)] ![&_svg:not([class*="size-"])]:size-9',
-		4: 'bg-white shadow-[0_6px_0_var(--color-primary)] border-2 border-primary text-primary hover:bg-white hover:shadow-[0_8px_0_var(--color-primary)] active:translate-y-0.5 hover:-translate-y-0.5 active:shadow-[0_4px_0_var(--color-primary)] disabled:bg-gray-500 disabled:shadow-[0_6px_0_rgb(55,65,81)] ![&_svg:not([class*="size-"])]:size-9'
+		1: 'bg-primary shadow-[0_6px_0_var(--color-secondary)] hover:bg-primary hover:shadow-[0_8px_0_var(--color-secondary)] active:translate-y-0.5 hover:-translate-y-0.5 active:shadow-[0_4px_0_var(--color-secondary)] disabled:bg-gray-500 disabled:border-gray-500 disabled:shadow-[0_6px_0_rgb(55,65,81)]',
+		2: 'bg-green-500 shadow-[0_6px_0_rgb(21,128,61)] hover:bg-green-500 hover:shadow-[0_8px_0_rgb(21,128,61)] active:translate-y-0.5 hover:-translate-y-0.5 active:shadow-[0_4px_0_rgb(21,128,61)]',
+		3: 'bg-red-500 shadow-[0_6px_0_rgb(185,28,28)] hover:bg-red-500 hover:shadow-[0_8px_0_rgb(185,28,28)] active:translate-y-0.5 hover:-translate-y-0.5 active:shadow-[0_4px_0_rgb(185,28,28)] ![&_svg:not([class*="size-"])]:size-9',
+		4: 'bg-white shadow-[0_6px_0_var(--color-primary)] border-2 border-primary text-primary hover:bg-white hover:shadow-[0_8px_0_var(--color-primary)] active:translate-y-0.5 hover:-translate-y-0.5 active:shadow-[0_4px_0_var(--color-primary)] ![&_svg:not([class*="size-"])]:size-9'
 	};
 
 	const sizeClasses: Record<'medium' | 'small' | 'large', string> = {

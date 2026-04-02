@@ -8,24 +8,36 @@ export const answers: ConversationAnswerType[] = [
 			{
 				id: 'a',
 				dialogue: [
-					{ speaker: 'M', text: 'Chceš jít na metro?' },
-					{ speaker: 'Ž', text: 'Ano, rád bych.' }
+					{ speaker: 'M', text: 'Ahoj.' },
+					{ speaker: 'Ž', text: 'Ahoj.' },
+					{ speaker: 'M', text: 'Jak se máš?' },
+					{ speaker: 'Ž', text: 'Mám se špatně.' },
+					{ speaker: 'M', text: 'Co budeš dneska dělat?' },
+					{ speaker: 'Ž', text: 'Půjdu do práce.' }
 				],
 				correct: false
 			},
 			{
 				id: 'b',
 				dialogue: [
-					{ speaker: 'M', text: 'Co dělání o víkendu?' },
-					{ speaker: 'Ž', text: 'Rád chodím.' }
+					{ speaker: 'M', text: 'Ahoj.' },
+					{ speaker: 'Ž', text: 'Ahoj.' },
+					{ speaker: 'M', text: 'Jak se máš?' },
+					{ speaker: 'Ž', text: 'Mám se dobře.' },
+					{ speaker: 'M', text: 'Co jsi dneska dělala?' },
+					{ speaker: 'Ž', text: 'Byla jsem v práci.' }
 				],
 				correct: true
 			},
 			{
 				id: 'c',
 				dialogue: [
-					{ speaker: 'M', text: 'Víš, co to je?' },
-					{ speaker: 'Ž', text: 'Je to lékař.' }
+					{ speaker: 'M', text: 'Ahoj.' },
+					{ speaker: 'Ž', text: 'Ahoj.' },
+					{ speaker: 'M', text: 'Jak se máš?' },
+					{ speaker: 'Ž', text: 'Mám se dobře.' },
+					{ speaker: 'M', text: 'Co budeš dneska dělat?' },
+					{ speaker: 'Ž', text: 'Půjdu do práce.' }
 				],
 				correct: false
 			}
@@ -38,24 +50,33 @@ export const answers: ConversationAnswerType[] = [
 			{
 				id: 'a',
 				dialogue: [
-					{ speaker: 'M', text: 'Kde budeš zítra?' },
-					{ speaker: 'Ž', text: 'Budu doma.' }
+					{ speaker: 'M', text: 'Ahoj.' },
+					{ speaker: 'Ž', text: 'Ahoj.' },
+					{ speaker: 'M', text: 'Jak ti je?' },
+					{ speaker: 'Ž', text: 'Necítím se dobře.' },
+					{ speaker: 'M', text: 'Aha, tak pujdeme spolu domů.' }
 				],
 				correct: false
 			},
 			{
 				id: 'b',
 				dialogue: [
-					{ speaker: 'M', text: 'Co děláš?' },
-					{ speaker: 'Ž', text: 'Pracuji.' }
+					{ speaker: 'M', text: 'Ahoj.' },
+					{ speaker: 'Ž', text: 'Ahoj.' },
+					{ speaker: 'M', text: 'Jak ti je?' },
+					{ speaker: 'Ž', text: 'Necítím se dobře.' },
+					{ speaker: 'M', text: 'Aha, tak pujdeme spolu k lékaři.' }
 				],
 				correct: true
 			},
 			{
 				id: 'c',
 				dialogue: [
-					{ speaker: 'M', text: 'Jdeš se mnou?' },
-					{ speaker: 'Ž', text: 'Spolu jdeš?' }
+					{ speaker: 'M', text: 'Ahoj.' },
+					{ speaker: 'Ž', text: 'Ahoj.' },
+					{ speaker: 'M', text: 'Jak ti je?' },
+					{ speaker: 'Ž', text: 'Jsem unavená.' },
+					{ speaker: 'M', text: 'Aha, tak pujdeme spolu k domů.' }
 				],
 				correct: false
 			}
@@ -68,24 +89,33 @@ export const answers: ConversationAnswerType[] = [
 			{
 				id: 'a',
 				dialogue: [
-					{ speaker: 'M', text: 'Jaká byla vaše snídaně?' },
-					{ speaker: 'Ž', text: 'Byla velmi dobrá.' }
+					{ speaker: 'Ž', text: 'Dobrý den.' },
+					{ speaker: 'M', text: 'Dobrý den.' },
+					{ speaker: 'Ž', text: 'Chceš udělat snídani?' },
+					{ speaker: 'M', text: 'Ano, prosím uděláš mi vejce?' },
+					{ speaker: 'Ž', text: 'Dobře, udělám ti.' }
 				],
 				correct: false
 			},
 			{
 				id: 'b',
 				dialogue: [
-					{ speaker: 'M', text: 'Ztratil jsi něco?' },
-					{ speaker: 'Ž', text: 'Ne, nic jsem neztratil.' }
+					{ speaker: 'Ž', text: 'Dobré ráno.' },
+					{ speaker: 'M', text: 'Dobré ráno.' },
+					{ speaker: 'Ž', text: 'Chceš udělat oběd?' },
+					{ speaker: 'M', text: 'Ano, prosím uděláš mi míchané vejce?' },
+					{ speaker: 'Ž', text: 'Dobře, udělám ti.' }
 				],
 				correct: false
 			},
 			{
 				id: 'c',
 				dialogue: [
-					{ speaker: 'M', text: 'Děkuji ti za pomoc.' },
-					{ speaker: 'Ž', text: 'Nic se neděje, rád jsem pomohl.' }
+					{ speaker: 'Ž', text: 'Dobré ráno.' },
+					{ speaker: 'M', text: 'Dobré ráno.' },
+					{ speaker: 'Ž', text: 'Chceš udělat snídani?' },
+					{ speaker: 'M', text: 'Ano, prosím uděláš mi míchané vejce?' },
+					{ speaker: 'Ž', text: 'Dobře, udělám ti.' }
 				],
 				correct: true
 			}
@@ -98,24 +128,36 @@ export const answers: ConversationAnswerType[] = [
 			{
 				id: 'a',
 				dialogue: [
-					{ speaker: 'M', text: 'Dobrý den!' },
-					{ speaker: 'Ž', text: 'Dobrý den, jak se máš?' }
+					{ speaker: 'M', text: 'Dobré ráno.' },
+					{ speaker: 'Ž', text: 'Dobré ráno.' },
+					{ speaker: 'M', text: 'Kde je míchané vejce za rohem?' },
+					{ speaker: 'Ž', text: 'Je v metru, chodit tam spolu.' },
+					{ speaker: 'M', text: 'Co budeš dneska dělat?' },
+					{ speaker: 'Ž', text: 'Děkuji, na shledanou!' }
 				],
 				correct: false
 			},
 			{
 				id: 'b',
 				dialogue: [
-					{ speaker: 'M', text: 'Co dneska děláš?' },
-					{ speaker: 'Ž', text: 'Pracuji v kanceláři.' }
+					{ speaker: 'Ž', text: 'Dobrý den.' },
+					{ speaker: 'M', text: 'Dobrý den.' },
+					{ speaker: 'Ž', text: 'Ztratila jsem se, kde je metro?' },
+					{ speaker: 'M', text: 'Metro je za rohem.' },
+					{ speaker: 'Ž', text: 'Děkuji, na shlednaou.' },
+					{ speaker: 'M', text: 'Na shledanou.' }
 				],
 				correct: true
 			},
 			{
 				id: 'c',
 				dialogue: [
-					{ speaker: 'M', text: 'Jak se máš?' },
-					{ speaker: 'Ž', text: 'Necítím se dobře.' }
+					{ speaker: 'M', text: 'Dobrý den.' },
+					{ speaker: 'Ž', text: 'Dobrý den.' },
+					{ speaker: 'M', text: 'Ztratila jsem se, kde je lékař?' },
+					{ speaker: 'Ž', text: 'Metro je za rohem, chodit tam spolu.' },
+					{ speaker: 'M', text: 'Co budeš dneska?' },
+					{ speaker: 'Ž', text: 'Děkuji, na shledanou!' }
 				],
 				correct: false
 			}

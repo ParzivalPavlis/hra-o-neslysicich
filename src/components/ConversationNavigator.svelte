@@ -4,6 +4,7 @@
 	import EmblaCarousel from 'embla-carousel';
 	import type { EmblaCarouselType } from 'embla-carousel';
 	import type { ConversationOptionType } from '$types/answer';
+	import GameButton from '$components/GameButton.svelte';
 
 	type Props = {
 		options: ConversationOptionType[];
@@ -66,14 +67,13 @@
 	}
 </script>
 
-<div class="flex w-full flex-col gap-4 select-none" role="region" aria-label="Answer Navigator">
+<div class="flex w-full flex-col gap-2 select-none" role="region" aria-label="Answer Navigator">
 	<div class="overflow-hidden" bind:this={emblaRef}>
 		<div class="flex gap-4">
 			{#each options as option, index}
-				<div class="min-w-0 flex-[0_0_100%]">
+				<div class="min-w-0 flex-[0_0_100%] p-2">
 					<ConversationButton
 						dialogue={option.dialogue}
-						selected={currentCarouselIndex === index}
 						disabled={disabled || getDisabledOption(option.id)}
 						variant={variant(option.id)}
 						onClick={() => onOptionClick(index)}
@@ -83,24 +83,24 @@
 		</div>
 	</div>
 	<div class="flex w-full items-center justify-between gap-4">
-		<button
+		<GameButton
 			type="button"
 			onclick={scrollPrev}
 			disabled={!canScrollPrev || disabled}
-			class="rounded-lg border-2 border-primary bg-white p-2 text-primary disabled:cursor-not-allowed disabled:opacity-50"
+			class="min-h-11.25 cursor-pointer rounded-lg border-2 border-primary bg-white p-2 hover:text-white disabled:cursor-not-allowed disabled:opacity-50"
 		>
 			<ChevronLeft size={24} />
-		</button>
+		</GameButton>
 		<span class="flex-1 text-center text-lg font-semibold">
 			{currentCarouselIndex + 1} / {options.length}
 		</span>
-		<button
+		<GameButton
 			type="button"
 			onclick={scrollNext}
 			disabled={!canScrollNext || disabled}
-			class="rounded-lg border-2 border-primary bg-white p-2 text-primary disabled:cursor-not-allowed disabled:opacity-50"
+			class="min-h-11.25 cursor-pointer rounded-lg border-2 border-primary bg-white p-2 hover:text-white disabled:cursor-not-allowed disabled:opacity-50"
 		>
 			<ChevronRight size={24} />
-		</button>
+		</GameButton>
 	</div>
 </div>

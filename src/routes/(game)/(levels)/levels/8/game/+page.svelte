@@ -7,7 +7,7 @@
 	import { onMount } from 'svelte';
 	import { goto } from '$app/navigation';
 	import { answers } from '$lib/levels/8/answers';
-	import type { ConversationOptionType } from '$types/answer';
+	import type { ConversationAnswerType, ConversationOptionType } from '$types/answer';
 	import {
 		level8GameState,
 		initializeLevel8Game,
@@ -30,6 +30,7 @@
 	let isCorrect = $state(false);
 	let disabledButtons = $state<Record<string, boolean>>({});
 	let videoPlayerRef: any = $state(null);
+	let shuffledVideos = $state<ConversationAnswerType[]>([]);
 
 	// Derived state from store
 	let gameState = $derived($level8GameState);
@@ -45,7 +46,7 @@
 	function handleAnswerClick(optionId: string) {
 		if (showingFeedback) return;
 
-		const currentAnswer = answers[currentAnswerIndex];
+		const currentAnswer = shuffledVideos[currentAnswerIndex];
 		const selectedOption = currentAnswer.options.find((opt) => opt.id === optionId);
 
 		if (selectedOption) {
@@ -59,7 +60,7 @@
 			setTimeout(() => {
 				if (isCorrect) {
 					showAnswerTab = false;
-					if (currentAnswerIndex < answers.length - 1) {
+					if (currentAnswerIndex < shuffledVideos.length - 1) {
 						updateCurrentAnswer(currentAnswerIndex + 1);
 					} else {
 						// Last question answered correctly - navigate to overview
@@ -91,14 +92,16 @@
 	onMount(() => {
 		updateOrientation();
 		initializeLevel8Game();
+		// Shuffle videos array
+		shuffledVideos = shuffleArray([...answers]);
 	});
 
 	$effect(() => {
 		videoEnded = false;
 		autoplayPrevented = false;
 		disabledButtons = {};
-		if (answers[currentAnswerIndex]) {
-			shuffledOptions = shuffleArray(answers[currentAnswerIndex].options);
+		if (shuffledVideos[currentAnswerIndex]) {
+			shuffledOptions = shuffleArray(shuffledVideos[currentAnswerIndex].options);
 		}
 	});
 
@@ -127,7 +130,7 @@
 					>
 						<VideoPlayer
 							bind:this={videoPlayerRef}
-							videoSrc={answers[currentAnswerIndex].videoSrc}
+							videoSrc={shuffledVideos[currentAnswerIndex]?.videoSrc}
 							bind:videoEnded
 							bind:autoplayPrevented
 							{helpUses}
@@ -150,7 +153,7 @@
 				>
 					<VideoPlayer
 						bind:this={videoPlayerRef}
-						videoSrc={answers[currentAnswerIndex].videoSrc}
+						videoSrc={shuffledVideos[currentAnswerIndex]?.videoSrc}
 						bind:videoEnded
 						bind:autoplayPrevented
 						{helpUses}
