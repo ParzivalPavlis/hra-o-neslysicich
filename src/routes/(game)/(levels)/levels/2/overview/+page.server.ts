@@ -1,5 +1,6 @@
 import type { PageServerLoad, Actions } from './$types';
-import { updateLevelProgress, getLevelProgress, unlockNextLevel } from '$lib/server/services';
+import { updateLevelProgress, getLevelProgress } from '$lib/server/services';
+import type { FormSaveLevelProgressResponseType } from '$types/form';
 
 export const load: PageServerLoad = async ({ locals: { safeGetSession } }) => {
 	const { session } = await safeGetSession();
@@ -10,7 +11,7 @@ export const load: PageServerLoad = async ({ locals: { safeGetSession } }) => {
 };
 
 export const actions: Actions = {
-	saveLevelProgress: async (event) => {
+	saveLevelProgress: async (event): Promise<FormSaveLevelProgressResponseType> => {
 		const {
 			locals: { safeGetSession, supabase }
 		} = event;
@@ -52,13 +53,10 @@ export const actions: Actions = {
 			};
 		}
 
-		const wasUnlocked = newStars >= 1 && (await unlockNextLevel(session.user.id, 2, supabase));
-
 		return {
 			success: true,
 			message: 'Progress updated!',
-			firstTimeThreeStars,
-			unlockedLevel: wasUnlocked ? 3 : undefined
+			firstTimeThreeStars
 		};
 	}
 };
