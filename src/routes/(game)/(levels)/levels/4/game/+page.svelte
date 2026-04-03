@@ -1,12 +1,9 @@
 <script lang="ts">
-	import GameButton from '$components/GameButton.svelte';
-	import ReplayButton from '$components/ReplayButton.svelte';
+	import VideoPlayer from '$components/VideoPlayer.svelte';
 	import AnswerTab from '$components/AnswerTab.svelte';
 	import Layout2 from '$components/layouts/Layout2.svelte';
-	import Paragraph from '$components/typography/Paragraph.svelte';
-	import { fly, fade } from 'svelte/transition';
-	import { Play, HeartHandshake } from '@lucide/svelte';
-	import { shuffleArray } from '$lib/shared/utils';
+	import PortraitOrientationWarning from '$components/PortraitOrientationWarning.svelte';
+	import { shuffleArray, getOrientationInfo } from '$lib/shared/utils';
 	import { onMount } from 'svelte';
 	import { goto } from '$app/navigation';
 	import { answers } from '$lib/levels/4/answers';
@@ -26,13 +23,13 @@
 	let answerTabCollapsed = $state(false);
 	let helpUses = $state(3);
 	let videoEnded = $state(false);
-	let videoElement: HTMLVideoElement | null = $state(null);
 	let autoplayPrevented = $state(false);
 	let shuffledOptions = $state<AnswerOptionType[]>([]);
 	let selectedAnswer = $state<string | null>(null);
 	let showingFeedback = $state(false);
 	let isCorrect = $state(false);
 	let disabledButtons = $state<Record<string, boolean>>({});
+	let videoPlayerRef: any = $state(null);
 
 	// Derived state from store
 	let gameState = $derived($level4GameState);
@@ -40,9 +37,9 @@
 	let lives = $derived(gameState.lives);
 
 	function updateOrientation() {
-		const userAgent = navigator.userAgent.toLowerCase();
-		isMobile = /android|webos|iphone|ipad|ipod|blackberry|iemobile|opera mini/.test(userAgent);
-		isPortrait = window.innerHeight > window.innerWidth;
+		const orientation = getOrientationInfo();
+		isMobile = orientation.isMobile;
+		isPortrait = orientation.isPortrait;
 	}
 
 	function handleAnswerClick(optionId: string) {
@@ -80,17 +77,9 @@
 	}
 
 	function replayVideo() {
-		if (helpUses > 0 && videoElement) {
+		if (helpUses > 0) {
 			helpUses--;
 			videoEnded = false;
-			videoElement.currentTime = 0;
-			videoElement.play();
-		}
-	}
-
-	function skipVideo() {
-		if (videoElement) {
-			videoElement.currentTime = videoElement.duration;
 		}
 	}
 
@@ -106,13 +95,8 @@
 
 	$effect(() => {
 		videoEnded = false;
-		disabledButtons = {}; // Reset disabled buttons on new question
-		if (videoElement && answers[currentAnswerIndex]) {
-			// Wait for video to be loaded and play
-			videoElement.play().catch(() => {
-				autoplayPrevented = true;
-			});
-		}
+		autoplayPrevented = false;
+		disabledButtons = {};
 		if (answers[currentAnswerIndex]) {
 			shuffledOptions = shuffleArray(answers[currentAnswerIndex].options);
 		}
@@ -131,22 +115,8 @@
 
 <svelte:window on:orientationchange={updateOrientation} on:resize={updateOrientation} />
 <Layout2>
-	<!-- Skip button for mobile landscape -->
-	{#if !isPortrait && isMobile}
-		<button
-			onclick={skipVideo}
-			class="fixed top-4 left-4 z-50 flex items-center justify-center border-2 border-foreground bg-red-500 px-4 py-2 font-semibold text-white hover:bg-red-600 active:bg-red-600"
-		>
-			Skip
-		</button>
-	{/if}
 	{#if isMobile && isPortrait}
-		<div class="flex h-screen w-full flex-col items-center justify-center gap-6 px-6 text-center">
-			<div class="text-5xl">📱</div>
-			<Paragraph className="text-xl font-semibold">
-				Prosím otočte zařízení do vodorovné polohy
-			</Paragraph>
-		</div>
+		<PortraitOrientationWarning />
 	{:else}
 		<div class="flex w-full flex-col items-center justify-center landscape:gap-2">
 			<!-- Desktop layout with video and help button side by side -->
@@ -155,45 +125,16 @@
 					<div
 						class="relative aspect-video overflow-hidden rounded-lg border-2 border-foreground bg-transparent landscape:h-auto landscape:max-h-[calc(100vh-2rem)]"
 					>
-						{#if autoplayPrevented}
-							<div class="flex h-full w-full items-center justify-center">
-								<button
-									onclick={() => {
-										autoplayPrevented = false;
-										if (videoElement) {
-											videoElement.play();
-										}
-									}}
-									class="flex h-14 w-14 cursor-pointer items-center justify-center rounded-full border-0 bg-secondary shadow-[0_6px_0_var(--secondary-2)] transition-all hover:-translate-y-0.5 hover:shadow-[0_8px_0_var(--secondary-2)] active:translate-y-0.5 active:shadow-[0_4px_0_var(--secondary-2)]"
-								>
-									<Play size={24} color="white" fill="white" />
-								</button>
-							</div>
-						{:else}
-							{#key answers[currentAnswerIndex].videoSrc}
-								<video
-									bind:this={videoElement}
-									class="h-full w-full object-cover transition-opacity duration-300 {videoEnded
-										? 'opacity-50'
-										: 'opacity-100'}"
-									playsinline
-									muted
-									transition:fade={{ duration: 400 }}
-									onended={handleVideoEnd}
-								>
-									<source src={answers[currentAnswerIndex].videoSrc} type="video/mp4" />
-									Your browser does not support the video tag.
-								</video>
-							{/key}
-							{#if videoEnded}
-								<div
-									class="absolute inset-0 flex items-center justify-center"
-									transition:fade={{ duration: 200 }}
-								>
-									<ReplayButton onclick={replayVideo} disabled={helpUses === 0} {helpUses} />
-								</div>
-							{/if}
-						{/if}
+						<VideoPlayer
+							bind:this={videoPlayerRef}
+							videoSrc={answers[currentAnswerIndex].videoSrc}
+							bind:videoEnded
+							bind:autoplayPrevented
+							{helpUses}
+							showSkipButton={true}
+							onReplay={replayVideo}
+							onVideoEnd={handleVideoEnd}
+						/>
 					</div>
 					<!-- Lives indicator for desktop - absolute positioned -->
 					<div class="absolute top-4 right-4 flex flex-col gap-2">
@@ -207,45 +148,16 @@
 				<div
 					class="relative aspect-video w-full max-w-6xl overflow-hidden rounded-lg border-2 border-foreground bg-transparent landscape:h-auto landscape:max-h-[calc(100vh-2rem)]"
 				>
-					{#if autoplayPrevented}
-						<div class="flex h-full w-full items-center justify-center">
-							<button
-								onclick={() => {
-									autoplayPrevented = false;
-									if (videoElement) {
-										videoElement.play();
-									}
-								}}
-								class="flex h-14 w-14 cursor-pointer items-center justify-center rounded-full border-0 bg-secondary shadow-[0_6px_0_var(--secondary-2)] transition-all hover:-translate-y-0.5 hover:shadow-[0_8px_0_var(--secondary-2)] active:translate-y-0.5 active:shadow-[0_4px_0_var(--secondary-2)]"
-							>
-								<Play size={24} color="white" fill="white" />
-							</button>
-						</div>
-					{:else}
-						{#key answers[currentAnswerIndex].videoSrc}
-							<video
-								bind:this={videoElement}
-								class="h-full w-full object-cover transition-opacity duration-300 {videoEnded
-									? 'opacity-50'
-									: 'opacity-100'}"
-								playsinline
-								muted
-								transition:fade={{ duration: 400 }}
-								onended={handleVideoEnd}
-							>
-								<source src={answers[currentAnswerIndex].videoSrc} type="video/mp4" />
-								Your browser does not support the video tag.
-							</video>
-						{/key}
-						{#if videoEnded}
-							<div
-								class="absolute inset-0 flex items-center justify-center"
-								transition:fade={{ duration: 200 }}
-							>
-								<ReplayButton onclick={replayVideo} disabled={helpUses === 0} {helpUses} />
-							</div>
-						{/if}
-					{/if}
+					<VideoPlayer
+						bind:this={videoPlayerRef}
+						videoSrc={answers[currentAnswerIndex].videoSrc}
+						bind:videoEnded
+						bind:autoplayPrevented
+						{helpUses}
+						showSkipButton={true}
+						onReplay={replayVideo}
+						onVideoEnd={handleVideoEnd}
+					/>
 				</div>
 			{/if}
 			<!-- Desktop answer tab -->

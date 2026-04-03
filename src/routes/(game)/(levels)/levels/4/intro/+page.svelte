@@ -59,7 +59,7 @@
 				</Paragraph>
 			</div>
 			<div class="w-full" in:fade={{ delay: 12000, duration: 3000 }}>
-				<GameButton onclick={handleContinue} class="mt-5 w-full">Pokračovat</GameButton>
+				<GameButton onclick={handleContinue} class="w-full">Pokračovat</GameButton>
 			</div>
 		{/if}
 		{#if introState === 2}
@@ -70,7 +70,7 @@
 			</Paragraph>
 			<ReplayButtonTutorial />
 			<LivesTutorial />
-			<GameButton onclick={handleContinue} class="mt-5 w-full">Začít</GameButton>
+			<GameButton onclick={handleContinue} class="w-full">Začít</GameButton>
 		{/if}
 	</div>
 </Layout1>

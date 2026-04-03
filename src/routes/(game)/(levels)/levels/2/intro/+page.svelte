@@ -27,7 +27,7 @@
 </svelte:head>
 
 <Layout1>
-	<div class="flex w-full max-w-150 flex-col items-center text-justify">
+	<div class="text-justif flex w-full max-w-150 flex-col items-center gap-3">
 		{#if introState === 1}
 			<Paragraph>
 				Nacházíte se v roli neslyšícího člověka v kavárně. Okolo sebe máte další návštěvníky, kteří
@@ -35,14 +35,12 @@
 				čem si ostatní povídají. Na konci je vaším cílem odpovědět na sérii otázek vztahující se k
 				tématům, o kterých si postavy povídaly.
 			</Paragraph>
-			<GameButton onclick={handleContinue} class="mt-5 w-full">Pokračovat</GameButton>
+			<GameButton onclick={handleContinue} class="w-full">Pokračovat</GameButton>
 		{/if}
 		{#if introState === 2}
 			<Paragraph variant={3} className="font-bold">Vysvětlivky:</Paragraph>
 			<TalkingPersonTutorial />
-			<GameButton class="w-full max-w-[80%] md:max-w-150" onclick={handleContinue}>
-				Začít
-			</GameButton>
+			<GameButton class="w-full md:max-w-150" onclick={handleContinue}>Začít</GameButton>
 		{/if}
 	</div>
 </Layout1>

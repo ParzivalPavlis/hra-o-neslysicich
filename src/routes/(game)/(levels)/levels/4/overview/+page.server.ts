@@ -1,5 +1,6 @@
 import type { PageServerLoad, Actions } from './$types';
 import { updateLevelProgress, getLevelProgress } from '$lib/server/services';
+import type { FormSaveLevelProgressResponseType } from '$types/form';
 
 export const load: PageServerLoad = async ({ locals: { safeGetSession } }) => {
 	const { session } = await safeGetSession();
@@ -10,7 +11,7 @@ export const load: PageServerLoad = async ({ locals: { safeGetSession } }) => {
 };
 
 export const actions: Actions = {
-	saveLevelProgress: async (event) => {
+	saveLevelProgress: async (event): Promise<FormSaveLevelProgressResponseType> => {
 		const {
 			locals: { safeGetSession, supabase }
 		} = event;
@@ -48,8 +49,7 @@ export const actions: Actions = {
 		if (!result) {
 			return {
 				success: false,
-				error: 'Failed to save progress',
-				firstTimeThreeStars: false
+				error: 'Failed to save progress'
 			};
 		}
 

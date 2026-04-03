@@ -1,19 +1,8 @@
+import type { LevelVideosState } from '$lib/types/store';
 import { persisted } from 'svelte-persisted-store';
 
-export interface Level4Answer {
-	answerIndex: number;
-	selectedOptionId: string;
-	isCorrect: boolean;
-}
-
-export interface Level4GameState {
-	currentAnswerIndex: number;
-	lives: number;
-	answers: Level4Answer[];
-}
-
 // Store for persisting the complete level 4 game state
-export const level4GameState = persisted<Level4GameState>('level4-game-state', {
+export const level4GameState = persisted<LevelVideosState>('level4-game-state', {
 	currentAnswerIndex: 0,
 	lives: 4,
 	answers: []
@@ -42,13 +31,13 @@ export function decreaseLives() {
 	}));
 }
 
-export function addAnswer(answerIndex: number, selectedOptionId: string, isCorrect: boolean) {
+export function addAnswer(questionId: number, selectedOptionId: string, isCorrect: boolean) {
 	level4GameState.update((state) => ({
 		...state,
 		answers: [
 			...state.answers,
 			{
-				answerIndex,
+				questionId,
 				selectedOptionId,
 				isCorrect
 			}

@@ -1,17 +1,8 @@
 import { persisted } from 'svelte-persisted-store';
-
-export interface Level2QuestionsState {
-	questionIds: number[]; // Store original question IDs from source data
-	currentQuestionIndex: number;
-	answers: Array<{
-		questionId: number;
-		selectedOptionId: string;
-		isCorrect: boolean;
-	}>;
-}
+import type { LevelQuestionsState } from '$lib/types/store';
 
 // Store for persisting the complete level 2 questions state
-export const level2QuestionsState = persisted<Level2QuestionsState>('level2-questions-state', {
+export const level2QuestionsState = persisted<LevelQuestionsState>('level2-questions-state', {
 	questionIds: [],
 	currentQuestionIndex: 1,
 	answers: []

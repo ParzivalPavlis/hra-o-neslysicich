@@ -15,13 +15,16 @@
 	let currentViewedLevelIndex: number | null = $state(null);
 	let shouldPlayYellowAnimation: boolean = $state(false);
 	let yellowAnimationLevelNumber: number | null = $state(null);
+	let isYellowAnimationPlaying: boolean = $state(false);
 	let shouldPlayUnlockAnimation: boolean = $state(false);
 	let unlockAnimationLevelNumber: number | null = $state(null);
+	let isScrollingAfterNavigation: boolean = $state(false);
 	let levelMapImages = [
 		{ level: 1, src: '/assets/levelMap/manStudying.png' },
 		{ level: 2, src: '/assets/levelMap/manDrinking.png' },
 		{ level: 4, src: '/assets/levelMap/manDoctor.png' },
-		{ level: 7, src: '/assets/levelMap/peopleSigning.png' }
+		{ level: 7, src: '/assets/levelMap/womanLearning.png' },
+		{ level: 8, src: '/assets/levelMap/peopleSigning.png' }
 	];
 
 	const levelsWithProgress = $derived(
@@ -70,14 +73,18 @@
 
 	afterNavigate(() => {
 		if ($lastPlayedStore.level) {
-			// Set the viewed level index immediately so animation can trigger
 			const index = $lastPlayedStore.level - 1;
-			currentViewedLevelIndex = index;
+			isScrollingAfterNavigation = true;
 
 			setTimeout(() => {
 				const levelButton = document.getElementById(`level-${$lastPlayedStore.level}`);
 				if (levelButton) {
 					levelButton.scrollIntoView({ behavior: 'smooth', block: 'center' });
+					// Wait for scroll to complete, then allow animations to trigger
+					setTimeout(() => {
+						currentViewedLevelIndex = index;
+						isScrollingAfterNavigation = false;
+					}, 800);
 				}
 			}, 200);
 		} else {
@@ -102,6 +109,9 @@
 		const observer = new IntersectionObserver(
 			(entries) => {
 				entries.forEach((entry) => {
+					// Skip observer updates while scrolling after navigation
+					if (isScrollingAfterNavigation) return;
+
 					if (entry.isIntersecting) {
 						const index = levelButtonRefs.findIndex((ref) => ref === entry.target);
 						if (index !== -1) {
@@ -133,6 +143,10 @@
 			if (isLastPlayed && matchesFirstThreeStars) {
 				shouldPlayYellowAnimation = true;
 				yellowAnimationLevelNumber = levelNumber;
+				isYellowAnimationPlaying = true;
+				setTimeout(() => {
+					isYellowAnimationPlaying = false;
+				}, 2000);
 			} else {
 				shouldPlayYellowAnimation = false;
 				yellowAnimationLevelNumber = null;
@@ -142,7 +156,7 @@
 
 	// Check for unlock animation independently of which level is viewed
 	$effect(() => {
-		if ($lastPlayedStore.justUnlockedLevel) {
+		if ($lastPlayedStore.justUnlockedLevel && !isYellowAnimationPlaying) {
 			shouldPlayUnlockAnimation = true;
 			unlockAnimationLevelNumber = $lastPlayedStore.justUnlockedLevel;
 		} else {

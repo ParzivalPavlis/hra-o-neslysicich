@@ -2,6 +2,7 @@
 	import GameButton from '$components/GameButton.svelte';
 	import Paragraph from '$components/typography/Paragraph.svelte';
 	import Heading from '$components/typography/Heading.svelte';
+	import LivesIndicator from '$components/LivesIndicator.svelte';
 	import { Star } from '@lucide/svelte';
 
 	type Props = {
@@ -49,21 +50,25 @@
 	<div class="flex flex-col text-center">
 		<Heading variant={2}>{title}</Heading>
 	</div>
-	<div class="rounded-2xl border-2 border-foreground bg-white p-8 text-center">
-		<div class="mb-4 text-6xl font-bold text-foreground">
+	<div class="rounded-2xl border-4 border-secondary">
+		<div class="rounded-[12px] border-4 border-primary bg-white p-8 text-center">
 			{#if variant === 'correctAnswers'}
-				{correctAnswers}/{totalQuestions}
+				<div class="mb-4 text-6xl font-bold text-foreground">
+					{correctAnswers}/{totalQuestions}
+				</div>
 			{:else if variant === 'lives'}
-				{lives}/{maxLives}
+				<div class="mb-4 flex justify-center">
+					<LivesIndicator orientation="horizontal" {lives} {maxLives} size={40} />
+				</div>
 			{/if}
+			<Paragraph>
+				{#if variant === 'correctAnswers'}
+					Správných odpovědí
+				{:else if variant === 'lives'}
+					Životů zbylo
+				{/if}
+			</Paragraph>
 		</div>
-		<Paragraph>
-			{#if variant === 'correctAnswers'}
-				Správných odpovědí
-			{:else if variant === 'lives'}
-				Životů zbylo
-			{/if}
-		</Paragraph>
 	</div>
 	<div class="flex gap-2">
 		{#each Array(3) as _, i}
