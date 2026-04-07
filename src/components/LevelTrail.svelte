@@ -1,5 +1,5 @@
 <script lang="ts">
-	import { colors } from '$lib/shared/colors';
+	import { colors } from '$lib/client/shared/colors';
 	import type { LevelTrailVariants } from '$types/levelTrails';
 
 	let {
