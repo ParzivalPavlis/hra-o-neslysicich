@@ -21,6 +21,5 @@
 	<Logo />
 	<GameButton onclick={() => goto('/levels')} class="w-full max-w-100">Úrovně</GameButton>
 	<GameButton class="w-full max-w-100">Profil</GameButton>
-	<GameButton class="w-full max-w-100">Titulky</GameButton>
 	<GameButton onclick={handleLogout} variant={3} class="w-full max-w-100">Odhlásit se</GameButton>
 </div>
