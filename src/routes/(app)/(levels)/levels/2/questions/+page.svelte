@@ -12,12 +12,13 @@
 	} from '$lib/stores/level2';
 	import type { QuestionOptionType } from '$types/question';
 
+	const NUMBER_OF_QUESTIONS_GROUP1 = 4;
+	const NUMBER_OF_QUESTIONS_GROUP2 = 4;
+
 	let selectedAnswer = $state<string | null>(null);
 	let showingFeedback = $state(false);
 	let isCorrect = $state(false);
 	let personImage = $state<'man_thinking' | 'man_correct' | 'man_wrong'>('man_thinking');
-
-	// Get questions state from store
 	let questionsState = $derived($level2QuestionsState);
 	let questionIds = $derived(questionsState.questionIds);
 	let currentQuestionIndex = $derived(questionsState.currentQuestionIndex);
@@ -97,13 +98,13 @@
 	$effect(() => {
 		const storedState = $level2QuestionsState;
 		if (!storedState.questionIds || storedState.questionIds.length === 0) {
-			// Select 4 random from group1
+			// Select random from group1
 			const shuffledGroup1 = [...questions.group1].sort(() => 0.5 - Math.random());
-			const selectedFromGroup1 = shuffledGroup1.slice(0, 4);
+			const selectedFromGroup1 = shuffledGroup1.slice(0, NUMBER_OF_QUESTIONS_GROUP1);
 
-			// Select 4 random from group2
+			// Select random from group2
 			const shuffledGroup2 = [...questions.group2].sort(() => 0.5 - Math.random());
-			const selectedFromGroup2 = shuffledGroup2.slice(0, 4);
+			const selectedFromGroup2 = shuffledGroup2.slice(0, NUMBER_OF_QUESTIONS_GROUP2);
 
 			// Combine and shuffle all selected questions
 			const combinedQuestions = [...selectedFromGroup1, ...selectedFromGroup2].sort(

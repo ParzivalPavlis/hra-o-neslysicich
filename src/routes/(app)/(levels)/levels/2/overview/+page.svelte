@@ -8,10 +8,12 @@
 	import { onMount } from 'svelte';
 	import type { FormSaveLevelProgressResponseType } from '$lib/types/form';
 
+	const NUMBER_OF_QUESTIONS = 8;
+
 	let questionsState = $derived($level2QuestionsState);
 	let answers = $derived(questionsState.answers);
 	let correctAnswers = $derived(answers.filter((answer) => answer.isCorrect).length);
-	let totalQuestions = $derived(Math.max(answers.length, 6));
+	let totalQuestions = $derived(Math.max(answers.length, NUMBER_OF_QUESTIONS));
 
 	let stars = $derived(() => {
 		const percentage = (correctAnswers / totalQuestions) * 100;

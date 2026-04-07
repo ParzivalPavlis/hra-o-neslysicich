@@ -3,7 +3,7 @@
 	import { Play } from '@lucide/svelte';
 	import { fade } from 'svelte/transition';
 
-	interface Props {
+	type Props = {
 		videoSrc: string;
 		videoEnded?: boolean;
 		autoplayPrevented?: boolean;
@@ -12,7 +12,7 @@
 		onReplay?: () => void;
 		onVideoEnd?: () => void;
 		onPlayClick?: () => void;
-	}
+	};
 
 	let {
 		videoSrc,
