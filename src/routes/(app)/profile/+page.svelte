@@ -8,6 +8,7 @@
 	import { Star, Mail, Calendar, ChevronDown } from '@lucide/svelte';
 	import { slide, fly } from 'svelte/transition';
 	import type { PageData } from './$types';
+	import { colors } from '$lib/client/shared/colors';
 
 	let { data }: { data: PageData } = $props();
 
@@ -23,7 +24,7 @@
 		} else if (stars === 3) {
 			return 'border-yellow-500 bg-yellow-50';
 		} else {
-			return 'border-gray-300 bg-gray-50';
+			return 'border-secondary bg-white';
 		}
 	}
 </script>
@@ -107,13 +108,13 @@
 							{/if}
 						</div>
 						<div class="flex">
-							{#if !level.locked && level.stars > 0}
+							{#if !level.locked}
 								{#each Array(3) as _, i}
 									<div class="flex">
 										{#if i < level.stars}
 											<Star size={40} color="gold" fill="gold" />
 										{:else}
-											<Star size={40} />
+											<Star size={40} color="gray" fill="gray" />
 										{/if}
 									</div>
 								{/each}
