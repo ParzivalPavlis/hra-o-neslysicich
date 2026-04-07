@@ -11,21 +11,20 @@
 	let levelNumber: number | null = $state(null);
 	let isMobile = $state(false);
 	let mobileMenuOpen = $state(false);
-
 	let currentLevel = $derived.by(() => {
 		return levelNumber !== null && levels[levelNumber - 1] ? levels[levelNumber - 1] : null;
 	});
 
 	// Pages that should be landscape-only
-	const landscapeOnlyPages = [
+	const LANDSCAPE_ONLY = [
 		'/levels/4/game',
 		'/levels/7/game',
 		'/levels/7/learn',
 		'/levels/8/game'
-	];
+	] as const;
 
 	function shouldBeLandscapeOnly(pathname: string): boolean {
-		return landscapeOnlyPages.some((p) => pathname.includes(p));
+		return LANDSCAPE_ONLY.some((p) => pathname.includes(p));
 	}
 
 	let isLandscapePage = $derived(shouldBeLandscapeOnly(page.url.pathname));

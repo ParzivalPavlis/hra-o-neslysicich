@@ -1,6 +1,8 @@
-import type { PageServerLoad, Actions } from './$types';
+import type { Actions } from './$types';
 import { updateLevelProgress, getLevelProgress } from '$lib/server/services';
 import type { FormSaveLevelProgressResponseType } from '$types/form';
+
+const CURRENT_LEVEL_NUMBER = 8;
 
 export const actions: Actions = {
 	saveLevelProgress: async (event): Promise<FormSaveLevelProgressResponseType> => {
@@ -15,7 +17,7 @@ export const actions: Actions = {
 		const newStars = parseInt(formData.get('stars') as string) as 0 | 1 | 2 | 3;
 
 		// Get current level progress
-		const currentProgress = await getLevelProgress(user.id, 8, supabase);
+		const currentProgress = await getLevelProgress(user.id, CURRENT_LEVEL_NUMBER, supabase);
 
 		// Check if this is first time getting 3 stars
 		const firstTimeThreeStars = newStars === 3 && (!currentProgress || currentProgress.stars < 3);
@@ -27,10 +29,9 @@ export const actions: Actions = {
 
 		const result = await updateLevelProgress(
 			user.id,
-			8,
+			CURRENT_LEVEL_NUMBER,
 			{
 				stars: newStars,
-				completed: true,
 				locked: false
 			},
 			supabase

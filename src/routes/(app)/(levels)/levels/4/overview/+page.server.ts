@@ -1,6 +1,8 @@
 import type { Actions } from './$types';
-import { updateLevelProgress, getLevelProgress } from '$lib/server/services';
+import { updateLevelProgress, getLevelProgress, unlockLevel } from '$lib/server/services';
 import type { FormSaveLevelProgressResponseType } from '$types/form';
+
+const CURRENT_LEVEL_NUMBER = 4;
 
 export const actions: Actions = {
 	saveLevelProgress: async (event): Promise<FormSaveLevelProgressResponseType> => {
@@ -15,7 +17,7 @@ export const actions: Actions = {
 		const newStars = parseInt(formData.get('stars') as string) as 0 | 1 | 2 | 3;
 
 		// Get current level progress
-		const currentProgress = await getLevelProgress(user.id, 4, supabase);
+		const currentProgress = await getLevelProgress(user.id, CURRENT_LEVEL_NUMBER, supabase);
 
 		// Check if this is first time getting 3 stars
 		const firstTimeThreeStars = newStars === 3 && (!currentProgress || currentProgress.stars < 3);
@@ -27,10 +29,9 @@ export const actions: Actions = {
 
 		const result = await updateLevelProgress(
 			user.id,
-			4,
+			CURRENT_LEVEL_NUMBER,
 			{
 				stars: newStars,
-				completed: true,
 				locked: false
 			},
 			supabase
@@ -43,6 +44,14 @@ export const actions: Actions = {
 			};
 		}
 
-		return { success: true, message: 'Progress updated!', firstTimeThreeStars };
+		const wasUnlocked =
+			newStars >= 1 && (await unlockLevel(user.id, CURRENT_LEVEL_NUMBER + 1, supabase));
+
+		return {
+			success: true,
+			message: 'Progress updated!',
+			firstTimeThreeStars,
+			unlockedLevel: wasUnlocked ? CURRENT_LEVEL_NUMBER + 1 : undefined
+		};
 	}
 };
