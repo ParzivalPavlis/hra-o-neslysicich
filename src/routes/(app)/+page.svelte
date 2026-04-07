@@ -20,6 +20,6 @@
 <div class="relative flex min-h-screen flex-col items-center gap-10 p-10">
 	<Logo />
 	<GameButton onclick={() => goto('/levels')} class="w-full max-w-100">Úrovně</GameButton>
-	<GameButton class="w-full max-w-100">Profil</GameButton>
+	<GameButton onclick={() => goto('/profile')} class="w-full max-w-100">Profil</GameButton>
 	<GameButton onclick={handleLogout} variant={3} class="w-full max-w-100">Odhlásit se</GameButton>
 </div>
