@@ -12,22 +12,17 @@ export const load: PageServerLoad = async ({ locals, url }) => {
 	} else {
 		redirect(303, '/');
 	}
+
+	return { code };
 };
 
 export const actions: Actions = {
 	default: async (event) => {
 		const { locals } = event;
-		const { user, supabase } = locals;
-
-		// User must be authenticated to reset password
-		if (!user) {
-			return fail(401, {
-				success: false,
-				message: 'Musíte být přihlášeni pro obnovu hesla. Prosím zkuste znovu.'
-			} as FormResponseType);
-		}
+		const { supabase } = locals;
 
 		const formData = await event.request.formData();
+		const code = formData.get('code') as string;
 		const password = formData.get('password') as string;
 		const confirmPassword = formData.get('confirmPassword') as string;
 
@@ -50,13 +45,24 @@ export const actions: Actions = {
 			} as FormResponseType);
 		}
 
+		// Exchange the recovery code for a session to authenticate the user
+		const { data: sessionData, error: sessionError } =
+			await supabase.auth.exchangeCodeForSession(code);
+
+		if (sessionError || !sessionData.session) {
+			return fail(400, {
+				success: false,
+				message: 'Obnovení hesla selhalo. Prosím zkuste znovu.'
+			} as FormResponseType);
+		}
+
 		// Update password
 		const { error } = await supabase.auth.updateUser({ password });
 
 		if (error) {
 			return fail(400, {
 				success: false,
-				message: 'Obnovení hesla selhalo. Prosím zkuste znovu.'
+				message: 'Aktualizace hesla selhala. Prosím zkuste znovu.'
 			} as FormResponseType);
 		}
 

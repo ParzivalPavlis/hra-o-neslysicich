@@ -42,18 +42,18 @@ export async function listAllUsers() {
 export async function initializeGameProgress(userId: string) {
 	const gameProgress: GameProgressType = {
 		levels: {
-			level1: { stars: 0, completed: false, locked: false },
-			level2: { stars: 0, completed: false, locked: true },
-			level3: { stars: 0, completed: false, locked: true },
-			level4: { stars: 0, completed: false, locked: false },
-			level5: { stars: 0, completed: false, locked: true },
-			level6: { stars: 0, completed: false, locked: true },
-			level7: { stars: 0, completed: false, locked: false },
-			level8: { stars: 0, completed: false, locked: true },
-			level9: { stars: 0, completed: false, locked: true },
-			level10: { stars: 0, completed: false, locked: false },
-			level11: { stars: 0, completed: false, locked: true },
-			level12: { stars: 0, completed: false, locked: true }
+			level1: { stars: 0, lastPlayed: true, locked: false },
+			level2: { stars: 0, locked: true },
+			level3: { stars: 0, locked: true },
+			level4: { stars: 0, locked: false },
+			level5: { stars: 0, locked: true },
+			level6: { stars: 0, locked: true },
+			level7: { stars: 0, locked: false },
+			level8: { stars: 0, locked: true },
+			level9: { stars: 0, locked: true },
+			level10: { stars: 0, locked: false },
+			level11: { stars: 0, locked: true },
+			level12: { stars: 0, locked: true }
 		}
 	};
 
@@ -256,7 +256,7 @@ export async function unlockNextLevel(
 	const result = await updateLevelProgress(
 		userId,
 		nextLevelNumber,
-		{ stars: 0, completed: false, locked: false },
+		{ stars: 0, locked: false },
 		client
 	);
 

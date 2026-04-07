@@ -6,11 +6,11 @@
 	import GameButton from '$components/GameButton.svelte';
 	import Layout1 from '$components/layouts/Layout1.svelte';
 	import Paragraph from '$components/typography/Paragraph.svelte';
-	import type { ActionData, SubmitFunction } from './$types';
+	import type { ActionData, SubmitFunction, PageData } from './$types';
 	import Logo from '$components/Logo.svelte';
 	import Particles from '$components/Particles.svelte';
 
-	let { form }: { form: ActionData } = $props();
+	let { form, data }: { form: ActionData; data: PageData } = $props();
 
 	let loading = $state(false);
 
@@ -39,6 +39,7 @@
 <Layout1>
 	<Logo class="mb-5" />
 	<form class="flex w-full max-w-md flex-col gap-5" method="POST" use:enhance={handleSubmit}>
+		<input type="hidden" name="code" value={data.code} />
 		{#if form?.message !== undefined}
 			<AlertMessage message={form.message} variant={form?.success ? 'success' : 'error'} />
 		{/if}
