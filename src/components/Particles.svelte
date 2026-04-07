@@ -1,6 +1,6 @@
 <script lang="ts">
 	//https://animation-svelte.vercel.app/magic/particles
-	import { colors } from '$lib/shared/colors';
+	import { colors } from '$lib/client/shared/colors';
 	import { onMount } from 'svelte';
 
 	type Props = {

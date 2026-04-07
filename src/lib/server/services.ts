@@ -1,4 +1,6 @@
-import { supabase, supabaseAdmin } from './supabaseClient';
+import { supabaseBrowserClient } from '$lib/client/supabase';
+import { supabaseAdminClient } from '$lib/server/supabase';
+import type { Session, User } from '@supabase/supabase-js';
 import type { GameProgressType, LevelProgressType } from '$types/supabase/gameProgress';
 
 /**
@@ -7,7 +9,7 @@ import type { GameProgressType, LevelProgressType } from '$types/supabase/gamePr
  * @returns {Promise<any|null>} The user object or null if not found
  */
 export async function getUserByEmail(email: string) {
-	const { data, error } = await supabase.auth.admin.listUsers();
+	const { data, error } = await supabaseAdminClient.auth.admin.listUsers();
 
 	if (error) {
 		console.error('Error fetching user by email:', error);
@@ -22,7 +24,7 @@ export async function getUserByEmail(email: string) {
  * @returns {Promise<any[]>} Array of all user objects
  */
 export async function listAllUsers() {
-	const { data, error } = await supabase.auth.admin.listUsers();
+	const { data, error } = await supabaseAdminClient.auth.admin.listUsers();
 
 	if (error) {
 		console.error('Error listing users:', error);
@@ -40,22 +42,22 @@ export async function listAllUsers() {
 export async function initializeGameProgress(userId: string) {
 	const gameProgress: GameProgressType = {
 		levels: {
-			level1: { stars: 0, completed: false, locked: false },
-			level2: { stars: 0, completed: false, locked: true },
-			level3: { stars: 0, completed: false, locked: true },
-			level4: { stars: 0, completed: false, locked: false },
-			level5: { stars: 0, completed: false, locked: true },
-			level6: { stars: 0, completed: false, locked: true },
-			level7: { stars: 0, completed: false, locked: false },
-			level8: { stars: 0, completed: false, locked: true },
-			level9: { stars: 0, completed: false, locked: true },
-			level10: { stars: 0, completed: false, locked: false },
-			level11: { stars: 0, completed: false, locked: true },
-			level12: { stars: 0, completed: false, locked: true }
+			level1: { stars: 0, lastPlayed: true, locked: false },
+			level2: { stars: 0, locked: true },
+			level3: { stars: 0, locked: true },
+			level4: { stars: 0, locked: false },
+			level5: { stars: 0, locked: true },
+			level6: { stars: 0, locked: true },
+			level7: { stars: 0, locked: false },
+			level8: { stars: 0, locked: true },
+			level9: { stars: 0, locked: true },
+			level10: { stars: 0, locked: false },
+			level11: { stars: 0, locked: true },
+			level12: { stars: 0, locked: true }
 		}
 	};
 
-	const { data, error } = await supabaseAdmin
+	const { data, error } = await supabaseAdminClient
 		.from('game_progress')
 		.insert({
 			user_id: userId,
@@ -80,7 +82,7 @@ export async function initializeGameProgress(userId: string) {
  */
 export async function getGameProgress(
 	userId: string,
-	client: any = supabase
+	client: any = supabaseBrowserClient
 ): Promise<GameProgressType | null> {
 	// Optimized query: only select progress column (smaller payload)
 	// Make sure user_id column has a database index for faster queries
@@ -104,7 +106,11 @@ export async function getGameProgress(
  * @returns {Promise<any|null>} The game progress record or null if not found
  */
 export async function getGameProgressById(id: number) {
-	const { data, error } = await supabase.from('game_progress').select('*').eq('id', id).single();
+	const { data, error } = await supabaseBrowserClient
+		.from('game_progress')
+		.select('*')
+		.eq('id', id)
+		.single();
 
 	if (error) {
 		console.error('Error fetching game progress by ID:', error);
@@ -124,7 +130,7 @@ export async function getGameProgressById(id: number) {
 export async function updateGameProgress(
 	userId: string,
 	progress: GameProgressType,
-	client: any = supabase
+	client: any = supabaseBrowserClient
 ): Promise<GameProgressType | null> {
 	const { data, error } = await client
 		.from('game_progress')
@@ -156,7 +162,7 @@ export async function updateLevelProgress(
 	userId: string,
 	levelNumber: number,
 	attributes: LevelProgressType,
-	client: any = supabase
+	client: any = supabaseBrowserClient
 ): Promise<GameProgressType | null> {
 	// Get current progress
 	const currentProgress = await getGameProgress(userId, client);
@@ -195,7 +201,7 @@ export async function updateLevelProgress(
 export async function getLevelProgress(
 	userId: string,
 	levelNumber: number,
-	client: any = supabase
+	client: any = supabaseBrowserClient
 ): Promise<LevelProgressType | null> {
 	// Get the full game progress
 	const gameProgress = await getGameProgress(userId, client);
@@ -213,19 +219,18 @@ export async function getLevelProgress(
 }
 
 /**
- * Unlock the next level if it exists and is locked
+ * Unlock level for a user
  * @param {string} userId - The user ID to update progress for
- * @param {number} currentLevelNumber - The current level number
+ * @param {number} levelNumber - The level number to unlock
  * @param {any} client - The authenticated Supabase client
  * @returns {Promise<boolean>} True if next level was unlocked or was already unlocked, false if failed
  */
-export async function unlockNextLevel(
+export async function unlockLevel(
 	userId: string,
-	currentLevelNumber: number,
-	client: any = supabase
+	levelNumber: number,
+	client: any = supabaseBrowserClient
 ): Promise<boolean> {
-	const nextLevelNumber = currentLevelNumber + 1;
-	const nextLevelKey = `level${nextLevelNumber}` as keyof GameProgressType['levels'];
+	const nextLevelKey = `level${levelNumber}` as keyof GameProgressType['levels'];
 
 	// Get current progress
 	const gameProgress = await getGameProgress(userId, client);
@@ -237,7 +242,7 @@ export async function unlockNextLevel(
 
 	// Check if next level exists
 	if (!gameProgress.levels[nextLevelKey]) {
-		console.warn(`Level ${nextLevelNumber} does not exist`);
+		console.warn(`Level ${levelNumber} does not exist`);
 		return false;
 	}
 
@@ -249,10 +254,38 @@ export async function unlockNextLevel(
 	// Unlock the next level
 	const result = await updateLevelProgress(
 		userId,
-		nextLevelNumber,
-		{ stars: 0, completed: false, locked: false },
+		levelNumber,
+		{ stars: 0, locked: false },
 		client
 	);
 
 	return result !== null;
+}
+
+/**
+ * Safely get the current session and user
+ * @param {any} client - The authenticated Supabase client
+ * @returns {Promise<{session: Session; user: User} | {session: null; user: null}>} Session and user if authenticated, or null values if not
+ */
+export async function safeGetSession(
+	client: any = supabaseBrowserClient
+): Promise<{ session: Session; user: User } | { session: null; user: null }> {
+	const {
+		data: { session }
+	} = await client.auth.getSession();
+
+	if (!session) {
+		return { session: null, user: null };
+	}
+
+	const {
+		data: { user },
+		error
+	} = await client.auth.getUser();
+
+	if (error || user === null) {
+		return { session: null, user: null };
+	}
+
+	return { session, user };
 }

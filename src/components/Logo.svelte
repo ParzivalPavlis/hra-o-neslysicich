@@ -1,6 +1,6 @@
 <script lang="ts">
 	import { cn } from '$lib/utils';
-	import { colors, type ColorType } from '$lib/shared/colors';
+	import { colors, type ColorType } from '$lib/client/shared/colors';
 
 	type Props = {
 		fillColor?: ColorType | string;
