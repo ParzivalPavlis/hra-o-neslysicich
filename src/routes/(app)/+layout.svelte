@@ -18,6 +18,7 @@
 	// Pages that should be landscape-only
 	const LANDSCAPE_ONLY = [
 		'/levels/4/game',
+		'/levels/5/game',
 		'/levels/7/game',
 		'/levels/7/learn',
 		'/levels/8/game'

@@ -12,6 +12,7 @@
 		onReplay?: () => void;
 		onVideoEnd?: () => void;
 		onPlayClick?: () => void;
+		onDurationChange?: (duration: number) => void;
 	};
 
 	let {
@@ -22,7 +23,8 @@
 		showSkipButton = false,
 		onReplay,
 		onVideoEnd,
-		onPlayClick
+		onPlayClick,
+		onDurationChange
 	}: Props = $props();
 
 	let videoElement: HTMLVideoElement | null = $state(null);
@@ -52,6 +54,12 @@
 	function handleSkip() {
 		if (videoElement) {
 			videoElement.currentTime = videoElement.duration;
+		}
+	}
+
+	function handleLoadedMetadata() {
+		if (videoElement) {
+			onDurationChange?.(videoElement.duration * 1000); // Convert to milliseconds
 		}
 	}
 
@@ -93,6 +101,7 @@
 			muted
 			transition:fade={{ duration: 400 }}
 			onended={handleVideoEnd}
+			onloadedmetadata={handleLoadedMetadata}
 		>
 			<source src={videoSrc} type="video/mp4" />
 			Your browser does not support the video tag.

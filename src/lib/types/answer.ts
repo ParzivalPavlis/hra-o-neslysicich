@@ -15,6 +15,12 @@ export type AnswerType = {
 	options: AnswerOptionType[];
 };
 
+export type VariableAnswerType = {
+	id: number;
+	videoSrc: string[];
+	options: AnswerOptionType[];
+};
+
 export type AnswerOptionType = {
 	id: string;
 	text: string;

@@ -1,5 +1,5 @@
 import type { LevelButtonType } from '$types/levelButton';
-import { Hand, PersonStanding, Speech, Stethoscope } from '@lucide/svelte';
+import { Hand, PersonStanding, Speech, Eye } from '@lucide/svelte';
 
 export const levels: LevelButtonType[] = [
 	{
@@ -27,7 +27,7 @@ export const levels: LevelButtonType[] = [
 		trails: 2
 	},
 	{
-		icon: Stethoscope,
+		icon: Eye,
 		stars: 0,
 		locked: false,
 		description: 'Zkuste si návštěvu u lékaře',
@@ -35,15 +35,15 @@ export const levels: LevelButtonType[] = [
 		trails: 4
 	},
 	{
-		icon: Stethoscope,
+		icon: Eye,
 		stars: 0,
 		locked: true,
 		description: 'Kliknutím znovu pro spuštění',
-		href: '/levels/5',
+		href: '/levels/5/intro',
 		trails: 1
 	},
 	{
-		icon: Stethoscope,
+		icon: Eye,
 		stars: 0,
 		locked: true,
 		description: 'Kliknutím znovu pro spuštění',
