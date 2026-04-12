@@ -37,6 +37,7 @@
 	let buttonTimeoutId: NodeJS.Timeout | null = null;
 	let buttonHideTimeoutId: NodeJS.Timeout | null = null;
 	let videoDuration = $state(0);
+	let buttonPosition = $state({ x: 0, y: 0 });
 
 	// Derived state from store
 	let gameState = $derived($level5GameState);
@@ -45,6 +46,7 @@
 
 	const MAX_VARIABLE_VIDEOS = 5;
 	const MIN_VARIABLE_VIDEOS = 3;
+	const BUTTON_SHOW_DURATION = 3000;
 
 	function initializeRandomAnswers() {
 		answersWithRandomVideo.clear();
@@ -75,18 +77,26 @@
 		if (buttonTimeoutId) clearTimeout(buttonTimeoutId);
 		if (buttonHideTimeoutId) clearTimeout(buttonHideTimeoutId);
 
-		// Random delay between 10% and 60% of video duration
-		const minDelay = videoDuration * 0.1;
-		const maxDelay = videoDuration * 0.6;
-		const randomDelay = Math.random() * (maxDelay - minDelay) + minDelay;
+		// Only show button if this answer has a random video
+		if (!answersWithRandomVideo.has(currentAnswerIndex)) {
+			return;
+		}
+
+		// Show button at 60% of video duration
+		const delay = videoDuration * 0.6;
 
 		buttonTimeoutId = setTimeout(() => {
+			// Generate random position within ±128px from center (256x256 square)
+			buttonPosition = {
+				x: Math.random() * 256 - 128,
+				y: Math.random() * 256 - 128
+			};
 			showInteractiveButton = true;
 			// Hide button after 1.5 seconds
 			buttonHideTimeoutId = setTimeout(() => {
 				showInteractiveButton = false;
-			}, 1500);
-		}, randomDelay);
+			}, BUTTON_SHOW_DURATION);
+		}, delay);
 	}
 
 	function handleVideoLoadedMetadata(duration: number) {
@@ -141,6 +151,28 @@
 		}
 	}
 
+	function handleAlertButtonClick() {
+		// Change to the first video and start playing
+		const currentAnswer = answers[currentAnswerIndex];
+		if (currentAnswer && currentAnswer.videoSrc.length > 0) {
+			// Remove from random video set so it doesn't revert
+			answersWithRandomVideo.delete(currentAnswerIndex);
+			currentVideoSrc = currentAnswer.videoSrc[0];
+			videoEnded = false;
+			// Reset video to beginning and play
+			if (videoPlayerRef) {
+				setTimeout(() => {
+					if (videoPlayerRef.currentTime !== undefined) {
+						videoPlayerRef.currentTime = 0;
+					}
+					if (videoPlayerRef.play) {
+						videoPlayerRef.play();
+					}
+				}, 0);
+			}
+		}
+	}
+
 	function handleVideoEnd() {
 		if (buttonTimeoutId) clearTimeout(buttonTimeoutId);
 		if (buttonHideTimeoutId) clearTimeout(buttonHideTimeoutId);
@@ -160,6 +192,7 @@
 		autoplayPrevented = false;
 		disabledButtons = {};
 		showInteractiveButton = false;
+		buttonPosition = { x: 0, y: 0 };
 		if (buttonTimeoutId) clearTimeout(buttonTimeoutId);
 		if (buttonHideTimeoutId) clearTimeout(buttonHideTimeoutId);
 		initializeVideoForAnswer();
@@ -204,8 +237,11 @@
 							onDurationChange={handleVideoLoadedMetadata}
 						/>
 						{#if showInteractiveButton}
-							<div class="absolute inset-0 flex items-center justify-center">
-								<AlertButton />
+							<div
+								class="absolute flex items-center justify-center"
+								style="left: calc(50% + {buttonPosition.x}px); top: calc(50% + {buttonPosition.y}px); transform: translate(-50%, -50%);"
+							>
+								<AlertButton onclick={handleAlertButtonClick} />
 							</div>
 						{/if}
 					</div>
@@ -233,8 +269,11 @@
 						onDurationChange={handleVideoLoadedMetadata}
 					/>
 					{#if showInteractiveButton}
-						<div class="absolute inset-0 flex items-center justify-center">
-							<AlertButton />
+						<div
+							class="absolute flex items-center justify-center"
+							style="left: calc(50% + {buttonPosition.x}px); top: calc(50% + {buttonPosition.y}px); transform: translate(-50%, -50%);"
+						>
+							<AlertButton onclick={handleAlertButtonClick} />
 						</div>
 					{/if}
 				</div>

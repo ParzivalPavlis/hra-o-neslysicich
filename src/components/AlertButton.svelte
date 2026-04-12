@@ -4,10 +4,10 @@
 	type Props = {
 		onclick?: () => void;
 		disabled?: boolean;
-		helpUses?: number;
+		alertUses?: number;
 	};
 
-	let { onclick, disabled = false, helpUses = 0 }: Props = $props();
+	let { onclick, disabled = false, alertUses = 0 }: Props = $props();
 </script>
 
 <div class="relative w-fit">
@@ -20,11 +20,11 @@
 	>
 		<CircleAlert size={35} color="white" />
 	</button>
-	{#if helpUses > 0}
+	{#if alertUses > 0}
 		<div
 			class="absolute -right-1 -bottom-1 flex h-7 w-7 items-center justify-center rounded-full border-2 border-white bg-black"
 		>
-			<span class="text-xs font-bold text-white">{helpUses}</span>
+			<span class="text-xs font-bold text-white">{alertUses}</span>
 		</div>
 	{/if}
 </div>

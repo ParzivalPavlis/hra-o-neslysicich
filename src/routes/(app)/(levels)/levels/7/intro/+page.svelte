@@ -38,19 +38,15 @@
 <Layout1>
 	<div class="text-justif flex w-full max-w-150 flex-col items-center gap-3">
 		{#if introState === 1 && fadeAnimations}
-			<div in:fade={{ duration: 3000 }}>
-				<Paragraph>
-					Znaková řeč je pro neslyšící lidi přirozeným způsobem komunikace a hraje v jejich
-					každodenním životě klíčovou roli.
-				</Paragraph>
-			</div>
-			<div in:fade={{ delay: 3000, duration: 3000 }}>
-				<Paragraph>
-					Díky znakové řeči mohou neslyšící lidé sdílet informace, vyjadřovat emoce a plnohodnotně
-					komunikovat s ostatními. Zároveň jim umožňuje lépe porozumět světu kolem sebe a aktivně se
-					zapojit do běžných situací, které jsou pro slyšící samozřejmé.
-				</Paragraph>
-			</div>
+			<Paragraph inTransition={{ duration: 3000 }}>
+				Znaková řeč je pro neslyšící lidi přirozeným způsobem komunikace a hraje v jejich každy den
+				ním životě klíčovou roli.
+			</Paragraph>
+			<Paragraph inTransition={{ delay: 3000, duration: 3000 }}>
+				Díky znakové řeči mohou neslyšící lidé sdílet informace, vyjadřovat emoce a plnohodnotně
+				komunikovat s ostatními. Zároveň jim umožňuje lépe porozumět světu kolem sebe a aktivně se
+				zapojit do běžných situací, které jsou pro slyšící samozřejmé.
+			</Paragraph>
 			<div class="w-full" in:fade={{ delay: 6000, duration: 3000 }}>
 				<GameButton onclick={handleContinue} class="mt-5 w-full">Pokračovat</GameButton>
 			</div>

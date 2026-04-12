@@ -24,6 +24,7 @@
 		{ level: 1, src: '/assets/levelMap/manStudying.png' },
 		{ level: 2, src: '/assets/levelMap/manDrinking.png' },
 		{ level: 4, src: '/assets/levelMap/manDoctor.png' },
+		{ level: 5, src: '/assets/levelMap/manBank.png' },
 		{ level: 7, src: '/assets/levelMap/womanLearning.png' },
 		{ level: 8, src: '/assets/levelMap/peopleSigning.png' }
 	];

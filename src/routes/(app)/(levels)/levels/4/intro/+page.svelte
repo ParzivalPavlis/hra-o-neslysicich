@@ -33,12 +33,10 @@
 <Layout1>
 	<div class="flex w-full max-w-150 flex-col gap-3 text-justify">
 		{#if introState === 1 && fadeAnimations}
-			<div in:fade={{ duration: 3000 }}>
-				<Paragraph>
-					Necítíte se dobře a rozhodl/a jste se navštívit praktického lékaře. Poslední dny máte tyto
-					potíže:
-				</Paragraph>
-			</div>
+			<Paragraph inTransition={{ duration: 3000 }}>
+				Necítíte se dobře a rozhodl/a jste se navštívit praktického lékaře. Poslední dny máte tyto
+				potíže:
+			</Paragraph>
 			<div in:fade={{ delay: 3000, duration: 3000 }}>
 				<ul class="mx-auto list-disc pl-5 text-[15px] md:text-[17px]">
 					<li class="font-bold">bolest v krku</li>
@@ -47,17 +45,13 @@
 					<li class="font-bold">potíže trvají 3 dny</li>
 				</ul>
 			</div>
-			<div in:fade={{ delay: 6000, duration: 3000 }}>
-				<Paragraph>
-					Další důležitá informace: <span class="font-bold">nejste na nic alegický/á</span>
-				</Paragraph>
-			</div>
-			<div in:fade={{ delay: 9000, duration: 3000 }}>
-				<Paragraph>
-					Vaším cílem je správně odpovídat na jeho otázky, vysvětlit mu své potíže a nakonec získat
-					správnou diagnózu a doporučení.
-				</Paragraph>
-			</div>
+			<Paragraph inTransition={{ delay: 6000, duration: 3000 }}>
+				Další důležitá informace: <span class="font-bold">nejste na nic alegický/á</span>
+			</Paragraph>
+			<Paragraph inTransition={{ delay: 9000, duration: 3000 }}>
+				Vaším cílem je správně odpovídat na jeho otázky, vysvětlit mu své potíže a nakonec získat
+				správnou diagnózu a doporučení.
+			</Paragraph>
 			<div class="w-full" in:fade={{ delay: 12000, duration: 3000 }}>
 				<GameButton onclick={handleContinue} class="w-full">Pokračovat</GameButton>
 			</div>

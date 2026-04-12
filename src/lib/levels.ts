@@ -38,7 +38,7 @@ export const levels: LevelButtonType[] = [
 		icon: Eye,
 		stars: 0,
 		locked: true,
-		description: 'Kliknutím znovu pro spuštění',
+		description: 'Zkuste si návštěvu v bance',
 		href: '/levels/5/intro',
 		trails: 1
 	},

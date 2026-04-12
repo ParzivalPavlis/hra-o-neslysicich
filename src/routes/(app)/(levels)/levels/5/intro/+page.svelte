@@ -8,6 +8,8 @@
 	import { setLastPlayed } from '$lib/stores/lastPlayed';
 	import ReplayButtonTutorial from '$components/tutorials/ReplayButton.svelte';
 	import LivesTutorial from '$components/tutorials/Lives.svelte';
+	import AlertButtonTutorial from '$components/tutorials/AlertButton.svelte';
+	import AlertButton from '$components/tutorials/AlertButton.svelte';
 
 	let fadeAnimations = $state(false);
 	let introState = $state<1 | 2>(1);
@@ -33,9 +35,9 @@
 <Layout1>
 	<div class="flex w-full max-w-150 flex-col gap-3 text-justify">
 		{#if introState === 1 && fadeAnimations}
-			<div in:fade={{ duration: 3000 }}>
-				<Paragraph>Navštívili jste svojí bankum, kde si chcete zařídit několik věcí</Paragraph>
-			</div>
+			<Paragraph inTransition={{ duration: 3000 }}
+				>Navštívili jste banku, kde si chcete zařídit několik věcí:</Paragraph
+			>
 			<div in:fade={{ delay: 3000, duration: 3000 }}>
 				<ul class="mx-auto list-disc pl-5 text-[15px] md:text-[17px]">
 					<li class="font-bold">založit si spořicí účet</li>
@@ -46,19 +48,17 @@
 			</div>
 			<div in:fade={{ delay: 6000, duration: 3000 }}>
 				<Paragraph>
-					Nemáte žádný úvěr ani dluhy a jedná se o vaši první návštěvu této banky.
+					Nemáte žádný úvěr ani dluhy a jedná se o vaši první návštěvu této banky. Nemáte zájém o
+					investice a žádné podoné služby.
 				</Paragraph>
 				<Paragraph>
 					Pracovník banky ví, že jste neslyšící, ale zdá se, že úplně neví, jak s vámi komunikovat.
 				</Paragraph>
 			</div>
-			<div in:fade={{ delay: 9000, duration: 3000 }}>
-				<Paragraph>
-					Vaším cílem je správně odpovídat na jeho otázky. Občas nebudete rozumět, bude si zakrívat
-					ústa, nebo vám nebude dávat oční kontakt. V těchto situacích musíte z rychlého menu vybrat
-					správnou reakci, abyste ho přiměli komunikovat s vámi efektivněji.
-				</Paragraph>
-			</div>
+			<Paragraph inTransition={{ delay: 9000, duration: 3000 }}>
+				Vaším cílem je správně odpovídat na jeho otázky. Občas nebudete rozumět, bude si zakrývat
+				ústa, nebo vám nebude dávat oční kontakt.
+			</Paragraph>
 			<div class="w-full" in:fade={{ delay: 12000, duration: 3000 }}>
 				<GameButton onclick={handleContinue} class="w-full">Pokračovat</GameButton>
 			</div>
@@ -66,9 +66,10 @@
 		{#if introState === 2}
 			<Paragraph variant={3} className="text-center font-bold">Vystvětlivky:</Paragraph>
 			<Paragraph>
-				V této úrovni budete sledovat videa, která simulují návštěvu lékaře, ale bez zvuku. Budete
-				muset doktorovi odezírat z úst.
+				V této úrovni budete sledovat videa, která simulují návštěvu banky, ale bez zvuku. Budete
+				muset pracovníkovy odezírat z úst.
 			</Paragraph>
+			<AlertButtonTutorial />
 			<ReplayButtonTutorial />
 			<LivesTutorial />
 			<GameButton onclick={handleContinue} class="w-full">Začít</GameButton>
