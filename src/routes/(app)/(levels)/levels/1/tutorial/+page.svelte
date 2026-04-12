@@ -1,21 +1,15 @@
 <script lang="ts">
-	import Paragraph from '$components/typography/Paragraph.svelte';
-	import { onMount } from 'svelte';
-	import { goto } from '$app/navigation';
-	import TalkingPersonTutorial from '$components/tutorials/TalkingPerson.svelte';
 	import GameButton from '$components/GameButton.svelte';
+	import Paragraph from '$components/typography/Paragraph.svelte';
+	import TalkingPersonTutorial from '$components/tutorials/TalkingPerson.svelte';
 	import Layout1 from '$components/layouts/Layout1.svelte';
-	import { setLastPlayed } from '$lib/stores/lastPlayed';
+	import { goto } from '$app/navigation';
 
-	const CURRENT_LEVEL_NUMBER = 2;
+	const CURRENT_LEVEL_NUMBER = 1;
 
 	function handleContinue() {
 		goto(`/levels/${CURRENT_LEVEL_NUMBER}/game`);
 	}
-
-	onMount(() => {
-		setLastPlayed(CURRENT_LEVEL_NUMBER);
-	});
 </script>
 
 <svelte:head>
@@ -26,10 +20,10 @@
 	<div class="text-justif flex w-full max-w-150 flex-col items-center gap-3">
 		<Paragraph variant={3} className="font-bold">Vysvětlivky:</Paragraph>
 		<Paragraph>
-			Nacházíte se v roli neslyšícího člověka v kavárně. Okolo sebe máte další návštěvníky, kteří si
-			povídají a jelikož čekáte na kamaráda, nenapadne vás nic lepšího než mezitím zjistit, o čem si
-			ostatní povídají. Na konci je vaším cílem odpovědět na sérii otázek vztahující se k tématům, o
-			kterých si postavy povídaly.
+			Nacházíte se v roli neslyšícího člověka ve škole. Čekáte na začátek hodiny a nedaleko od vás
+			si dva vaši kamarádi spolu povídají. Protože máte chvíli času, začnete sledovat jejich
+			konverzaci a snažíte se odezírat, o čem mluví. Na konci je vaším cílem odpovědět na sérii
+			otázek vztahujících se k tématům, o kterých si kamarádi mluvili.
 		</Paragraph>
 		<TalkingPersonTutorial />
 		<GameButton class="w-full md:max-w-150" onclick={handleContinue}>Začít</GameButton>

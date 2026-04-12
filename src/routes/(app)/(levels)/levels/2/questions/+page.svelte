@@ -11,6 +11,8 @@
 		addQuestionAnswer
 	} from '$lib/stores/level2';
 	import type { QuestionOptionType } from '$types/question';
+	import { onMount } from 'svelte';
+	import { checkIsPlaying } from '$lib/stores/lastPlayed';
 
 	const NUMBER_OF_QUESTIONS_GROUP1 = 4;
 	const NUMBER_OF_QUESTIONS_GROUP2 = 4;
@@ -113,6 +115,10 @@
 			const originalIds = combinedQuestions.map((q) => q.id);
 			initializeLevel2Questions(originalIds);
 		}
+	});
+
+	onMount(() => {
+		checkIsPlaying(2);
 	});
 </script>
 

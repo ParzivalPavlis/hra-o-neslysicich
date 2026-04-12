@@ -192,6 +192,98 @@ export async function updateLevelProgress(
 }
 
 /**
+ * Mark a level as played for a user (only if not already played)
+ * @param {string} userId - The user ID to update progress for
+ * @param {number} levelNumber - The level number to mark as played
+ * @param {any} client - The authenticated Supabase client
+ * @returns {Promise<boolean | 'already-played'>} True if level was marked as played or was already played, false if failed
+ */
+export async function setPlayedLevel(
+	userId: string,
+	levelNumber: number,
+	client: any = supabaseBrowserClient
+): Promise<boolean | 'already-played'> {
+	// Get current progress
+	const currentProgress = await getGameProgress(userId, client);
+
+	if (!currentProgress) {
+		console.error('No game progress found for user:', userId);
+		return false;
+	}
+
+	// Get the level key
+	const levelKey = `level${levelNumber}` as keyof GameProgressType['levels'];
+
+	// Check if level is already played
+	if (currentProgress.levels[levelKey].played) {
+		return 'already-played';
+	}
+
+	// Update the specific level's played property
+	const updatedProgress: GameProgressType = {
+		...currentProgress,
+		levels: {
+			...currentProgress.levels,
+			[levelKey]: {
+				...currentProgress.levels[levelKey],
+				played: true
+			}
+		}
+	};
+
+	// Save the updated progress
+	const result = await updateGameProgress(userId, updatedProgress, client);
+
+	return result !== null;
+}
+
+/**
+ * Set a level as lastPlayed and reset lastPlayed for all other levels
+ * @param {string} userId - The user ID to update progress for
+ * @param {number} levelNumber - The level number to set as lastPlayed
+ * @param {any} client - The authenticated Supabase client
+ * @returns {Promise<boolean>} True if level was set as lastPlayed, false if failed
+ */
+export async function setLastPlayedLevel(
+	userId: string,
+	levelNumber: number,
+	client: any = supabaseBrowserClient
+): Promise<boolean> {
+	// Get current progress
+	const currentProgress = await getGameProgress(userId, client);
+
+	if (!currentProgress) {
+		console.error('No game progress found for user:', userId);
+		return false;
+	}
+
+	// Get the level key
+	const levelKey = `level${levelNumber}` as keyof GameProgressType['levels'];
+
+	// Update all levels to reset lastPlayed, then set the specific level to true
+	const updatedLevels = Object.entries(currentProgress.levels).reduce(
+		(acc, [key, level]) => {
+			acc[key as keyof GameProgressType['levels']] = {
+				...level,
+				lastPlayed: key === levelKey
+			};
+			return acc;
+		},
+		{} as GameProgressType['levels']
+	);
+
+	const updatedProgress: GameProgressType = {
+		...currentProgress,
+		levels: updatedLevels
+	};
+
+	// Save the updated progress
+	const result = await updateGameProgress(userId, updatedProgress, client);
+
+	return result !== null;
+}
+
+/**
  * Get attributes of a specific level
  * @param {string} userId - The user ID to fetch progress for
  * @param {number} levelNumber - The level number

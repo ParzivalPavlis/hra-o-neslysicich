@@ -11,7 +11,10 @@
 		addQuestionAnswer
 	} from '$lib/stores/level1';
 	import type { QuestionOptionType } from '$types/question';
+	import { onMount } from 'svelte';
+	import { checkIsPlaying } from '$lib/stores/lastPlayed';
 
+	const CURRENT_LEVEL_NUMBER = 1;
 	const NUMBER_OF_QUESTIONS = 8;
 
 	let selectedAnswer = $state<string | null>(null);
@@ -83,7 +86,7 @@
 			const nextIndex = currentQuestionIndex + 1;
 			updateCurrentQuestion(nextIndex);
 		} else {
-			goto('/levels/1/overview');
+			goto(`/levels/${CURRENT_LEVEL_NUMBER}/overview`);
 		}
 	}
 
@@ -91,6 +94,10 @@
 		if (!showingFeedback || selectedAnswer !== optionId) return 1;
 		return isCorrect ? 2 : 3;
 	}
+
+	onMount(() => {
+		checkIsPlaying(CURRENT_LEVEL_NUMBER);
+	});
 
 	// Initialize questions from store or generate new ones
 	$effect(() => {
@@ -109,7 +116,7 @@
 </script>
 
 <svelte:head>
-	<title>Úroveň 1 | Deafio</title>
+	<title>Úroveň {CURRENT_LEVEL_NUMBER} | Deafio</title>
 </svelte:head>
 
 <Layout1>

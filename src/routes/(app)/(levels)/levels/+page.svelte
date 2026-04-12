@@ -3,11 +3,12 @@
 	import LevelButton from '$components/LevelButton.svelte';
 	import Button from '$components/ui/button/button.svelte';
 	import { levels } from '$lib/levels';
-	import { lastPlayedStore } from '$lib/stores/lastPlayed';
+	import { clearIsPlaying, lastPlayedStore } from '$lib/stores/lastPlayed';
 	import type { GameProgressType } from '$types/supabase/gameProgress';
 	import { ArrowUp, ArrowDown, ChevronUp, ChevronDown } from '@lucide/svelte';
 	import type { PageData } from './$types';
 	import Particles from '$components/Particles.svelte';
+	import { onMount } from 'svelte';
 
 	let { data }: { data: PageData } = $props();
 
@@ -164,6 +165,10 @@
 			shouldPlayUnlockAnimation = false;
 			unlockAnimationLevelNumber = null;
 		}
+	});
+
+	onMount(() => {
+		clearIsPlaying();
 	});
 </script>
 

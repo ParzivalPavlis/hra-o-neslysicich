@@ -9,6 +9,8 @@
 	import ReplayButtonTutorial from '$components/tutorials/ReplayButton.svelte';
 	import LivesTutorial from '$components/tutorials/Lives.svelte';
 
+	const CURRENT_LEVEL_NUMBER = 4;
+
 	let fadeAnimations = $state(false);
 	let introState = $state<1 | 2>(1);
 
@@ -16,18 +18,18 @@
 		if (introState === 1) {
 			introState = 2;
 		} else {
-			goto('/levels/4/game');
+			goto(`/levels/${CURRENT_LEVEL_NUMBER}/game`);
 		}
 	}
 
 	onMount(() => {
-		setLastPlayed(4);
+		setLastPlayed(CURRENT_LEVEL_NUMBER);
 		fadeAnimations = true;
 	});
 </script>
 
 <svelte:head>
-	<title>Úroveň 4 | Deafio</title>
+	<title>Úroveň {CURRENT_LEVEL_NUMBER} | Deafio</title>
 </svelte:head>
 
 <Layout1>

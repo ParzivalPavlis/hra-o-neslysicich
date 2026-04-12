@@ -3,12 +3,14 @@
 	import Layout1 from '$components/layouts/Layout1.svelte';
 	import TalkingPerson from '$components/TalkingPerson.svelte';
 	import Button from '$components/ui/button/button.svelte';
-	import characterGroups from '$lib/levels/2/characterGroups';
-	import { getRandomDuration } from '$lib/client/shared/utils';
-	import { clearLevel2QuestionsState } from '$lib/stores/level2';
+	import characterGroups from '$lib/levels/1/characterGroups';
+	import { deleteFromMap, getRandomDuration, updateMap } from '$lib/client/shared/utils';
+	import { clearLevel1QuestionsState } from '$lib/stores/level1';
 	import { RotateCcw } from '@lucide/svelte';
 	import { onMount } from 'svelte';
+	import { checkIsPlaying } from '$lib/stores/lastPlayed';
 
+	const CURRENT_LEVEL_NUMBER = 1;
 	const SHOW_FULL_DIALOG = true;
 
 	let conversationStarted = $state(false);
@@ -97,16 +99,6 @@
 	});
 
 	let selectedCharacterDialog = $derived(selectedCharacterTyped);
-
-	function updateMap<K, V>(map: Map<K, V>, key: K, value: V): Map<K, V> {
-		map.set(key, value);
-		return new Map(map);
-	}
-
-	function deleteFromMap<K, V>(map: Map<K, V>, key: K): Map<K, V> {
-		map.delete(key);
-		return new Map(map);
-	}
 
 	function resetConversationState() {
 		typingIntervals.forEach((interval) => clearInterval(interval));
@@ -236,13 +228,14 @@
 	}
 
 	onMount(() => {
+		checkIsPlaying(CURRENT_LEVEL_NUMBER);
 		startConversation();
-		clearLevel2QuestionsState();
+		clearLevel1QuestionsState();
 	});
 </script>
 
 <svelte:head>
-	<title>Úroveň 2</title>
+	<title>Úroveň {CURRENT_LEVEL_NUMBER} | Deafio</title>
 </svelte:head>
 
 <Layout1>
@@ -291,7 +284,10 @@
 							<RotateCcw />
 						</GameButton>
 					{/if}
-					<GameButton href="/levels/2/questions" class="mt-3 bg-gray-600 hover:bg-gray-700">
+					<GameButton
+						href={`/levels/${CURRENT_LEVEL_NUMBER}/questions`}
+						class="mt-3 bg-gray-600 hover:bg-gray-700"
+					>
 						Pokračovat
 					</GameButton>
 				</div>

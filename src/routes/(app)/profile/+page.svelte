@@ -8,7 +8,6 @@
 	import { Star, Mail, Calendar, ChevronDown } from '@lucide/svelte';
 	import { slide, fly } from 'svelte/transition';
 	import type { PageData } from './$types';
-	import { colors } from '$lib/client/shared/colors';
 
 	let { data }: { data: PageData } = $props();
 

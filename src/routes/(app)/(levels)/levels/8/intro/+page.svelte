@@ -9,6 +9,8 @@
 	import { onMount } from 'svelte';
 	import { fade } from 'svelte/transition';
 
+	const CURRENT_LEVEL_NUMBER = 8;
+
 	let fadeAnimations = $state(false);
 	let introState = $state<1 | 2 | 3>(1);
 
@@ -16,18 +18,18 @@
 		if (introState === 1) {
 			introState = 2;
 		} else if (introState === 2) {
-			goto('/levels/8/game');
+			goto(`/levels/${CURRENT_LEVEL_NUMBER}/game`);
 		}
 	}
 
 	onMount(() => {
-		setLastPlayed(8);
+		setLastPlayed(CURRENT_LEVEL_NUMBER);
 		fadeAnimations = true;
 	});
 </script>
 
 <svelte:head>
-	<title>Úroveň 8 | Deafio</title>
+	<title>Úroveň {CURRENT_LEVEL_NUMBER} | Deafio</title>
 </svelte:head>
 
 <Layout1>

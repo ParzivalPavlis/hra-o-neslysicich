@@ -1,7 +1,7 @@
 <script lang="ts">
 	import LevelCompletionCard from '$components/LevelCompletionCard.svelte';
 	import { level2QuestionsState } from '$lib/stores/level2';
-	import { setFirstThreeStars, setJustUnlockedLevel } from '$lib/stores/lastPlayed';
+	import { checkIsPlaying, setFirstThreeStars, setJustUnlockedLevel } from '$lib/stores/lastPlayed';
 	import { goto, invalidate } from '$app/navigation';
 	import Layout1 from '$components/layouts/Layout1.svelte';
 	import { enhance } from '$app/forms';
@@ -31,7 +31,7 @@
 	};
 
 	function handleRetry() {
-		goto('/levels/2');
+		goto('/levels/2/game');
 	}
 
 	function handleBackToLevels() {
@@ -39,6 +39,7 @@
 	}
 
 	onMount(() => {
+		checkIsPlaying(2);
 		// Auto-submit the form on mount
 		const form = document.querySelector('form');
 		if (form) form.requestSubmit();
