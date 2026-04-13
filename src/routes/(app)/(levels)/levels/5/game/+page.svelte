@@ -17,6 +17,12 @@
 	} from '$lib/stores/level5';
 	import LivesIndicator from '$components/LivesIndicator.svelte';
 	import AlertButton from '$components/AlertButton.svelte';
+	import { checkIsPlaying } from '$lib/stores/lastPlayed';
+
+	const CURRENT_LEVEL_NUMBER = 5;
+	const MAX_VARIABLE_VIDEOS = 5;
+	const MIN_VARIABLE_VIDEOS = 3;
+	const BUTTON_SHOW_DURATION = 3000;
 
 	let isPortrait = $state(true);
 	let isMobile = $state(false);
@@ -43,10 +49,6 @@
 	let gameState = $derived($level5GameState);
 	let currentAnswerIndex = $derived(gameState.currentAnswerIndex);
 	let lives = $derived(gameState.lives);
-
-	const MAX_VARIABLE_VIDEOS = 5;
-	const MIN_VARIABLE_VIDEOS = 3;
-	const BUTTON_SHOW_DURATION = 3000;
 
 	function initializeRandomAnswers() {
 		answersWithRandomVideo.clear();
@@ -130,7 +132,7 @@
 						updateCurrentAnswer(currentAnswerIndex + 1);
 					} else {
 						// Last question answered correctly - navigate to overview
-						goto('/levels/5/overview');
+						goto(`/levels/${CURRENT_LEVEL_NUMBER}/overview`);
 					}
 				} else {
 					decreaseLives();
@@ -181,12 +183,6 @@
 		showAnswerTab = true;
 	}
 
-	onMount(() => {
-		updateOrientation();
-		initializeLevel5Game();
-		initializeRandomAnswers();
-	});
-
 	$effect(() => {
 		videoEnded = false;
 		autoplayPrevented = false;
@@ -204,13 +200,20 @@
 
 	$effect(() => {
 		if (lives === 0) {
-			goto('/levels/5/overview');
+			goto(`/levels/${CURRENT_LEVEL_NUMBER}/overview`);
 		}
+	});
+
+	onMount(() => {
+		checkIsPlaying(CURRENT_LEVEL_NUMBER);
+		updateOrientation();
+		initializeLevel5Game();
+		initializeRandomAnswers();
 	});
 </script>
 
 <svelte:head>
-	<title>Úroveň 5 | Deafio</title>
+	<title>Úroveň {CURRENT_LEVEL_NUMBER} | Deafio</title>
 </svelte:head>
 
 <svelte:window on:orientationchange={updateOrientation} on:resize={updateOrientation} />

@@ -4,12 +4,18 @@
 	import TalkingPersonTutorial from '$components/tutorials/TalkingPerson.svelte';
 	import Layout1 from '$components/layouts/Layout1.svelte';
 	import { goto } from '$app/navigation';
+	import { onMount } from 'svelte';
+	import { checkIsPlaying } from '$lib/stores/lastPlayed';
 
 	const CURRENT_LEVEL_NUMBER = 1;
 
 	function handleContinue() {
 		goto(`/levels/${CURRENT_LEVEL_NUMBER}/game`);
 	}
+
+	onMount(() => {
+		checkIsPlaying(CURRENT_LEVEL_NUMBER);
+	});
 </script>
 
 <svelte:head>

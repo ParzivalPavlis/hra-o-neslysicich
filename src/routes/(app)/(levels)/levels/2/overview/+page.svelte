@@ -8,6 +8,7 @@
 	import { onMount } from 'svelte';
 	import type { FormSaveLevelProgressResponseType } from '$lib/types/form';
 
+	const CURRENT_LEVEL_NUMBER = 2;
 	const NUMBER_OF_QUESTIONS = 8;
 
 	let questionsState = $derived($level2QuestionsState);
@@ -31,7 +32,7 @@
 	};
 
 	function handleRetry() {
-		goto('/levels/2/game');
+		goto(`/levels/${CURRENT_LEVEL_NUMBER}/game`);
 	}
 
 	function handleBackToLevels() {
@@ -39,7 +40,7 @@
 	}
 
 	onMount(() => {
-		checkIsPlaying(2);
+		checkIsPlaying(CURRENT_LEVEL_NUMBER);
 		// Auto-submit the form on mount
 		const form = document.querySelector('form');
 		if (form) form.requestSubmit();
@@ -47,7 +48,7 @@
 </script>
 
 <svelte:head>
-	<title>Úroveň 2 | Deafio</title>
+	<title>Úroveň {CURRENT_LEVEL_NUMBER} | Deafio</title>
 </svelte:head>
 
 <form
@@ -59,7 +60,7 @@
 				const actionResult = result.data as FormSaveLevelProgressResponseType;
 
 				if (actionResult.firstTimeThreeStars === true) {
-					setFirstThreeStars(2);
+					setFirstThreeStars(CURRENT_LEVEL_NUMBER);
 				}
 				if (actionResult.unlockedLevel) {
 					setJustUnlockedLevel(actionResult.unlockedLevel);
@@ -82,7 +83,7 @@
 		{totalQuestions}
 		onRetry={handleRetry}
 		onBackToLevels={handleBackToLevels}
-		title="Úroveň 2 dokončena!"
+		title={`Úroveň ${CURRENT_LEVEL_NUMBER} dokončena!`}
 		stars={stars()}
 		{messages}
 	/>

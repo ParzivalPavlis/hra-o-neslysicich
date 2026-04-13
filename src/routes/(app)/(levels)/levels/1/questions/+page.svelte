@@ -95,10 +95,6 @@
 		return isCorrect ? 2 : 3;
 	}
 
-	onMount(() => {
-		checkIsPlaying(CURRENT_LEVEL_NUMBER);
-	});
-
 	// Initialize questions from store or generate new ones
 	$effect(() => {
 		const storedState = $level1QuestionsState;
@@ -112,6 +108,10 @@
 			const originalIds = combinedQuestions.map((q) => q.id);
 			initializeLevel1Questions(originalIds);
 		}
+	});
+
+	onMount(() => {
+		checkIsPlaying(CURRENT_LEVEL_NUMBER);
 	});
 </script>
 

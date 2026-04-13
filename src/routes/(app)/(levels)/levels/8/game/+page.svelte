@@ -16,6 +16,9 @@
 		addAnswer
 	} from '$lib/stores/level8';
 	import LivesIndicator from '$components/LivesIndicator.svelte';
+	import { checkIsPlaying } from '$lib/stores/lastPlayed';
+
+	const CURRENT_LEVEL_NUMBER = 8;
 
 	let isPortrait = $state(true);
 	let isMobile = $state(false);
@@ -64,7 +67,7 @@
 						updateCurrentAnswer(currentAnswerIndex + 1);
 					} else {
 						// Last question answered correctly - navigate to overview
-						goto('/levels/8/overview');
+						goto(`/levels/${CURRENT_LEVEL_NUMBER}/overview`);
 					}
 				} else {
 					decreaseLives();
@@ -89,13 +92,6 @@
 		showAnswerTab = true;
 	}
 
-	onMount(() => {
-		updateOrientation();
-		initializeLevel8Game();
-		// Shuffle videos array
-		shuffledVideos = shuffleArray([...answers]);
-	});
-
 	$effect(() => {
 		videoEnded = false;
 		autoplayPrevented = false;
@@ -107,13 +103,21 @@
 
 	$effect(() => {
 		if (lives === 0) {
-			goto('/levels/8/overview');
+			goto(`/levels/${CURRENT_LEVEL_NUMBER}/overview`);
 		}
+	});
+
+	onMount(() => {
+		checkIsPlaying(CURRENT_LEVEL_NUMBER);
+		updateOrientation();
+		initializeLevel8Game();
+		// Shuffle videos array
+		shuffledVideos = shuffleArray([...answers]);
 	});
 </script>
 
 <svelte:head>
-	<title>Úroveň 8 | Deafio</title>
+	<title>Úroveň {CURRENT_LEVEL_NUMBER} | Deafio</title>
 </svelte:head>
 
 <svelte:window on:orientationchange={updateOrientation} on:resize={updateOrientation} />

@@ -14,6 +14,9 @@
 		updateCurrentAnswer
 	} from '$lib/stores/level7';
 	import { onMount } from 'svelte';
+	import { checkIsPlaying } from '$lib/stores/lastPlayed';
+
+	const CURRENT_LEVEL_NUMBER = 7;
 
 	let isPortrait = $state(true);
 	let isMobile = $state(false);
@@ -79,14 +82,6 @@
 		showAnswerTab = true;
 	}
 
-	onMount(() => {
-		updateOrientation();
-		initializeLevel7Game();
-		// Create shuffled array of video indices [0, 1, 2, ..., 17]
-		const indices = Array.from({ length: answers.length }, (_, i) => i);
-		shuffledVideos = shuffleArray(indices);
-	});
-
 	$effect(() => {
 		videoEnded = false;
 		autoplayPrevented = false;
@@ -97,10 +92,19 @@
 			correctAnswerId = correctOption?.id ?? null;
 		}
 	});
+
+	onMount(() => {
+		checkIsPlaying(CURRENT_LEVEL_NUMBER);
+		updateOrientation();
+		initializeLevel7Game();
+		// Create shuffled array of video indices [0, 1, 2, ..., 17]
+		const indices = Array.from({ length: answers.length }, (_, i) => i);
+		shuffledVideos = shuffleArray(indices);
+	});
 </script>
 
 <svelte:head>
-	<title>Úroveň 7 | Deafio</title>
+	<title>Úroveň {CURRENT_LEVEL_NUMBER} | Deafio</title>
 </svelte:head>
 
 <svelte:window on:orientationchange={updateOrientation} on:resize={updateOrientation} />
@@ -113,7 +117,7 @@
 			{currentAnswerIndex}
 			totalQuestions={answers.length}
 			onSelectQuestion={handleSelectQuestion}
-			compleationLink="/levels/7/game"
+			compleationLink={`/levels/${CURRENT_LEVEL_NUMBER}/game`}
 			{isMobile}
 		/>
 		<div class="flex w-full flex-col items-center justify-center landscape:gap-2">
@@ -188,7 +192,7 @@
 			{currentAnswerIndex}
 			totalQuestions={answers.length}
 			onSelectQuestion={handleSelectQuestion}
-			compleationLink="/levels/7/game"
+			compleationLink={`/levels/${CURRENT_LEVEL_NUMBER}/game`}
 		/>
 	{/if}
 </Layout2>

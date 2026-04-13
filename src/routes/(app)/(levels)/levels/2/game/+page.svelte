@@ -10,6 +10,7 @@
 	import { onMount } from 'svelte';
 	import { checkIsPlaying } from '$lib/stores/lastPlayed';
 
+	const CURRENT_LEVEL_NUMBER = 2;
 	const SHOW_FULL_DIALOG = true;
 
 	let conversationStarted = $state(false);
@@ -237,14 +238,14 @@
 	}
 
 	onMount(() => {
-		checkIsPlaying(2);
+		checkIsPlaying(CURRENT_LEVEL_NUMBER);
 		startConversation();
 		clearLevel2QuestionsState();
 	});
 </script>
 
 <svelte:head>
-	<title>Úroveň 2</title>
+	<title>Úroveň {CURRENT_LEVEL_NUMBER} | Deafio</title>
 </svelte:head>
 
 <Layout1>
@@ -293,7 +294,10 @@
 							<RotateCcw />
 						</GameButton>
 					{/if}
-					<GameButton href="/levels/2/questions" class="mt-3 bg-gray-600 hover:bg-gray-700">
+					<GameButton
+						href={`/levels/${CURRENT_LEVEL_NUMBER}/questions`}
+						class="mt-3 bg-gray-600 hover:bg-gray-700"
+					>
 						Pokračovat
 					</GameButton>
 				</div>

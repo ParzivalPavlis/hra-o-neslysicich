@@ -4,6 +4,8 @@
 	import Layout1 from '$components/layouts/Layout1.svelte';
 	import ReplayButtonTutorial from '$components/tutorials/ReplayButton.svelte';
 	import { goto } from '$app/navigation';
+	import { onMount } from 'svelte';
+	import { checkIsPlaying } from '$lib/stores/lastPlayed';
 
 	const CURRENT_LEVEL_NUMBER = 7;
 
@@ -14,6 +16,10 @@
 	function handleLearn() {
 		goto(`/levels/${CURRENT_LEVEL_NUMBER}/learn`);
 	}
+
+	onMount(() => {
+		checkIsPlaying(CURRENT_LEVEL_NUMBER);
+	});
 </script>
 
 <Layout1>

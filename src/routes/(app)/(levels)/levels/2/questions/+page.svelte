@@ -14,6 +14,7 @@
 	import { onMount } from 'svelte';
 	import { checkIsPlaying } from '$lib/stores/lastPlayed';
 
+	const CURRENT_LEVEL_NUMBER = 2;
 	const NUMBER_OF_QUESTIONS_GROUP1 = 4;
 	const NUMBER_OF_QUESTIONS_GROUP2 = 4;
 
@@ -87,7 +88,7 @@
 			const nextIndex = currentQuestionIndex + 1;
 			updateCurrentQuestion(nextIndex);
 		} else {
-			goto('/levels/2/overview');
+			goto(`/levels/${CURRENT_LEVEL_NUMBER}/overview`);
 		}
 	}
 
@@ -118,12 +119,12 @@
 	});
 
 	onMount(() => {
-		checkIsPlaying(2);
+		checkIsPlaying(CURRENT_LEVEL_NUMBER);
 	});
 </script>
 
 <svelte:head>
-	<title>Úroveň 2 | Deafio</title>
+	<title>Úroveň {CURRENT_LEVEL_NUMBER} | Deafio</title>
 </svelte:head>
 
 <Layout1>
