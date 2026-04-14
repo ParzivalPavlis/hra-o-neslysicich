@@ -8,7 +8,12 @@
 		className = '',
 		variant = 1,
 		inTransition
-	}: { children: Snippet; className?: string; variant?: 1 | 2 | 3; inTransition?: any } = $props();
+	}: {
+		children: Snippet;
+		className?: string;
+		variant?: 1 | 2 | 3;
+		inTransition?: { delay?: number; duration?: number };
+	} = $props();
 
 	const variantClasses = {
 		1: 'text-[15px] md:text-[17px]',

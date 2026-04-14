@@ -32,7 +32,7 @@
 	let showingFeedback = $state(false);
 	let isCorrect = $state(false);
 	let disabledButtons = $state<Record<string, boolean>>({});
-	let videoPlayerRef: any = $state(null);
+	let videoPlayerRef: VideoPlayer | null = $state(null);
 	let shuffledVideos = $state<AnswerType[]>([]);
 
 	// Derived state from store

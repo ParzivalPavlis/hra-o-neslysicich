@@ -24,8 +24,6 @@
 		return 0;
 	});
 
-	let progressSaved = $state(false);
-
 	const messages = {
 		excellent: 'Výborně! Předvedli jste skvělé porozumění znakového jazyka.',
 		good: 'Dobře! S větší pozorností to bude ještě lepší.',
@@ -64,7 +62,6 @@
 					setFirstThreeStars(CURRENT_LEVEL_NUMBER);
 				}
 				if (actionResult.success) {
-					progressSaved = true;
 					await invalidate('game:progress');
 				}
 			}

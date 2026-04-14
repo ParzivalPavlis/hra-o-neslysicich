@@ -13,7 +13,7 @@
 </script>
 
 <div class={cn('w-fit', orientation === 'vertical' ? 'flex flex-col' : 'flex flex-row gap-1')}>
-	{#each Array(maxLives) as _, i}
+	{#each Array.from({ length: maxLives }) as _, i (i)}
 		<HeartHandshake
 			{size}
 			class="transition-all duration-500 {i < maxLives - lives ? 'text-gray-300' : 'text-red-600'}"

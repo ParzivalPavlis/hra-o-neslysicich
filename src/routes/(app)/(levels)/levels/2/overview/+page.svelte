@@ -23,8 +23,6 @@
 		return 1;
 	});
 
-	let progressSaved = $state(false);
-
 	const messages = {
 		excellent: 'Výborně! Máte skvělé porozumění konverzaci.',
 		good: 'Dobře! S trochou pozornosti to bude ještě lepší.',
@@ -66,7 +64,6 @@
 					setJustUnlockedLevel(actionResult.unlockedLevel);
 				}
 				if (actionResult.success) {
-					progressSaved = true;
 					await invalidate('game:progress');
 				}
 			}

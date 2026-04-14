@@ -164,10 +164,10 @@
 			// Reset video to beginning and play
 			if (videoPlayerRef) {
 				setTimeout(() => {
-					if (videoPlayerRef.currentTime !== undefined) {
+					if (videoPlayerRef && videoPlayerRef.currentTime !== undefined) {
 						videoPlayerRef.currentTime = 0;
 					}
-					if (videoPlayerRef.play) {
+					if (videoPlayerRef && videoPlayerRef.play) {
 						videoPlayerRef.play();
 					}
 				}, 0);

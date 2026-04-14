@@ -21,7 +21,7 @@ export const actions: Actions = {
 		const password = formData.get('password') as string;
 		const confirmPassword = formData.get('confirmPassword') as string;
 
-		let errors: FormErrorsType = {};
+		const errors: FormErrorsType = {};
 
 		// Email validation
 		const validEmail = /^[\w\-.+]+@([\w-]+\.)+[\w-]{2,}$/.test(email);

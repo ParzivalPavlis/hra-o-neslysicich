@@ -1,5 +1,5 @@
 import type { Actions } from './$types';
-import { updateLevelProgress, getLevelProgress, unlockLevel } from '$lib/server/services';
+import { updateLevelProgress, getLevelProgress } from '$lib/server/services';
 import type { FormSaveLevelProgressResponseType } from '$types/form';
 
 const CURRENT_LEVEL_NUMBER = 5;

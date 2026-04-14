@@ -71,7 +71,7 @@
 		</div>
 	</div>
 	<div class="flex gap-2">
-		{#each Array(3) as _, i}
+		{#each [0, 1, 2] as i (i)}
 			<div class="flex">
 				{#if i < stars}
 					<Star size={40} color="gold" fill="gold" />

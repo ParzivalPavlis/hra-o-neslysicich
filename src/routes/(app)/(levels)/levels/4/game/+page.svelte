@@ -32,7 +32,7 @@
 	let showingFeedback = $state(false);
 	let isCorrect = $state(false);
 	let disabledButtons = $state<Record<string, boolean>>({});
-	let videoPlayerRef: any = $state(null);
+	let videoPlayerRef: VideoPlayer | null = $state(null);
 
 	// Derived state from store
 	let gameState = $derived($level4GameState);

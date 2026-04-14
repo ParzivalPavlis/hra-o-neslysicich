@@ -7,6 +7,7 @@
 	import { deleteFromMap, getRandomDuration, updateMap } from '$lib/client/shared/utils';
 	import { clearLevel1QuestionsState } from '$lib/stores/level1';
 	import { RotateCcw } from '@lucide/svelte';
+	import { SvelteSet } from 'svelte/reactivity';
 	import { onMount } from 'svelte';
 	import { checkIsPlaying } from '$lib/stores/lastPlayed';
 
@@ -15,8 +16,8 @@
 
 	let conversationStarted = $state(false);
 	let restartUsed = $state(false);
-	let currentlySpeaking = $state(new Set<number>());
-	let finishedGroups = $state(new Set<number>());
+	let currentlySpeaking = $state(new SvelteSet<number>());
+	let finishedGroups = $state(new SvelteSet<number>());
 	let selectedCharacter = $state<(typeof allCharacters)[0] | null>(null);
 	let selectedCharacterClickTime = $state(0);
 	let currentDialogs = $state(new Map<number, string>());
@@ -103,8 +104,8 @@
 	function resetConversationState() {
 		typingIntervals.forEach((interval) => clearInterval(interval));
 
-		currentlySpeaking = new Set();
-		finishedGroups = new Set();
+		currentlySpeaking = new SvelteSet();
+		finishedGroups = new SvelteSet();
 		selectedCharacter = null;
 		selectedCharacterClickTime = 0;
 		currentDialogs = new Map();
@@ -164,12 +165,12 @@
 			const dialog = speaker.dialog[thoughtIndex];
 
 			// Start speaking
-			currentlySpeaking = new Set(currentlySpeaking).add(speaker.globalId);
+			currentlySpeaking = new SvelteSet(currentlySpeaking).add(speaker.globalId);
 			currentDialogs = updateMap(currentDialogs, speaker.globalId, dialog.text || '');
 
 			// Stop speaking after duration
 			setTimeout(() => {
-				const newSpeaking = new Set(currentlySpeaking);
+				const newSpeaking = new SvelteSet(currentlySpeaking);
 				newSpeaking.delete(speaker.globalId);
 				currentlySpeaking = newSpeaking;
 			}, dialog.duration * 0.9);
@@ -181,7 +182,7 @@
 			// Check if finished
 			if (thoughtIndex >= speaker.dialog.length) {
 				setTimeout(() => {
-					finishedGroups = new Set(finishedGroups).add(groupId);
+					finishedGroups = new SvelteSet(finishedGroups).add(groupId);
 				}, dialog.duration);
 				return;
 			}
@@ -224,7 +225,7 @@
 
 	function skipConversation() {
 		resetConversationState();
-		finishedGroups = new Set(Object.keys(characterGroups).map((id) => parseInt(id)));
+		finishedGroups = new SvelteSet(Object.keys(characterGroups).map((id) => parseInt(id)));
 	}
 
 	onMount(() => {
@@ -252,9 +253,9 @@
 			</div>
 		{/if}
 
-		{#each Object.entries(characterGroups) as [groupKeyStr, group]}
+		{#each Object.entries(characterGroups) as [groupKeyStr, group] (groupKeyStr)}
 			<div class="flex h-fit">
-				{#each group as character}
+				{#each group as character (character.name)}
 					{@const globalCharacter = allCharacters.find(
 						(c) => c.groupId === parseInt(groupKeyStr) && c.name === character.name
 					)}

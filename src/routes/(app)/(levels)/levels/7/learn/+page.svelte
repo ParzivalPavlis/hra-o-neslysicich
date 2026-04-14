@@ -29,7 +29,7 @@
 	let showingFeedback = $state(false);
 	let isCorrect = $state(false);
 	let correctAnswerId = $state<string | null>(null);
-	let videoPlayerRef: any = $state(null);
+	let videoPlayerRef: VideoPlayer | null = $state(null);
 	let shuffledVideos = $state<number[]>([]);
 
 	let gameState = $derived($level7GameState);

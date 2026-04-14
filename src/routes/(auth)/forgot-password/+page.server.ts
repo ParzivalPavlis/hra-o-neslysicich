@@ -19,7 +19,7 @@ export const actions: Actions = {
 		const formData = await request.formData();
 		const email = formData.get('email') as string;
 
-		let errors: FormErrorsType = {};
+		const errors: FormErrorsType = {};
 
 		// Email validation
 		const validEmail = /^[\w\-.+]+@([\w-]+\.)+[\w-]{2,}$/.test(email);

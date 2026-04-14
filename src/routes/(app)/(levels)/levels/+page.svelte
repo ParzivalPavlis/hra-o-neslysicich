@@ -179,7 +179,7 @@
 <div class="relative min-h-screen">
 	<Particles className="fixed inset-0" />
 	<div class="relative flex min-h-screen flex-col items-center gap-50 overflow-x-hidden p-10">
-		{#each levelsWithProgress as { icon, stars, locked, description, trails, href }, index}
+		{#each levelsWithProgress as { icon, stars, locked, description, trails, href }, index (href)}
 			<div class="relative flex w-full justify-center" bind:this={levelButtonRefs[index]}>
 				<div class="hidden w-60 md:flex">
 					{#if index % 2 === 0}
