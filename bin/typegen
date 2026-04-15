@@ -1,0 +1,25 @@
+#!/bin/sh
+set -a && . ./.env && set +a
+
+OUT_FILE="./src/lib/types/supabase/index.ts"
+
+# Check installed (npx-cached) version without triggering install
+CURRENT=$(npx --no -- supabase --version 2>/dev/null)
+LATEST=$(npm view supabase version 2>/dev/null)
+
+if [ -n "$LATEST" ] && [ "$CURRENT" != "$LATEST" ]; then
+  if [ -z "$CURRENT" ]; then
+    printf "supabase CLI not found. Install supabase@%s? (y/n) " "$LATEST"
+  else
+    printf "supabase update available (%s → %s). Install? (y/n) " "$CURRENT" "$LATEST"
+  fi
+  read -r REPLY
+  if [ "$REPLY" = "y" ] || [ "$REPLY" = "Y" ]; then
+    npx --yes "supabase@$LATEST" --version > /dev/null 2>&1
+  fi
+fi
+
+npx --yes supabase gen types typescript --project-id "$PUBLIC_SUPABASE_PROJECT_ID" --schema 'public' > $OUT_FILE || true
+
+pnpm prettier --write $OUT_FILE || true
+pnpm eslint --fix $OUT_FILE || true
