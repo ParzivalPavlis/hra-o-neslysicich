@@ -8,18 +8,12 @@
 	import { goto } from '$app/navigation';
 	import { answers } from '$lib/levels/7/answers';
 	import type { AnswerOptionType, AnswerType } from '$types/answer';
-	import {
-		level7GameState,
-		initializeLevel7Game,
-		updateCurrentAnswer,
-		decreaseLives,
-		addAnswer,
-		markLevel7Completed
-	} from '$lib/stores/level7';
+	import { level7 } from '$lib/stores/gameState';
 	import LivesIndicator from '$components/LivesIndicator.svelte';
 	import { checkIsPlaying } from '$lib/stores/lastPlayed';
 
 	const CURRENT_LEVEL_NUMBER = 7;
+	const level7State = level7.store;
 
 	let isPortrait = $state(true);
 	let isMobile = $state(false);
@@ -37,7 +31,7 @@
 	let shuffledVideos = $state<AnswerType[]>([]);
 
 	// Derived state from store
-	let gameState = $derived($level7GameState);
+	let gameState = $derived($level7State);
 	let currentAnswerIndex = $derived(gameState.currentAnswerIndex);
 	let lives = $derived(gameState.lives);
 
@@ -59,20 +53,20 @@
 			showingFeedback = true;
 
 			// Record the answer in the store
-			addAnswer(currentAnswerIndex, optionId, isCorrect);
+			level7.addAnswer(currentAnswerIndex, optionId, isCorrect);
 
 			setTimeout(() => {
 				if (isCorrect) {
 					showAnswerTab = false;
 					if (currentAnswerIndex < shuffledVideos.length - 1) {
-						updateCurrentAnswer(currentAnswerIndex + 1);
+						level7.updateCurrentAnswer(currentAnswerIndex + 1);
 					} else {
 						// Last question answered correctly - navigate to overview
-						markLevel7Completed();
+						level7.markCompleted();
 						goto(`/levels/${CURRENT_LEVEL_NUMBER}/overview`);
 					}
 				} else {
-					decreaseLives();
+					level7.decreaseLives();
 					// Disable incorrect answer button after feedback is shown
 					disabledButtons[optionId] = true;
 				}
@@ -105,7 +99,7 @@
 
 	$effect(() => {
 		if (lives === 0) {
-			markLevel7Completed();
+			level7.markCompleted();
 			goto(`/levels/${CURRENT_LEVEL_NUMBER}/overview`);
 		}
 	});
@@ -113,12 +107,11 @@
 	onMount(() => {
 		checkIsPlaying(CURRENT_LEVEL_NUMBER);
 		updateOrientation();
-		initializeLevel7Game();
+		level7.initialize();
 		// Shuffle answers and take first 10
 		const allAnswersShuffled = shuffleArray([...answers]);
 		shuffledVideos = allAnswersShuffled.slice(0, 10);
 	});
-
 </script>
 
 <svelte:head>

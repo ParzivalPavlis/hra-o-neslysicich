@@ -49,8 +49,8 @@
 		<div class="text-justif flex w-full max-w-150 flex-col items-center gap-3">
 			{#if fadeAnimations}
 				<Paragraph inTransition={{ duration: 3000 }}>
-					Znaková řeč je pro neslyšící lidi přirozeným způsobem komunikace a hraje v jejich každy den
-					ním životě klíčovou roli.
+					Znaková řeč je pro neslyšící lidi přirozeným způsobem komunikace a hraje v jejich každy
+					den ním životě klíčovou roli.
 				</Paragraph>
 				<Paragraph inTransition={{ delay: 3000, duration: 3000 }}>
 					Díky znakové řeči mohou neslyšící lidé sdílet informace, vyjadřovat emoce a plnohodnotně

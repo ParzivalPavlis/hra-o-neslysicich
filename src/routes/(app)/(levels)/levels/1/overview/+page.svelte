@@ -1,6 +1,6 @@
 <script lang="ts">
 	import LevelCompletionCard from '$components/LevelCompletionCard.svelte';
-	import { level1QuestionsState } from '$lib/stores/level1';
+	import { level1 } from '$lib/stores/gameState';
 	import { checkIsPlaying, setFirstThreeStars, setJustUnlockedLevel } from '$lib/stores/lastPlayed';
 	import { goto, invalidate } from '$app/navigation';
 	import Layout1 from '$components/layouts/Layout1.svelte';
@@ -10,8 +10,9 @@
 
 	const CURRENT_LEVEL_NUMBER = 1;
 	const NUMBER_OF_QUESTIONS = 8;
+	const level1State = level1.store;
 
-	let questionsState = $derived($level1QuestionsState);
+	let questionsState = $derived($level1State);
 	let answers = $derived(questionsState.answers);
 	let correctAnswers = $derived(answers.filter((answer) => answer.isCorrect).length);
 	let totalQuestions = $derived(Math.max(answers.length, NUMBER_OF_QUESTIONS));

@@ -4,25 +4,20 @@
 	import QuestionCard from '$components/QuestionCard.svelte';
 	import questions from '$lib/levels/1/questions';
 	import { selectRandomOptions } from '$lib/client/shared/utils';
-	import {
-		level1QuestionsState,
-		initializeLevel1Questions,
-		updateCurrentQuestion,
-		addQuestionAnswer,
-		markLevel1QuestionsCompleted
-	} from '$lib/stores/level1';
+	import { level1 } from '$lib/stores/gameState';
 	import type { QuestionOptionType } from '$types/question';
 	import { onMount } from 'svelte';
 	import { checkIsPlaying } from '$lib/stores/lastPlayed';
 
 	const CURRENT_LEVEL_NUMBER = 1;
 	const NUMBER_OF_QUESTIONS = 8;
+	const level1State = level1.store;
 
 	let selectedAnswer = $state<string | null>(null);
 	let showingFeedback = $state(false);
 	let isCorrect = $state(false);
 	let personImage = $state<'man_thinking' | 'man_correct' | 'man_wrong'>('man_thinking');
-	let questionsState = $derived($level1QuestionsState);
+	let questionsState = $derived($level1State);
 	let questionIds = $derived(questionsState.questionIds);
 	let currentQuestionIndex = $derived(questionsState.currentQuestionIndex);
 
@@ -70,7 +65,7 @@
 		personImage = isCorrect ? 'man_correct' : 'man_wrong';
 
 		// Record the answer in the quiz state
-		addQuestionAnswer(currentQuestionIndex, option.id, option.correct);
+		level1.addAnswer(currentQuestionIndex, option.id, option.correct);
 
 		// Show feedback for 1.5 seconds, then move to next question
 		setTimeout(() => {
@@ -85,9 +80,9 @@
 		const questions = selectedQuestions();
 		if (questions && currentQuestionIndex < questions.length) {
 			const nextIndex = currentQuestionIndex + 1;
-			updateCurrentQuestion(nextIndex);
+			level1.updateCurrentQuestion(nextIndex);
 		} else {
-			markLevel1QuestionsCompleted();
+			level1.markCompleted();
 			goto(`/levels/${CURRENT_LEVEL_NUMBER}/overview`);
 		}
 	}
@@ -99,7 +94,7 @@
 
 	// Initialize questions from store or generate new ones
 	$effect(() => {
-		const storedState = $level1QuestionsState;
+		const storedState = $level1State;
 		if (!storedState.questionIds || storedState.questionIds.length === 0) {
 			// Select random questions from group1
 			const shuffledGroup1 = [...questions.group1].sort(() => 0.5 - Math.random());
@@ -108,7 +103,7 @@
 			// Combine and shuffle all selected questions
 			const combinedQuestions = selectedFromGroup1.sort(() => 0.5 - Math.random());
 			const originalIds = combinedQuestions.map((q) => q.id);
-			initializeLevel1Questions(originalIds);
+			level1.initialize(originalIds);
 		}
 	});
 

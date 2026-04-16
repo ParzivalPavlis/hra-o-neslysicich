@@ -8,18 +8,12 @@
 	import { goto } from '$app/navigation';
 	import { answers } from '$lib/levels/8/answers';
 	import type { ConversationAnswerType, ConversationOptionType } from '$types/answer';
-	import {
-		level8GameState,
-		initializeLevel8Game,
-		updateCurrentAnswer,
-		decreaseLives,
-		addAnswer,
-		markLevel8Completed
-	} from '$lib/stores/level8';
+	import { level8 } from '$lib/stores/gameState';
 	import LivesIndicator from '$components/LivesIndicator.svelte';
 	import { checkIsPlaying } from '$lib/stores/lastPlayed';
 
 	const CURRENT_LEVEL_NUMBER = 8;
+	const level8State = level8.store;
 
 	let isPortrait = $state(true);
 	let isMobile = $state(false);
@@ -37,7 +31,7 @@
 	let shuffledVideos = $state<ConversationAnswerType[]>([]);
 
 	// Derived state from store
-	let gameState = $derived($level8GameState);
+	let gameState = $derived($level8State);
 	let currentAnswerIndex = $derived(gameState.currentAnswerIndex);
 	let lives = $derived(gameState.lives);
 
@@ -59,20 +53,20 @@
 			showingFeedback = true;
 
 			// Record the answer in the store
-			addAnswer(currentAnswerIndex, optionId, isCorrect);
+			level8.addAnswer(currentAnswerIndex, optionId, isCorrect);
 
 			setTimeout(() => {
 				if (isCorrect) {
 					showAnswerTab = false;
 					if (currentAnswerIndex < shuffledVideos.length - 1) {
-						updateCurrentAnswer(currentAnswerIndex + 1);
+						level8.updateCurrentAnswer(currentAnswerIndex + 1);
 					} else {
 						// Last question answered correctly - navigate to overview
-						markLevel8Completed();
+						level8.markCompleted();
 						goto(`/levels/${CURRENT_LEVEL_NUMBER}/overview`);
 					}
 				} else {
-					decreaseLives();
+					level8.decreaseLives();
 					// Disable incorrect answer button after feedback is shown
 					disabledButtons[optionId] = true;
 				}
@@ -105,7 +99,7 @@
 
 	$effect(() => {
 		if (lives === 0) {
-			markLevel8Completed();
+			level8.markCompleted();
 			goto(`/levels/${CURRENT_LEVEL_NUMBER}/overview`);
 		}
 	});
@@ -113,11 +107,10 @@
 	onMount(() => {
 		checkIsPlaying(CURRENT_LEVEL_NUMBER);
 		updateOrientation();
-		initializeLevel8Game();
+		level8.initialize();
 		// Shuffle videos array
 		shuffledVideos = shuffleArray([...answers]);
 	});
-
 </script>
 
 <svelte:head>

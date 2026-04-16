@@ -5,7 +5,7 @@
 	import Button from '$components/ui/button/button.svelte';
 	import characterGroups from '$lib/levels/1/characterGroups';
 	import { deleteFromMap, getRandomDuration, updateMap } from '$lib/client/shared/utils';
-	import { clearLevel1QuestionsState } from '$lib/stores/level1';
+	import { level1 } from '$lib/stores/gameState';
 	import { RotateCcw } from '@lucide/svelte';
 	import { SvelteSet } from 'svelte/reactivity';
 	import { onMount } from 'svelte';
@@ -231,7 +231,7 @@
 	onMount(() => {
 		checkIsPlaying(CURRENT_LEVEL_NUMBER);
 		startConversation();
-		clearLevel1QuestionsState();
+		level1.clear();
 	});
 </script>
 

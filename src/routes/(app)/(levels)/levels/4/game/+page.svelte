@@ -8,18 +8,12 @@
 	import { goto } from '$app/navigation';
 	import { answers } from '$lib/levels/4/answers';
 	import type { AnswerOptionType } from '$types/answer';
-	import {
-		level4GameState,
-		initializeLevel4Game,
-		updateCurrentAnswer,
-		decreaseLives,
-		addAnswer,
-		markLevel4Completed
-	} from '$lib/stores/level4';
+	import { level4 } from '$lib/stores/gameState';
 	import LivesIndicator from '$components/LivesIndicator.svelte';
 	import { checkIsPlaying } from '$lib/stores/lastPlayed';
 
 	const CURRENT_LEVEL_NUMBER = 4;
+	const level4State = level4.store;
 
 	let isPortrait = $state(true);
 	let isMobile = $state(false);
@@ -36,7 +30,7 @@
 	let videoPlayerRef: VideoPlayer | null = $state(null);
 
 	// Derived state from store
-	let gameState = $derived($level4GameState);
+	let gameState = $derived($level4State);
 	let currentAnswerIndex = $derived(gameState.currentAnswerIndex);
 	let lives = $derived(gameState.lives);
 
@@ -58,20 +52,20 @@
 			showingFeedback = true;
 
 			// Record the answer in the store
-			addAnswer(currentAnswerIndex, optionId, isCorrect);
+			level4.addAnswer(currentAnswerIndex, optionId, isCorrect);
 
 			setTimeout(() => {
 				if (isCorrect) {
 					showAnswerTab = false;
 					if (currentAnswerIndex < answers.length - 1) {
-						updateCurrentAnswer(currentAnswerIndex + 1);
+						level4.updateCurrentAnswer(currentAnswerIndex + 1);
 					} else {
 						// Last question answered correctly - navigate to overview
-						markLevel4Completed();
+						level4.markCompleted();
 						goto(`/levels/${CURRENT_LEVEL_NUMBER}/overview`);
 					}
 				} else {
-					decreaseLives();
+					level4.decreaseLives();
 					// Disable incorrect answer button after feedback is shown
 					disabledButtons[optionId] = true;
 				}
@@ -104,7 +98,7 @@
 
 	$effect(() => {
 		if (lives === 0) {
-			markLevel4Completed();
+			level4.markCompleted();
 			goto(`/levels/${CURRENT_LEVEL_NUMBER}/overview`);
 		}
 	});
@@ -112,7 +106,7 @@
 	onMount(() => {
 		checkIsPlaying(CURRENT_LEVEL_NUMBER);
 		updateOrientation();
-		initializeLevel4Game();
+		level4.initialize();
 	});
 </script>
 

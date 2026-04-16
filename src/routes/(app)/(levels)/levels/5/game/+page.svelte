@@ -8,14 +8,7 @@
 	import { goto } from '$app/navigation';
 	import { answers } from '$lib/levels/5/answers';
 	import type { AnswerOptionType } from '$types/answer';
-	import {
-		level5GameState,
-		initializeLevel5Game,
-		updateCurrentAnswer,
-		decreaseLives,
-		addAnswer,
-		markLevel5Completed
-	} from '$lib/stores/level5';
+	import { level5 } from '$lib/stores/gameState';
 	import LivesIndicator from '$components/LivesIndicator.svelte';
 	import AlertButton from '$components/AlertButton.svelte';
 	import { checkIsPlaying } from '$lib/stores/lastPlayed';
@@ -24,6 +17,7 @@
 	const MAX_VARIABLE_VIDEOS = 5;
 	const MIN_VARIABLE_VIDEOS = 3;
 	const BUTTON_SHOW_DURATION = 3000;
+	const level5State = level5.store;
 
 	let isPortrait = $state(true);
 	let isMobile = $state(false);
@@ -47,7 +41,7 @@
 	let buttonPosition = $state({ x: 0, y: 0 });
 
 	// Derived state from store
-	let gameState = $derived($level5GameState);
+	let gameState = $derived($level5State);
 	let currentAnswerIndex = $derived(gameState.currentAnswerIndex);
 	let lives = $derived(gameState.lives);
 
@@ -124,20 +118,20 @@
 			showingFeedback = true;
 
 			// Record the answer in the store
-			addAnswer(currentAnswerIndex, optionId, isCorrect);
+			level5.addAnswer(currentAnswerIndex, optionId, isCorrect);
 
 			setTimeout(() => {
 				if (isCorrect) {
 					showAnswerTab = false;
 					if (currentAnswerIndex < answers.length - 1) {
-						updateCurrentAnswer(currentAnswerIndex + 1);
+						level5.updateCurrentAnswer(currentAnswerIndex + 1);
 					} else {
 						// Last question answered correctly - navigate to overview
-						markLevel5Completed();
+						level5.markCompleted();
 						goto(`/levels/${CURRENT_LEVEL_NUMBER}/overview`);
 					}
 				} else {
-					decreaseLives();
+					level5.decreaseLives();
 					// Disable incorrect answer button after feedback is shown
 					disabledButtons[optionId] = true;
 				}
@@ -202,7 +196,7 @@
 
 	$effect(() => {
 		if (lives === 0) {
-			markLevel5Completed();
+			level5.markCompleted();
 			goto(`/levels/${CURRENT_LEVEL_NUMBER}/overview`);
 		}
 	});
@@ -210,7 +204,7 @@
 	onMount(() => {
 		checkIsPlaying(CURRENT_LEVEL_NUMBER);
 		updateOrientation();
-		initializeLevel5Game();
+		level5.initialize();
 		initializeRandomAnswers();
 	});
 </script>

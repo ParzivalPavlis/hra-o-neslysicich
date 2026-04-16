@@ -7,16 +7,12 @@
 	import { getOrientationInfo, shuffleArray } from '$lib/client/shared/utils';
 	import { answers } from '$lib/levels/7/answers';
 	import type { AnswerOptionType } from '$types/answer';
-	import {
-		initializeLevel7Game,
-		level7GameState,
-		modifyAnswer,
-		updateCurrentAnswer
-	} from '$lib/stores/level7';
+	import { level7 } from '$lib/stores/gameState';
 	import { onMount } from 'svelte';
 	import { checkIsPlaying } from '$lib/stores/lastPlayed';
 
 	const CURRENT_LEVEL_NUMBER = 7;
+	const level7State = level7.store;
 
 	let isPortrait = $state(true);
 	let isMobile = $state(false);
@@ -32,7 +28,7 @@
 	let videoPlayerRef: VideoPlayer | null = $state(null);
 	let shuffledVideos = $state<number[]>([]);
 
-	let gameState = $derived($level7GameState);
+	let gameState = $derived($level7State);
 	let currentAnswerIndex = $derived(gameState.currentAnswerIndex);
 	let actualAnswerIndex = $derived(shuffledVideos[currentAnswerIndex] ?? currentAnswerIndex);
 
@@ -54,12 +50,12 @@
 			showingFeedback = true;
 
 			// Record the answer in the store
-			modifyAnswer(currentAnswerIndex, optionId, isCorrect);
+			level7.modifyAnswer(currentAnswerIndex, optionId, isCorrect);
 
 			setTimeout(() => {
 				showAnswerTab = false;
 				if (currentAnswerIndex < answers.length - 1) {
-					updateCurrentAnswer(currentAnswerIndex + 1);
+					level7.updateCurrentAnswer(currentAnswerIndex + 1);
 				} else {
 					showAnswerTab = true;
 				}
@@ -71,7 +67,7 @@
 
 	function handleSelectQuestion(questionIndex: number) {
 		if (questionIndex !== currentAnswerIndex) {
-			updateCurrentAnswer(questionIndex);
+			level7.updateCurrentAnswer(questionIndex);
 			videoEnded = false;
 			showAnswerTab = false;
 		}
@@ -96,7 +92,7 @@
 	onMount(() => {
 		checkIsPlaying(CURRENT_LEVEL_NUMBER);
 		updateOrientation();
-		initializeLevel7Game();
+		level7.initialize();
 		// Create shuffled array of video indices [0, 1, 2, ..., 17]
 		const indices = Array.from({ length: answers.length }, (_, i) => i);
 		shuffledVideos = shuffleArray(indices);
