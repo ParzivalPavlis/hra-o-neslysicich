@@ -6,10 +6,16 @@
 	import { setLastPlayed } from '$lib/stores/lastPlayed';
 	import { onMount } from 'svelte';
 	import { fade } from 'svelte/transition';
+	import SkipIntro from '$components/SkipIntro.svelte';
+	import type { PageProps } from './$types';
+
+	let { data }: PageProps = $props();
 
 	const CURRENT_LEVEL_NUMBER = 8;
 
 	let fadeAnimations = $state(false);
+	let alreadyPlayed = $derived(data.alreadyPlayed);
+	let showIntroContent = $state(false);
 
 	function handleContinue() {
 		goto(`/levels/${CURRENT_LEVEL_NUMBER}/tutorial`);
@@ -25,21 +31,36 @@
 	<title>Úroveň {CURRENT_LEVEL_NUMBER} | Deafio</title>
 </svelte:head>
 
-<Layout1>
-	<div class="flex w-full max-w-150 flex-col items-center gap-3 text-justify">
-		{#if fadeAnimations}
-			<Paragraph inTransition={{ duration: 3000 }}>
-				Představte si konverzaci, ve které neuslyšíte ani jediné slovo. Místo hlasu, intonace a
-				zvuků probíhá vše pouze pomocí pohybů rukou, mimiky a výrazů tváře.
-			</Paragraph>
-			<Paragraph inTransition={{ delay: 3000, duration: 3000 }}>
-				Pro neslyšící je to přirozený způsob komunikace. Znaková řeč nahrazuje mluvené slovo a
-				umožňuje sdílet myšlenky, emoce i informace bez jediného zvuku. Každé gesto má svůj význam a
-				stejně důležité jsou i detaily jako tempo nebo výraz obličeje.
-			</Paragraph>
-			<div class="w-full" in:fade={{ delay: 6000, duration: 3000 }}>
-				<GameButton onclick={handleContinue} class="w-full">Pokračovat</GameButton>
-			</div>
-		{/if}
-	</div>
-</Layout1>
+{#if alreadyPlayed}
+	<SkipIntro
+		skipTo="tutorial"
+		levelNumber={CURRENT_LEVEL_NUMBER}
+		onContinue={() => {
+			fadeAnimations = false;
+			showIntroContent = true;
+			setTimeout(() => {
+				fadeAnimations = true;
+			}, 50);
+		}}
+	/>
+{/if}
+{#if !alreadyPlayed || showIntroContent}
+	<Layout1>
+		<div class="flex w-full max-w-150 flex-col items-center gap-3 text-justify">
+			{#if fadeAnimations}
+				<Paragraph inTransition={{ duration: 3000 }}>
+					Představte si konverzaci, ve které neuslyšíte ani jediné slovo. Místo hlasu, intonace a
+					zvuků probíhá vše pouze pomocí pohybů rukou, mimiky a výrazů tváře.
+				</Paragraph>
+				<Paragraph inTransition={{ delay: 3000, duration: 3000 }}>
+					Pro neslyšící je to přirozený způsob komunikace. Znaková řeč nahrazuje mluvené slovo a
+					umožňuje sdílet myšlenky, emoce i informace bez jediného zvuku. Každé gesto má svůj význam a
+					stejně důležité jsou i detaily jako tempo nebo výraz obličeje.
+				</Paragraph>
+				<div class="w-full" in:fade={{ delay: 6000, duration: 3000 }}>
+					<GameButton onclick={handleContinue} class="w-full">Pokračovat</GameButton>
+				</div>
+			{/if}
+		</div>
+	</Layout1>
+{/if}
