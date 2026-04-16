@@ -4,7 +4,7 @@
 	import LearningMenu from '$components/LearningMenu.svelte';
 	import PortraitOrientationWarning from '$components/PortraitOrientationWarning.svelte';
 	import VideoPlayer from '$components/VideoPlayer.svelte';
-	import { getOrientationInfo, shuffleArray } from '$lib/client/shared/utils';
+	import { getOrientationInfo, shuffleArray } from '$lib/client/shared/gameUtils';
 	import { answers } from '$lib/levels/7/answers';
 	import type { AnswerOptionType } from '$types/answer';
 	import { level7 } from '$lib/stores/gameState';

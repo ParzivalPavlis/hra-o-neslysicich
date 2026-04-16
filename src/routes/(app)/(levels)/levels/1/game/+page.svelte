@@ -4,7 +4,7 @@
 	import TalkingPerson from '$components/TalkingPerson.svelte';
 	import Button from '$components/ui/button/button.svelte';
 	import characterGroups from '$lib/levels/1/characterGroups';
-	import { deleteFromMap, getRandomDuration, updateMap } from '$lib/client/shared/utils';
+	import { deleteFromMap, getRandomDuration, updateMap } from '$lib/client/shared/questionsUtils';
 	import { level1 } from '$lib/stores/gameState';
 	import { RotateCcw } from '@lucide/svelte';
 	import { SvelteSet } from 'svelte/reactivity';

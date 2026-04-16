@@ -4,7 +4,7 @@
 	import TalkingPerson from '$components/TalkingPerson.svelte';
 	import Button from '$components/ui/button/button.svelte';
 	import characterGroups from '$lib/levels/2/characterGroups';
-	import { getRandomDuration } from '$lib/client/shared/utils';
+	import { getRandomDuration, updateMap, deleteFromMap } from '$lib/client/shared/questionsUtils';
 	import { level2 } from '$lib/stores/gameState';
 	import { RotateCcw } from '@lucide/svelte';
 	import { onMount } from 'svelte';
@@ -100,16 +100,6 @@
 	});
 
 	let selectedCharacterDialog = $derived(selectedCharacterTyped);
-
-	function updateMap<K, V>(map: Map<K, V>, key: K, value: V): Map<K, V> {
-		map.set(key, value);
-		return new Map(map);
-	}
-
-	function deleteFromMap<K, V>(map: Map<K, V>, key: K): Map<K, V> {
-		map.delete(key);
-		return new Map(map);
-	}
 
 	function resetConversationState() {
 		typingIntervals.forEach((interval) => clearInterval(interval));

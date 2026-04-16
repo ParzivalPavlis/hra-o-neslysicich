@@ -3,7 +3,7 @@
 	import AnswerTab from '$components/AnswerTab.svelte';
 	import Layout2 from '$components/layouts/Layout2.svelte';
 	import PortraitOrientationWarning from '$components/PortraitOrientationWarning.svelte';
-	import { shuffleArray, getOrientationInfo } from '$lib/client/shared/utils';
+	import { shuffleArray, getOrientationInfo, createAnswerClickHandler } from '$lib/client/shared/gameUtils';
 	import { onMount } from 'svelte';
 	import { goto } from '$app/navigation';
 	import { answers } from '$lib/levels/7/answers';
@@ -41,40 +41,22 @@
 		isPortrait = orientation.isPortrait;
 	}
 
-	function handleAnswerClick(optionId: string) {
-		if (showingFeedback) return;
-
-		const currentAnswer = shuffledVideos[currentAnswerIndex];
-		const selectedOption = currentAnswer.options.find((opt) => opt.id === optionId);
-
-		if (selectedOption) {
-			selectedAnswer = optionId;
-			isCorrect = selectedOption.correct;
-			showingFeedback = true;
-
-			// Record the answer in the store
-			level7.addAnswer(currentAnswerIndex, optionId, isCorrect);
-
-			setTimeout(() => {
-				if (isCorrect) {
-					showAnswerTab = false;
-					if (currentAnswerIndex < shuffledVideos.length - 1) {
-						level7.updateCurrentAnswer(currentAnswerIndex + 1);
-					} else {
-						// Last question answered correctly - navigate to overview
-						level7.markCompleted();
-						goto(`/levels/${CURRENT_LEVEL_NUMBER}/overview`);
-					}
-				} else {
-					level7.decreaseLives();
-					// Disable incorrect answer button after feedback is shown
-					disabledButtons[optionId] = true;
-				}
-				showingFeedback = false;
-				selectedAnswer = null;
-			}, 1500);
+	const handleAnswerClick = createAnswerClickHandler(
+		level7,
+		CURRENT_LEVEL_NUMBER,
+		{
+			isShowingFeedback: () => showingFeedback,
+			getVideos: () => shuffledVideos,
+			getCurrentAnswerIndex: () => currentAnswerIndex
+		},
+		{
+			setShowingFeedback: (v) => { showingFeedback = v; },
+			setSelectedAnswer: (v) => { selectedAnswer = v; },
+			setIsCorrect: (v) => { isCorrect = v; },
+			setShowAnswerTab: (v) => { showAnswerTab = v; },
+			disableButton: (id) => { disabledButtons[id] = true; }
 		}
-	}
+	);
 
 	function replayVideo() {
 		if (helpUses > 0) {

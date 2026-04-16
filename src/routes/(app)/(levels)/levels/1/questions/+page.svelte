@@ -3,7 +3,7 @@
 	import Layout1 from '$components/layouts/Layout1.svelte';
 	import QuestionCard from '$components/QuestionCard.svelte';
 	import questions from '$lib/levels/1/questions';
-	import { selectRandomOptions } from '$lib/client/shared/utils';
+	import { buildQuestionsFromIds, pickRandomIds } from '$lib/client/shared/questionsUtils';
 	import { level1 } from '$lib/stores/gameState';
 	import type { QuestionOptionType } from '$types/question';
 	import { onMount } from 'svelte';
@@ -21,23 +21,9 @@
 	let questionIds = $derived(questionsState.questionIds);
 	let currentQuestionIndex = $derived(questionsState.currentQuestionIndex);
 
-	// Regenerate selected questions based on stored original IDs
 	let selectedQuestions = $derived(() => {
 		if (!questionIds || questionIds.length === 0) return [];
-
-		const allQuestions = questions.group1;
-
-		// Get the original questions by ID and regenerate with randomized options
-		const originalQuestions = questionIds
-			.map((id) => allQuestions.find((q) => q.id === id))
-			.filter((q) => q !== undefined);
-
-		// Apply the same transformation as selectRandomQuestions (reassign IDs and randomize options)
-		return originalQuestions.map((q, index) => ({
-			...q,
-			id: index + 1, // Reassign IDs to be sequential 1-8
-			options: selectRandomOptions(q.options)
-		}));
+		return buildQuestionsFromIds(questions.group1, questionIds);
 	});
 
 	let currentQuestion = $derived(
@@ -92,18 +78,10 @@
 		return isCorrect ? 2 : 3;
 	}
 
-	// Initialize questions from store or generate new ones
 	$effect(() => {
 		const storedState = $level1State;
 		if (!storedState.questionIds || storedState.questionIds.length === 0) {
-			// Select random questions from group1
-			const shuffledGroup1 = [...questions.group1].sort(() => 0.5 - Math.random());
-			const selectedFromGroup1 = shuffledGroup1.slice(0, NUMBER_OF_QUESTIONS);
-
-			// Combine and shuffle all selected questions
-			const combinedQuestions = selectedFromGroup1.sort(() => 0.5 - Math.random());
-			const originalIds = combinedQuestions.map((q) => q.id);
-			level1.initialize(originalIds);
+			level1.initialize(pickRandomIds(questions.group1, NUMBER_OF_QUESTIONS));
 		}
 	});
 
