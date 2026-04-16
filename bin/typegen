@@ -21,5 +21,5 @@ fi
 
 npx --yes supabase gen types typescript --project-id "$PUBLIC_SUPABASE_PROJECT_ID" --schema 'public' > $OUT_FILE || true
 
-pnpm prettier --write $OUT_FILE || true
-pnpm eslint --fix $OUT_FILE || true
+npx prettier --write $OUT_FILE || true
+npx eslint --fix $OUT_FILE || true
