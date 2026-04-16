@@ -54,8 +54,8 @@
 				</Paragraph>
 				<Paragraph inTransition={{ delay: 3000, duration: 3000 }}>
 					Pro neslyšící je to přirozený způsob komunikace. Znaková řeč nahrazuje mluvené slovo a
-					umožňuje sdílet myšlenky, emoce i informace bez jediného zvuku. Každé gesto má svůj význam a
-					stejně důležité jsou i detaily jako tempo nebo výraz obličeje.
+					umožňuje sdílet myšlenky, emoce i informace bez jediného zvuku. Každé gesto má svůj význam
+					a stejně důležité jsou i detaily jako tempo nebo výraz obličeje.
 				</Paragraph>
 				<div class="w-full" in:fade={{ delay: 6000, duration: 3000 }}>
 					<GameButton onclick={handleContinue} class="w-full">Pokračovat</GameButton>

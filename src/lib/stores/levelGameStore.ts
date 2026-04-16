@@ -9,10 +9,7 @@ const DEFAULT_STATE: LevelVideosState = {
 };
 
 export function createLevelGameStore(levelNumber: number) {
-	const store = persisted<LevelVideosState>(
-		`level${levelNumber}-game-state`,
-		{ ...DEFAULT_STATE }
-	);
+	const store = persisted<LevelVideosState>(`level${levelNumber}-game-state`, { ...DEFAULT_STATE });
 
 	function initialize() {
 		store.set({ ...DEFAULT_STATE });
@@ -56,7 +53,16 @@ export function createLevelGameStore(levelNumber: number) {
 		store.set({ ...DEFAULT_STATE });
 	}
 
-	return { store, initialize, updateCurrentAnswer, decreaseLives, addAnswer, modifyAnswer, markCompleted, clear };
+	return {
+		store,
+		initialize,
+		updateCurrentAnswer,
+		decreaseLives,
+		addAnswer,
+		modifyAnswer,
+		markCompleted,
+		clear
+	};
 }
 
 export type LevelGameStoreInstance = ReturnType<typeof createLevelGameStore>;

@@ -3,7 +3,11 @@
 	import AnswerTab from '$components/AnswerTab.svelte';
 	import Layout2 from '$components/layouts/Layout2.svelte';
 	import PortraitOrientationWarning from '$components/PortraitOrientationWarning.svelte';
-	import { shuffleArray, getOrientationInfo, createAnswerClickHandler } from '$lib/client/shared/gameUtils';
+	import {
+		shuffleArray,
+		getOrientationInfo,
+		createAnswerClickHandler
+	} from '$lib/client/shared/gameUtils';
 	import { onMount } from 'svelte';
 	import { goto } from '$app/navigation';
 	import { answers } from '$lib/levels/5/answers';
@@ -115,11 +119,21 @@
 			getCurrentAnswerIndex: () => currentAnswerIndex
 		},
 		{
-			setShowingFeedback: (v) => { showingFeedback = v; },
-			setSelectedAnswer: (v) => { selectedAnswer = v; },
-			setIsCorrect: (v) => { isCorrect = v; },
-			setShowAnswerTab: (v) => { showAnswerTab = v; },
-			disableButton: (id) => { disabledButtons[id] = true; }
+			setShowingFeedback: (v) => {
+				showingFeedback = v;
+			},
+			setSelectedAnswer: (v) => {
+				selectedAnswer = v;
+			},
+			setIsCorrect: (v) => {
+				isCorrect = v;
+			},
+			setShowAnswerTab: (v) => {
+				showAnswerTab = v;
+			},
+			disableButton: (id) => {
+				disabledButtons[id] = true;
+			}
 		}
 	);
 

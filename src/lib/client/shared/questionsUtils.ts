@@ -25,7 +25,10 @@ export function selectRandomQuestions(allQuestions: QuestionType[], count: numbe
 
 // Pick `count` random question IDs from a source list
 export function pickRandomIds(source: QuestionType[], count: number): number[] {
-	return [...source].sort(() => 0.5 - Math.random()).slice(0, count).map((q) => q.id);
+	return [...source]
+		.sort(() => 0.5 - Math.random())
+		.slice(0, count)
+		.map((q) => q.id);
 }
 
 // Rebuild questions from stored IDs (with freshly randomized options each time)
