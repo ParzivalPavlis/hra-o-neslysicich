@@ -4,6 +4,7 @@ import { persisted } from 'svelte-persisted-store';
 // Store for persisting the complete level 1 questions state
 export const level1QuestionsState = persisted<LevelQuestionsState>('level1-questions-state', {
 	questionIds: [],
+	completed: false,
 	currentQuestionIndex: 1,
 	answers: []
 });
@@ -12,6 +13,7 @@ export const level1QuestionsState = persisted<LevelQuestionsState>('level1-quest
 export function initializeLevel1Questions(questionIds: number[]) {
 	level1QuestionsState.set({
 		questionIds,
+		completed: false,
 		currentQuestionIndex: 1,
 		answers: []
 	});
@@ -42,9 +44,17 @@ export function addQuestionAnswer(
 	}));
 }
 
+export function markLevel1QuestionsCompleted() {
+	level1QuestionsState.update((state) => ({
+		...state,
+		completed: true
+	}));
+}
+
 export function clearLevel1QuestionsState() {
 	level1QuestionsState.set({
 		questionIds: [],
+		completed: false,
 		currentQuestionIndex: 1,
 		answers: []
 	});

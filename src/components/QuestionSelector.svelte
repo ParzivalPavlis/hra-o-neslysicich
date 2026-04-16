@@ -1,11 +1,11 @@
 <script lang="ts">
 	import GameButton from '$components/GameButton.svelte';
-	import type { LevelAnswersState } from '$types/store';
+	import type { AnswersState } from '$types/store';
 
 	type Props = {
 		totalQuestions: number;
 		currentAnswerIndex: number;
-		answers: LevelAnswersState[];
+		answers: AnswersState[];
 		onSelectQuestion?: (index: number) => void;
 		isLastQuestionAnswered: boolean;
 		compleationLink?: string;

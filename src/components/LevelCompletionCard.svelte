@@ -58,7 +58,7 @@
 				</div>
 			{:else if variant === 'lives'}
 				<div class="mb-4 flex justify-center">
-					<LivesIndicator orientation="horizontal" {lives} {maxLives} size={40} />
+					<LivesIndicator orientation="horizontal" direction="rtl" {lives} {maxLives} size={40} />
 				</div>
 			{/if}
 			<Paragraph>

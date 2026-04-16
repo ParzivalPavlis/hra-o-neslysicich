@@ -4,6 +4,7 @@ import type { LevelVideosState } from '$lib/types/store';
 // Store for persisting the complete level 7 game state
 export const level7GameState = persisted<LevelVideosState>('level7-game-state', {
 	currentAnswerIndex: 0,
+	completed: false,
 	lives: 4,
 	answers: []
 });
@@ -12,6 +13,7 @@ export const level7GameState = persisted<LevelVideosState>('level7-game-state', 
 export function initializeLevel7Game() {
 	level7GameState.set({
 		currentAnswerIndex: 0,
+		completed: false,
 		lives: 4,
 		answers: []
 	});
@@ -74,9 +76,17 @@ export function modifyAnswer(questionId: number, selectedOptionId: string, isCor
 	});
 }
 
+export function markLevel7Completed() {
+	level7GameState.update((state) => ({
+		...state,
+		completed: true
+	}));
+}
+
 export function clearLevel7GameState() {
 	level7GameState.set({
 		currentAnswerIndex: 0,
+		completed: false,
 		lives: 4,
 		answers: []
 	});

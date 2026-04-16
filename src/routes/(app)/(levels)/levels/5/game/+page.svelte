@@ -13,7 +13,8 @@
 		initializeLevel5Game,
 		updateCurrentAnswer,
 		decreaseLives,
-		addAnswer
+		addAnswer,
+		markLevel5Completed
 	} from '$lib/stores/level5';
 	import LivesIndicator from '$components/LivesIndicator.svelte';
 	import AlertButton from '$components/AlertButton.svelte';
@@ -132,6 +133,7 @@
 						updateCurrentAnswer(currentAnswerIndex + 1);
 					} else {
 						// Last question answered correctly - navigate to overview
+						markLevel5Completed();
 						goto(`/levels/${CURRENT_LEVEL_NUMBER}/overview`);
 					}
 				} else {
@@ -200,6 +202,7 @@
 
 	$effect(() => {
 		if (lives === 0) {
+			markLevel5Completed();
 			goto(`/levels/${CURRENT_LEVEL_NUMBER}/overview`);
 		}
 	});

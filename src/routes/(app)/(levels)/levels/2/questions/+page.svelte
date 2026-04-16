@@ -8,7 +8,8 @@
 		level2QuestionsState,
 		initializeLevel2Questions,
 		updateCurrentQuestion,
-		addQuestionAnswer
+		addQuestionAnswer,
+		markLevel2QuestionsCompleted
 	} from '$lib/stores/level2';
 	import type { QuestionOptionType } from '$types/question';
 	import { onMount } from 'svelte';
@@ -88,6 +89,7 @@
 			const nextIndex = currentQuestionIndex + 1;
 			updateCurrentQuestion(nextIndex);
 		} else {
+			markLevel2QuestionsCompleted();
 			goto(`/levels/${CURRENT_LEVEL_NUMBER}/overview`);
 		}
 	}

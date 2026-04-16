@@ -38,10 +38,14 @@
 	}
 
 	onMount(() => {
-		checkIsPlaying(CURRENT_LEVEL_NUMBER);
-		// Auto-submit the form on mount
-		const form = document.querySelector('form');
-		if (form) form.requestSubmit();
+		if (!questionsState.completed) {
+			goto(`/levels/${CURRENT_LEVEL_NUMBER}/game`);
+		} else {
+			checkIsPlaying(CURRENT_LEVEL_NUMBER);
+			// Auto-submit the form on mount
+			const form = document.querySelector('form');
+			if (form) form.requestSubmit();
+		}
 	});
 </script>
 

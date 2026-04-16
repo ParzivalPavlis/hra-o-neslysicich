@@ -4,6 +4,7 @@ import { persisted } from 'svelte-persisted-store';
 // Store for persisting the complete level 4 game state
 export const level4GameState = persisted<LevelVideosState>('level4-game-state', {
 	currentAnswerIndex: 0,
+	completed: false,
 	lives: 4,
 	answers: []
 });
@@ -12,6 +13,7 @@ export const level4GameState = persisted<LevelVideosState>('level4-game-state', 
 export function initializeLevel4Game() {
 	level4GameState.set({
 		currentAnswerIndex: 0,
+		completed: false,
 		lives: 4,
 		answers: []
 	});
@@ -45,10 +47,18 @@ export function addAnswer(questionId: number, selectedOptionId: string, isCorrec
 	}));
 }
 
+export function markLevel4Completed() {
+	level4GameState.update((state) => ({
+		...state,
+		completed: true
+	}));
+}
+
 export function clearLevel4GameState() {
 	level4GameState.set({
 		currentAnswerIndex: 0,
 		lives: 4,
+		completed: false,
 		answers: []
 	});
 }

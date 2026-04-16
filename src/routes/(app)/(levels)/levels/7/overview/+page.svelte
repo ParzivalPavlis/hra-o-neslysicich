@@ -9,16 +9,16 @@
 	import type { FormSaveLevelProgressResponseType } from '$lib/types/form';
 
 	const CURRENT_LEVEL_NUMBER = 7;
+	const MAX_LIVES = 4;
 
 	let gameState = $derived($level7GameState);
 	let answers = $derived(gameState.answers);
 	let lives = $derived(gameState.lives);
 	let totalQuestions = $derived(answers.length);
-	let maxLives = 4;
 
 	let stars = $derived(() => {
 		// Stars based on remaining lives (out of 4)
-		if (lives === maxLives) return 3;
+		if (lives === MAX_LIVES) return 3;
 		if (lives >= 2) return 2;
 		if (lives === 1) return 1;
 		return 0;
@@ -39,10 +39,14 @@
 	}
 
 	onMount(() => {
-		checkIsPlaying(CURRENT_LEVEL_NUMBER);
-		// Auto-submit the form on mount
-		const form = document.querySelector('form');
-		if (form) form.requestSubmit();
+		if (!$level7GameState.completed) {
+			goto(`/levels/${CURRENT_LEVEL_NUMBER}/game`);
+		} else {
+			checkIsPlaying(CURRENT_LEVEL_NUMBER);
+			// Auto-submit the form on mount
+			const form = document.querySelector('form');
+			if (form) form.requestSubmit();
+		}
 	});
 </script>
 
@@ -81,7 +85,7 @@
 		{messages}
 		stars={stars()}
 		variant="lives"
-		{maxLives}
+		maxLives={MAX_LIVES}
 		{lives}
 	/>
 </Layout1>

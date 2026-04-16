@@ -4,6 +4,7 @@ import type { LevelQuestionsState } from '$lib/types/store';
 // Store for persisting the complete level 2 questions state
 export const level2QuestionsState = persisted<LevelQuestionsState>('level2-questions-state', {
 	questionIds: [],
+	completed: false,
 	currentQuestionIndex: 1,
 	answers: []
 });
@@ -12,6 +13,7 @@ export const level2QuestionsState = persisted<LevelQuestionsState>('level2-quest
 export function initializeLevel2Questions(questionIds: number[]) {
 	level2QuestionsState.set({
 		questionIds,
+		completed: false,
 		currentQuestionIndex: 1,
 		answers: []
 	});
@@ -42,9 +44,17 @@ export function addQuestionAnswer(
 	}));
 }
 
+export function markLevel2QuestionsCompleted() {
+	level2QuestionsState.update((state) => ({
+		...state,
+		completed: true
+	}));
+}
+
 export function clearLevel2QuestionsState() {
 	level2QuestionsState.set({
 		questionIds: [],
+		completed: false,
 		currentQuestionIndex: 1,
 		answers: []
 	});

@@ -13,7 +13,8 @@
 		initializeLevel8Game,
 		updateCurrentAnswer,
 		decreaseLives,
-		addAnswer
+		addAnswer,
+		markLevel8Completed
 	} from '$lib/stores/level8';
 	import LivesIndicator from '$components/LivesIndicator.svelte';
 	import { checkIsPlaying } from '$lib/stores/lastPlayed';
@@ -67,6 +68,7 @@
 						updateCurrentAnswer(currentAnswerIndex + 1);
 					} else {
 						// Last question answered correctly - navigate to overview
+						markLevel8Completed();
 						goto(`/levels/${CURRENT_LEVEL_NUMBER}/overview`);
 					}
 				} else {
@@ -103,6 +105,7 @@
 
 	$effect(() => {
 		if (lives === 0) {
+			markLevel8Completed();
 			goto(`/levels/${CURRENT_LEVEL_NUMBER}/overview`);
 		}
 	});
@@ -114,6 +117,7 @@
 		// Shuffle videos array
 		shuffledVideos = shuffleArray([...answers]);
 	});
+
 </script>
 
 <svelte:head>
