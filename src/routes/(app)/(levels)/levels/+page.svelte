@@ -3,11 +3,12 @@
 	import LevelButton from '$components/LevelButton.svelte';
 	import Button from '$components/ui/button/button.svelte';
 	import { levels } from '$lib/levels';
-	import { lastPlayedStore } from '$lib/stores/lastPlayed';
+	import { clearIsPlaying, lastPlayedStore } from '$lib/stores/lastPlayed';
 	import type { GameProgressType } from '$types/supabase/gameProgress';
 	import { ArrowUp, ArrowDown, ChevronUp, ChevronDown } from '@lucide/svelte';
 	import type { PageData } from './$types';
 	import Particles from '$components/Particles.svelte';
+	import { onMount } from 'svelte';
 
 	let { data }: { data: PageData } = $props();
 
@@ -24,6 +25,7 @@
 		{ level: 1, src: '/assets/levelMap/manStudying.png' },
 		{ level: 2, src: '/assets/levelMap/manDrinking.png' },
 		{ level: 4, src: '/assets/levelMap/manDoctor.png' },
+		{ level: 5, src: '/assets/levelMap/manBank.png' },
 		{ level: 7, src: '/assets/levelMap/womanLearning.png' },
 		{ level: 8, src: '/assets/levelMap/peopleSigning.png' }
 	];
@@ -164,6 +166,10 @@
 			unlockAnimationLevelNumber = null;
 		}
 	});
+
+	onMount(() => {
+		clearIsPlaying();
+	});
 </script>
 
 <svelte:head>
@@ -173,7 +179,7 @@
 <div class="relative min-h-screen">
 	<Particles className="fixed inset-0" />
 	<div class="relative flex min-h-screen flex-col items-center gap-50 overflow-x-hidden p-10">
-		{#each levelsWithProgress as { icon, stars, locked, description, trails, href }, index}
+		{#each levelsWithProgress as { icon, stars, locked, description, trails, href }, index (href)}
 			<div class="relative flex w-full justify-center" bind:this={levelButtonRefs[index]}>
 				<div class="hidden w-60 md:flex">
 					{#if index % 2 === 0}

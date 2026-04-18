@@ -70,7 +70,7 @@
 <div class="flex w-full flex-col gap-2 select-none" role="region" aria-label="Answer Navigator">
 	<div class="overflow-hidden" bind:this={emblaRef}>
 		<div class="flex gap-4">
-			{#each options as option, index}
+			{#each options as option, index (option.id)}
 				<div class="min-w-0 flex-[0_0_100%] p-2">
 					<ConversationButton
 						dialogue={option.dialogue}

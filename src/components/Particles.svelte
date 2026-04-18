@@ -30,10 +30,23 @@
 	let isMobile = $state(typeof window !== 'undefined' ? window.innerWidth < 768 : false);
 	let resolvedQuantity = $derived(quantity !== undefined ? quantity : isMobile ? 60 : 800);
 
+	type Circle = {
+		x: number;
+		y: number;
+		translateX: number;
+		translateY: number;
+		size: number;
+		alpha: number;
+		targetAlpha: number;
+		dx: number;
+		dy: number;
+		magnetism: number;
+	};
+
 	let canvasRef: HTMLCanvasElement;
 	let canvasContainerRef: HTMLDivElement;
 	let context: CanvasRenderingContext2D | null = null;
-	let circles: any[] = [];
+	let circles: Circle[] = [];
 	let mouse = { x: 0, y: 0 };
 	let canvasSize = { w: 0, h: 0 };
 	const dpr = typeof window !== 'undefined' ? window.devicePixelRatio : 1;
@@ -101,7 +114,7 @@
 		}
 	}
 
-	function drawCircle(circle: any, update = false) {
+	function drawCircle(circle: Circle, update = false) {
 		if (context) {
 			const { x, y, translateX, translateY, size, alpha } = circle;
 			context.translate(translateX, translateY);

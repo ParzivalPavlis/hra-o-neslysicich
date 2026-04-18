@@ -26,7 +26,7 @@ export const actions: Actions = {
 		const password = formData.get('password') as string;
 		const confirmPassword = formData.get('confirmPassword') as string;
 
-		let errors: FormErrorsType = {};
+		const errors: FormErrorsType = {};
 
 		// Password validation
 		if (!password || password.length < 6) {

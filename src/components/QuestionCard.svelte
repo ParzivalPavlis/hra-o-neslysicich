@@ -32,7 +32,7 @@
 			{/key}
 		{/if}
 		<div class="absolute bottom-2 flex justify-center gap-2">
-			{#each Array.from({ length: totalQuestions }, (_, i) => i + 1) as questionNum}
+			{#each Array.from({ length: totalQuestions }, (_, i) => i + 1) as questionNum (questionNum)}
 				{@const isAnswered = questionNum in answers}
 				{@const isCorrect = answers[questionNum]}
 				<div
@@ -47,7 +47,7 @@
 
 	<div class="mt-4 flex flex-col gap-3">
 		{#if currentQuestion}
-			{#each currentQuestion.options as option}
+			{#each currentQuestion.options as option (option.id)}
 				<GameButton
 					class="w-full"
 					onclick={() => onAnswerSelect(option)}

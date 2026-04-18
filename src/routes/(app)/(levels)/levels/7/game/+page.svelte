@@ -3,19 +3,21 @@
 	import AnswerTab from '$components/AnswerTab.svelte';
 	import Layout2 from '$components/layouts/Layout2.svelte';
 	import PortraitOrientationWarning from '$components/PortraitOrientationWarning.svelte';
-	import { shuffleArray, getOrientationInfo } from '$lib/client/shared/utils';
+	import {
+		shuffleArray,
+		getOrientationInfo,
+		createAnswerClickHandler
+	} from '$lib/client/shared/gameUtils';
 	import { onMount } from 'svelte';
 	import { goto } from '$app/navigation';
 	import { answers } from '$lib/levels/7/answers';
 	import type { AnswerOptionType, AnswerType } from '$types/answer';
-	import {
-		level7GameState,
-		initializeLevel7Game,
-		updateCurrentAnswer,
-		decreaseLives,
-		addAnswer
-	} from '$lib/stores/level7';
+	import { level7 } from '$lib/stores/gameState';
 	import LivesIndicator from '$components/LivesIndicator.svelte';
+	import { checkIsPlaying } from '$lib/stores/lastPlayed';
+
+	const CURRENT_LEVEL_NUMBER = 7;
+	const level7State = level7.store;
 
 	let isPortrait = $state(true);
 	let isMobile = $state(false);
@@ -29,11 +31,11 @@
 	let showingFeedback = $state(false);
 	let isCorrect = $state(false);
 	let disabledButtons = $state<Record<string, boolean>>({});
-	let videoPlayerRef: any = $state(null);
+	let videoPlayerRef: VideoPlayer | null = $state(null);
 	let shuffledVideos = $state<AnswerType[]>([]);
 
 	// Derived state from store
-	let gameState = $derived($level7GameState);
+	let gameState = $derived($level7State);
 	let currentAnswerIndex = $derived(gameState.currentAnswerIndex);
 	let lives = $derived(gameState.lives);
 
@@ -43,39 +45,32 @@
 		isPortrait = orientation.isPortrait;
 	}
 
-	function handleAnswerClick(optionId: string) {
-		if (showingFeedback) return;
-
-		const currentAnswer = shuffledVideos[currentAnswerIndex];
-		const selectedOption = currentAnswer.options.find((opt) => opt.id === optionId);
-
-		if (selectedOption) {
-			selectedAnswer = optionId;
-			isCorrect = selectedOption.correct;
-			showingFeedback = true;
-
-			// Record the answer in the store
-			addAnswer(currentAnswerIndex, optionId, isCorrect);
-
-			setTimeout(() => {
-				if (isCorrect) {
-					showAnswerTab = false;
-					if (currentAnswerIndex < shuffledVideos.length - 1) {
-						updateCurrentAnswer(currentAnswerIndex + 1);
-					} else {
-						// Last question answered correctly - navigate to overview
-						goto('/levels/7/overview');
-					}
-				} else {
-					decreaseLives();
-					// Disable incorrect answer button after feedback is shown
-					disabledButtons[optionId] = true;
-				}
-				showingFeedback = false;
-				selectedAnswer = null;
-			}, 1500);
+	const handleAnswerClick = createAnswerClickHandler(
+		level7,
+		CURRENT_LEVEL_NUMBER,
+		{
+			isShowingFeedback: () => showingFeedback,
+			getVideos: () => shuffledVideos,
+			getCurrentAnswerIndex: () => currentAnswerIndex
+		},
+		{
+			setShowingFeedback: (v) => {
+				showingFeedback = v;
+			},
+			setSelectedAnswer: (v) => {
+				selectedAnswer = v;
+			},
+			setIsCorrect: (v) => {
+				isCorrect = v;
+			},
+			setShowAnswerTab: (v) => {
+				showAnswerTab = v;
+			},
+			disableButton: (id) => {
+				disabledButtons[id] = true;
+			}
 		}
-	}
+	);
 
 	function replayVideo() {
 		if (helpUses > 0) {
@@ -89,14 +84,6 @@
 		showAnswerTab = true;
 	}
 
-	onMount(() => {
-		updateOrientation();
-		initializeLevel7Game();
-		// Shuffle answers and take first 10
-		const allAnswersShuffled = shuffleArray([...answers]);
-		shuffledVideos = allAnswersShuffled.slice(0, 10);
-	});
-
 	$effect(() => {
 		videoEnded = false;
 		autoplayPrevented = false;
@@ -108,13 +95,23 @@
 
 	$effect(() => {
 		if (lives === 0) {
-			goto('/levels/7/overview');
+			level7.markCompleted();
+			goto(`/levels/${CURRENT_LEVEL_NUMBER}/overview`);
 		}
+	});
+
+	onMount(() => {
+		checkIsPlaying(CURRENT_LEVEL_NUMBER);
+		updateOrientation();
+		level7.initialize();
+		// Shuffle answers and take first 10
+		const allAnswersShuffled = shuffleArray([...answers]);
+		shuffledVideos = allAnswersShuffled.slice(0, 10);
 	});
 </script>
 
 <svelte:head>
-	<title>Úroveň 7 | Deafio</title>
+	<title>Úroveň {CURRENT_LEVEL_NUMBER} | Deafio</title>
 </svelte:head>
 
 <svelte:window on:orientationchange={updateOrientation} on:resize={updateOrientation} />

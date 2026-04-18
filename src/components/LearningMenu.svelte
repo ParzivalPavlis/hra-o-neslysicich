@@ -1,10 +1,10 @@
 <script lang="ts">
 	import { goto } from '$app/navigation';
-	import type { LevelAnswersState } from '$types/store';
+	import type { AnswersState } from '$types/store';
 	import GameButton from './GameButton.svelte';
 
 	type Props = {
-		answers: LevelAnswersState[];
+		answers: AnswersState[];
 		currentAnswerIndex: number;
 		totalQuestions: number;
 		onSelectQuestion: (index: number) => void;

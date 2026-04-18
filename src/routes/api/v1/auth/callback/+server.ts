@@ -1,6 +1,6 @@
 import { redirect } from '@sveltejs/kit';
 import type { RequestHandler } from './$types';
-import { safeGetSession } from '$lib/server/services';
+import { safeGetSession, initializeGameProgress } from '$lib/server/services';
 
 export const GET: RequestHandler = async ({ url, locals }) => {
 	const code = url.searchParams.get('code');
@@ -21,6 +21,8 @@ export const GET: RequestHandler = async ({ url, locals }) => {
 		console.error('No user found in session after authentication');
 		redirect(303, '/auth/error');
 	}
+
+	await initializeGameProgress(user.id);
 
 	redirect(303, '/levels');
 };

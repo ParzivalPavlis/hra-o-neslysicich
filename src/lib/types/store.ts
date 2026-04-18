@@ -1,4 +1,4 @@
-export interface LevelAnswersState {
+export interface AnswersState {
 	questionId: number;
 	selectedOptionId: string;
 	isCorrect: boolean;
@@ -6,12 +6,14 @@ export interface LevelAnswersState {
 
 export interface LevelQuestionsState {
 	questionIds: number[];
+	completed: boolean;
 	currentQuestionIndex: number;
-	answers: LevelAnswersState[];
+	answers: AnswersState[];
 }
 
 export interface LevelVideosState {
 	currentAnswerIndex: number;
+	completed: boolean;
 	lives: number;
-	answers: LevelAnswersState[];
+	answers: AnswersState[];
 }

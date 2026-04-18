@@ -8,7 +8,6 @@
 	import { Star, Mail, Calendar, ChevronDown } from '@lucide/svelte';
 	import { slide, fly } from 'svelte/transition';
 	import type { PageData } from './$types';
-	import { colors } from '$lib/client/shared/colors';
 
 	let { data }: { data: PageData } = $props();
 
@@ -91,7 +90,7 @@
 		</GameButton>
 		{#if isOpen}
 			<div class="flex flex-col gap-4" transition:slide>
-				{#each levelProgress as level, i}
+				{#each levelProgress as level, i (level.level)}
 					<div
 						transition:fly={{ x: 100, duration: 300, delay: i * 50 }}
 						class={cn(
@@ -109,9 +108,9 @@
 						</div>
 						<div class="flex">
 							{#if !level.locked}
-								{#each Array(3) as _, i}
+								{#each [0, 1, 2] as starIdx (starIdx)}
 									<div class="flex">
-										{#if i < level.stars}
+										{#if starIdx < level.stars}
 											<Star size={40} color="gold" fill="gold" />
 										{:else}
 											<Star size={40} color="gray" fill="gray" />

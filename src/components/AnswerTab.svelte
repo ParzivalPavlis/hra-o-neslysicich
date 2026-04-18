@@ -5,7 +5,7 @@
 	import QuestionSelector from '$components/QuestionSelector.svelte';
 	import MobileQuestionSelector from '$components/MobileQuestionSelector.svelte';
 	import type { AnswerOptionType, ConversationOptionType } from '$types/answer';
-	import type { LevelAnswersState } from '$types/store';
+	import type { AnswersState } from '$types/store';
 	import { goto } from '$app/navigation';
 
 	type Props = {
@@ -22,7 +22,7 @@
 		isPortrait?: boolean;
 		isMobile?: boolean;
 		disabledButtons?: Record<string, boolean>;
-		answers?: LevelAnswersState[];
+		answers?: AnswersState[];
 		currentAnswerIndex?: number;
 		totalQuestions?: number;
 		onSelectQuestion?: (index: number) => void;
@@ -53,7 +53,9 @@
 	let listTabCollapsed = $state(true);
 	let currentConversationIndex = $state(0);
 
-	function isConversationOption(option: any): option is ConversationOptionType {
+	function isConversationOption(
+		option: AnswerOptionType | ConversationOptionType
+	): option is ConversationOptionType {
 		return 'dialogue' in option && !('text' in option);
 	}
 
@@ -96,7 +98,6 @@
 
 	$effect(() => {
 		currentConversationIndex = 0;
-		currentAnswerIndex;
 	});
 
 	function toggleAnswerTab() {

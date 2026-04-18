@@ -6,10 +6,15 @@
 	import TalkingPerson from '$components/TalkingPerson.svelte';
 	import { goto } from '$app/navigation';
 	import { beforeNavigate } from '$app/navigation';
-	import TalkingPersonTutorial from '$components/tutorials/TalkingPerson.svelte';
 	import GameButton from '$components/GameButton.svelte';
 	import Layout1 from '$components/layouts/Layout1.svelte';
 	import { setLastPlayed } from '$lib/stores/lastPlayed';
+	import type { PageProps } from './$types';
+	import SkipIntro from '$components/SkipIntro.svelte';
+
+	let { data }: PageProps = $props();
+
+	const CURRENT_LEVEL_NUMBER = 1;
 
 	let fadeAnimations = $state(false);
 	let manAudio: HTMLAudioElement;
@@ -17,7 +22,10 @@
 	let currentSpeaker = $state<'anna' | 'tomas' | null>(null);
 	let dialogIndex = $state(0);
 	let conversationActive = $state(false);
-	let introState = $state<1 | 2 | 3 | 4>(1);
+	let introState = $state<1 | 2>(1);
+
+	let alreadyPlayed = $derived(data.alreadyPlayed);
+	let showIntroContent = $state(false);
 
 	const characters: TalkingPersonType[] = [
 		{
@@ -138,13 +146,9 @@
 				fadeOutAudio();
 			}, 7000);
 		} else if (introState === 2) {
-			introState = 3;
-		} else if (introState === 3) {
-			introState = 4;
-		} else if (introState === 4) {
 			manAudio.pause();
 			womanAudio.pause();
-			goto('/levels/1');
+			goto(`/levels/${CURRENT_LEVEL_NUMBER}/tutorial`);
 		}
 	}
 
@@ -155,7 +159,8 @@
 	});
 
 	onMount(() => {
-		setLastPlayed(1);
+		setLastPlayed(CURRENT_LEVEL_NUMBER);
+
 		// Initialize audio elements
 		manAudio = new Audio('/assets/level1/man_voice.mp3');
 		womanAudio = new Audio('/assets/level1/woman_voice.mp3');
@@ -182,62 +187,61 @@
 </script>
 
 <svelte:head>
-	<title>Úroveň 1 | Deafio</title>
+	<title>Úroveň {CURRENT_LEVEL_NUMBER} | Deafio</title>
 </svelte:head>
 
-<Layout1>
-	<div class="text-justif flex w-full max-w-150 flex-col items-center gap-3">
-		{#if introState === 1 && fadeAnimations}
-			<div in:fade={{ duration: 3000 }}>
-				<Paragraph>
+{#if alreadyPlayed}
+	<SkipIntro
+		skipTo="tutorial"
+		levelNumber={CURRENT_LEVEL_NUMBER}
+		onContinue={() => {
+			fadeAnimations = false;
+			showIntroContent = true;
+			setTimeout(() => {
+				fadeAnimations = true;
+			}, 50);
+		}}
+	/>
+{/if}
+{#if !alreadyPlayed || showIntroContent}
+	<Layout1>
+		<div class="text-justif flex w-full max-w-150 flex-col items-center gap-3">
+			{#if introState === 1 && fadeAnimations}
+				<Paragraph inTransition={{ duration: 3000 }}>
 					Zvuk je pro nás všudypřítomný a často si ani neuvědomujeme, jak moc ho ke každodennímu
 					životu potřebujeme.
 				</Paragraph>
-			</div>
-			<div in:fade={{ delay: 3000, duration: 3000 }}>
-				<Paragraph>
+				<Paragraph inTransition={{ delay: 3000, duration: 3000 }}>
 					Dokážeme se díky němu například orientovat v prostoru, užívat si hudbu a také hlavně
 					efektivně komunikovat s ostatními a dokážeme ihned zjistit, co se děje kolem nás a o čem
 					se lidé baví.
 				</Paragraph>
-			</div>
-			<div class="w-full" in:fade={{ delay: 6000, duration: 3000 }}>
-				<GameButton onclick={handleContinue} class="w-full">Pokračovat</GameButton>
-			</div>
-		{/if}
-		{#if introState === 2}
-			<div class="mt-8 flex justify-center" in:fade={{ duration: 3000 }}>
-				<TalkingPerson
-					id={1}
-					person={characters[0]}
-					isSpeaking={currentSpeaker === 'anna'}
-					finishedSpeaking={false}
-				/>
-				<TalkingPerson
-					id={2}
-					person={characters[1]}
-					isSpeaking={currentSpeaker === 'tomas'}
-					finishedSpeaking={false}
-				/>
-			</div>
-			<div class="flex flex-col items-center" in:fade={{ delay: 6000, duration: 3000 }}>
-				<Paragraph className="text-center">Co se ale stane, když o něj přijdeme?</Paragraph>
-				<GameButton onclick={handleContinue} class="mt-5 w-full">Pokračovat</GameButton>
-			</div>
-		{/if}
-		{#if introState === 3}
-			<Paragraph>
-				Nacházíte se v roli neslyšícího člověka ve škole. Čekáte na začátek hodiny a nedaleko od vás
-				si dva vaši kamarádi spolu povídají. Protože máte chvíli času, začnete sledovat jejich
-				konverzaci a snažíte se odezírat, o čem mluví. Na konci je vaším cílem odpovědět na sérii
-				otázek vztahujících se k tématům, o kterých si kamarádi mluvili.
-			</Paragraph>
-			<GameButton onclick={handleContinue} class="w-full">Pokračovat</GameButton>
-		{/if}
-		{#if introState === 4}
-			<Paragraph variant={3} className="font-bold">Vysvětlivky:</Paragraph>
-			<TalkingPersonTutorial />
-			<GameButton class="w-full md:max-w-150" onclick={handleContinue}>Začít</GameButton>
-		{/if}
-	</div>
-</Layout1>
+				<div class="w-full" in:fade={{ delay: 6000, duration: 3000 }}>
+					<GameButton onclick={handleContinue} class="w-full">Pokračovat</GameButton>
+				</div>
+			{/if}
+			{#if introState === 2}
+				<div class="mt-8 flex justify-center" in:fade={{ duration: 3000 }}>
+					<TalkingPerson
+						id={1}
+						person={characters[0]}
+						isSpeaking={currentSpeaker === 'anna'}
+						finishedSpeaking={false}
+					/>
+					<TalkingPerson
+						id={2}
+						person={characters[1]}
+						isSpeaking={currentSpeaker === 'tomas'}
+						finishedSpeaking={false}
+					/>
+				</div>
+				<div class="flex flex-col items-center">
+					<Paragraph className="text-center" inTransition={{ delay: 6000, duration: 3000 }}>
+						Co se ale stane, když o něj přijdeme?
+					</Paragraph>
+					<GameButton onclick={handleContinue} class="mt-5 w-full">Pokračovat</GameButton>
+				</div>
+			{/if}
+		</div>
+	</Layout1>
+{/if}

@@ -18,6 +18,7 @@
 	// Pages that should be landscape-only
 	const LANDSCAPE_ONLY = [
 		'/levels/4/game',
+		'/levels/5/game',
 		'/levels/7/game',
 		'/levels/7/learn',
 		'/levels/8/game'
@@ -34,20 +35,23 @@
 		isMobile = /android|webos|iphone|ipad|ipod|blackberry|iemobile|opera mini/.test(userAgent);
 	}
 
+	type OrientationLockType = OrientationType | 'landscape' | 'portrait' | 'natural' | 'any';
+	type LockableOrientation = ScreenOrientation & {
+		lock?: (orientation: OrientationLockType) => Promise<void>;
+	};
+
+	function lockOrientation(type: OrientationLockType) {
+		(screen.orientation as LockableOrientation).lock?.(type).catch(() => {
+			console.log(`Could not lock orientation to ${type}`);
+		});
+	}
+
 	function lockPortraitOrientation() {
-		if (screen.orientation && (screen.orientation as any).lock) {
-			(screen.orientation as any).lock('portrait').catch(() => {
-				console.log('Could not lock orientation to portrait');
-			});
-		}
+		lockOrientation('portrait');
 	}
 
 	function lockLandscapeOrientation() {
-		if (screen.orientation && (screen.orientation as any).lock) {
-			(screen.orientation as any).lock('landscape').catch(() => {
-				console.log('Could not lock orientation to landscape');
-			});
-		}
+		lockOrientation('landscape');
 	}
 
 	onMount(() => {

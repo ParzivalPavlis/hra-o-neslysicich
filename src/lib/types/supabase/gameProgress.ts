@@ -18,5 +18,6 @@ export type GameProgressType = {
 export type LevelProgressType = {
 	stars: 0 | 1 | 2 | 3;
 	lastPlayed?: boolean;
+	played?: boolean;
 	locked: boolean;
 };

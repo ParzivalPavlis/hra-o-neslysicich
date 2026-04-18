@@ -1,28 +1,29 @@
 <script lang="ts">
 	import LevelCompletionCard from '$components/LevelCompletionCard.svelte';
-	import { level4GameState } from '$lib/stores/level4';
+	import { level4 } from '$lib/stores/gameState';
 	import { goto, invalidate } from '$app/navigation';
 	import { onMount } from 'svelte';
 	import Layout1 from '$components/layouts/Layout1.svelte';
-	import { setFirstThreeStars } from '$lib/stores/lastPlayed';
+	import { checkIsPlaying, setFirstThreeStars } from '$lib/stores/lastPlayed';
 	import { enhance } from '$app/forms';
 	import type { FormSaveLevelProgressResponseType } from '$lib/types/form';
 
-	let gameState = $derived($level4GameState);
+	const CURRENT_LEVEL_NUMBER = 4;
+	const MAX_LIVES = 4;
+	const level4State = level4.store;
+
+	let gameState = $derived($level4State);
 	let answers = $derived(gameState.answers);
 	let lives = $derived(gameState.lives);
 	let totalQuestions = $derived(answers.length);
-	let maxLives = 4;
 
 	let stars = $derived(() => {
 		// Stars based on remaining lives (out of 4)
-		if (lives === maxLives) return 3;
+		if (lives === MAX_LIVES) return 3;
 		if (lives >= 2) return 2;
 		if (lives === 1) return 1;
 		return 0;
 	});
-
-	let progressSaved = $state(false);
 
 	const messages = {
 		excellent: 'Výborně! Předvedli jste skvělé porozumění videa.',
@@ -31,7 +32,7 @@
 	};
 
 	function handleRetry() {
-		goto('/levels/4/game');
+		goto(`/levels/${CURRENT_LEVEL_NUMBER}/game`);
 	}
 
 	function handleBackToLevels() {
@@ -39,14 +40,19 @@
 	}
 
 	onMount(() => {
-		// Auto-submit the form on mount
-		const form = document.querySelector('form');
-		if (form) form.requestSubmit();
+		if (!$level4State.completed) {
+			goto(`/levels/${CURRENT_LEVEL_NUMBER}/game`);
+		} else {
+			checkIsPlaying(CURRENT_LEVEL_NUMBER);
+			// Auto-submit the form on mount
+			const form = document.querySelector('form');
+			if (form) form.requestSubmit();
+		}
 	});
 </script>
 
 <svelte:head>
-	<title>Úroveň 4 | Deafio</title>
+	<title>Úroveň {CURRENT_LEVEL_NUMBER} | Deafio</title>
 </svelte:head>
 
 <form
@@ -58,10 +64,9 @@
 				const actionResult = result.data as FormSaveLevelProgressResponseType;
 
 				if (actionResult.firstTimeThreeStars === true) {
-					setFirstThreeStars(4);
+					setFirstThreeStars(CURRENT_LEVEL_NUMBER);
 				}
 				if (actionResult.success) {
-					progressSaved = true;
 					await invalidate('game:progress');
 				}
 			}
@@ -77,11 +82,11 @@
 		{totalQuestions}
 		onRetry={handleRetry}
 		onBackToLevels={handleBackToLevels}
-		title="Úroveň 4 dokončena!"
+		title={`Úroveň ${CURRENT_LEVEL_NUMBER} dokončena!`}
 		{messages}
 		stars={stars()}
 		variant="lives"
-		{maxLives}
+		maxLives={MAX_LIVES}
 		{lives}
 	/>
 </Layout1>

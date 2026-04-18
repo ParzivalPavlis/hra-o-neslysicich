@@ -2,13 +2,15 @@ import { supabaseBrowserClient } from '$lib/client/supabase';
 import { supabaseAdminClient } from '$lib/server/supabase';
 import type { Session, User } from '@supabase/supabase-js';
 import type { GameProgressType, LevelProgressType } from '$types/supabase/gameProgress';
+import type { Database } from '$types/supabase';
+import type { SupabaseClient } from '@supabase/supabase-js';
 
 /**
  * Get a user from auth.users by email
  * @param {string} email - The email address to search for
- * @returns {Promise<any|null>} The user object or null if not found
+ * @returns {Promise<User|null>} The user object or null if not found
  */
-export async function getUserByEmail(email: string) {
+export async function getUserByEmail(email: string): Promise<User | null> {
 	const { data, error } = await supabaseAdminClient.auth.admin.listUsers();
 
 	if (error) {
@@ -21,9 +23,9 @@ export async function getUserByEmail(email: string) {
 
 /**
  * List all users from auth.users
- * @returns {Promise<any[]>} Array of all user objects
+ * @returns {Promise<User[]>} Array of all user objects
  */
-export async function listAllUsers() {
+export async function listAllUsers(): Promise<User[]> {
 	const { data, error } = await supabaseAdminClient.auth.admin.listUsers();
 
 	if (error) {
@@ -37,9 +39,9 @@ export async function listAllUsers() {
 /**
  * Initialize game progress for a new user
  * @param {string} userId - The user ID to create progress for
- * @returns {Promise<any|null>} The created game progress record or null if failed
+ * @returns {Promise<GameProgressType|null>} The created game progress record or null if failed
  */
-export async function initializeGameProgress(userId: string) {
+export async function initializeGameProgress(userId: string): Promise<GameProgressType | null> {
 	const gameProgress: GameProgressType = {
 		levels: {
 			level1: { stars: 0, lastPlayed: true, locked: false },
@@ -51,7 +53,7 @@ export async function initializeGameProgress(userId: string) {
 			level7: { stars: 0, locked: false },
 			level8: { stars: 0, locked: true },
 			level9: { stars: 0, locked: true },
-			level10: { stars: 0, locked: false },
+			level10: { stars: 0, locked: true },
 			level11: { stars: 0, locked: true },
 			level12: { stars: 0, locked: true }
 		}
@@ -71,18 +73,18 @@ export async function initializeGameProgress(userId: string) {
 		return null;
 	}
 
-	return data;
+	return data?.progress as GameProgressType | null;
 }
 
 /**
  * Get game progress for the currently logged in user
  * @param {string} userId - The user ID to fetch progress for
- * @param {any} client - The authenticated Supabase client
+ * @param {SupabaseClient<Database>} client - The authenticated Supabase client
  * @returns {Promise<GameProgressType|null>} The game progress object or null if not found
  */
 export async function getGameProgress(
 	userId: string,
-	client: any = supabaseBrowserClient
+	client: SupabaseClient<Database> = supabaseBrowserClient as SupabaseClient<Database>
 ): Promise<GameProgressType | null> {
 	// Optimized query: only select progress column (smaller payload)
 	// Make sure user_id column has a database index for faster queries
@@ -103,9 +105,9 @@ export async function getGameProgress(
 /**
  * Get game progress by record ID
  * @param {number} id - The game progress record ID
- * @returns {Promise<any|null>} The game progress record or null if not found
+ * @returns {Promise<GameProgressType|null>} The game progress record or null if not found
  */
-export async function getGameProgressById(id: number) {
+export async function getGameProgressById(id: number): Promise<GameProgressType | null> {
 	const { data, error } = await supabaseBrowserClient
 		.from('game_progress')
 		.select('*')
@@ -117,20 +119,20 @@ export async function getGameProgressById(id: number) {
 		return null;
 	}
 
-	return data;
+	return data?.progress as GameProgressType | null;
 }
 
 /**
  * Update game progress for a user
  * @param {string} userId - The user ID to update progress for
  * @param {GameProgressType} progress - The updated game progress object
- * @param {any} client - The authenticated Supabase client
+ * @param {SupabaseClient<Database>} client - The authenticated Supabase client
  * @returns {Promise<GameProgressType|null>} The updated progress object or null if failed
  */
 export async function updateGameProgress(
 	userId: string,
 	progress: GameProgressType,
-	client: any = supabaseBrowserClient
+	client: SupabaseClient<Database> = supabaseBrowserClient as SupabaseClient<Database>
 ): Promise<GameProgressType | null> {
 	const { data, error } = await client
 		.from('game_progress')
@@ -155,14 +157,14 @@ export async function updateGameProgress(
  * @param {number} [attributes.stars] - Stars earned
  * @param {boolean} [attributes.locked] - Whether the level is locked
  * @param {boolean} [attributes.completed] - Whether the level is completed
- * @param {any} client - The authenticated Supabase client
+ * @param {SupabaseClient<Database>} client - The authenticated Supabase client
  * @returns {Promise<GameProgressType|null>} The updated progress object or null if failed
  */
 export async function updateLevelProgress(
 	userId: string,
 	levelNumber: number,
 	attributes: LevelProgressType,
-	client: any = supabaseBrowserClient
+	client: SupabaseClient<Database> = supabaseBrowserClient as SupabaseClient<Database>
 ): Promise<GameProgressType | null> {
 	// Get current progress
 	const currentProgress = await getGameProgress(userId, client);
@@ -192,16 +194,108 @@ export async function updateLevelProgress(
 }
 
 /**
+ * Mark a level as played for a user (only if not already played)
+ * @param {string} userId - The user ID to update progress for
+ * @param {number} levelNumber - The level number to mark as played
+ * @param {SupabaseClient<Database>} client - The authenticated Supabase client
+ * @returns {Promise<boolean | 'already-played'>} True if level was marked as played or was already played, false if failed
+ */
+export async function setPlayedLevel(
+	userId: string,
+	levelNumber: number,
+	client: SupabaseClient<Database> = supabaseBrowserClient as SupabaseClient<Database>
+): Promise<boolean | 'already-played'> {
+	// Get current progress
+	const currentProgress = await getGameProgress(userId, client);
+
+	if (!currentProgress) {
+		console.error('No game progress found for user:', userId);
+		return false;
+	}
+
+	// Get the level key
+	const levelKey = `level${levelNumber}` as keyof GameProgressType['levels'];
+
+	// Check if level is already played
+	if (currentProgress.levels[levelKey].played) {
+		return 'already-played';
+	}
+
+	// Update the specific level's played property
+	const updatedProgress: GameProgressType = {
+		...currentProgress,
+		levels: {
+			...currentProgress.levels,
+			[levelKey]: {
+				...currentProgress.levels[levelKey],
+				played: true
+			}
+		}
+	};
+
+	// Save the updated progress
+	const result = await updateGameProgress(userId, updatedProgress, client);
+
+	return result !== null;
+}
+
+/**
+ * Set a level as lastPlayed and reset lastPlayed for all other levels
+ * @param {string} userId - The user ID to update progress for
+ * @param {number} levelNumber - The level number to set as lastPlayed
+ * @param {SupabaseClient<Database>} client - The authenticated Supabase client
+ * @returns {Promise<boolean>} True if level was set as lastPlayed, false if failed
+ */
+export async function setLastPlayedLevel(
+	userId: string,
+	levelNumber: number,
+	client: SupabaseClient<Database> = supabaseBrowserClient as SupabaseClient<Database>
+): Promise<boolean> {
+	// Get current progress
+	const currentProgress = await getGameProgress(userId, client);
+
+	if (!currentProgress) {
+		console.error('No game progress found for user:', userId);
+		return false;
+	}
+
+	// Get the level key
+	const levelKey = `level${levelNumber}` as keyof GameProgressType['levels'];
+
+	// Update all levels to reset lastPlayed, then set the specific level to true
+	const updatedLevels = Object.entries(currentProgress.levels).reduce(
+		(acc, [key, level]) => {
+			acc[key as keyof GameProgressType['levels']] = {
+				...level,
+				lastPlayed: key === levelKey
+			};
+			return acc;
+		},
+		{} as GameProgressType['levels']
+	);
+
+	const updatedProgress: GameProgressType = {
+		...currentProgress,
+		levels: updatedLevels
+	};
+
+	// Save the updated progress
+	const result = await updateGameProgress(userId, updatedProgress, client);
+
+	return result !== null;
+}
+
+/**
  * Get attributes of a specific level
  * @param {string} userId - The user ID to fetch progress for
  * @param {number} levelNumber - The level number
- * @param {any} client - The authenticated Supabase client
+ * @param {SupabaseClient<Database>} client - The authenticated Supabase client
  * @returns {Promise<LevelProgressType|null>} The level's attributes or null if not found
  */
 export async function getLevelProgress(
 	userId: string,
 	levelNumber: number,
-	client: any = supabaseBrowserClient
+	client: SupabaseClient<Database> = supabaseBrowserClient as SupabaseClient<Database>
 ): Promise<LevelProgressType | null> {
 	// Get the full game progress
 	const gameProgress = await getGameProgress(userId, client);
@@ -222,13 +316,13 @@ export async function getLevelProgress(
  * Unlock level for a user
  * @param {string} userId - The user ID to update progress for
  * @param {number} levelNumber - The level number to unlock
- * @param {any} client - The authenticated Supabase client
+ * @param {SupabaseClient<Database>} client - The authenticated Supabase client
  * @returns {Promise<boolean>} True if next level was unlocked or was already unlocked, false if failed
  */
 export async function unlockLevel(
 	userId: string,
 	levelNumber: number,
-	client: any = supabaseBrowserClient
+	client: SupabaseClient<Database> = supabaseBrowserClient as SupabaseClient<Database>
 ): Promise<boolean> {
 	const nextLevelKey = `level${levelNumber}` as keyof GameProgressType['levels'];
 
@@ -264,11 +358,11 @@ export async function unlockLevel(
 
 /**
  * Safely get the current session and user
- * @param {any} client - The authenticated Supabase client
+ * @param {SupabaseClient<Database>} client - The authenticated Supabase client
  * @returns {Promise<{session: Session; user: User} | {session: null; user: null}>} Session and user if authenticated, or null values if not
  */
 export async function safeGetSession(
-	client: any = supabaseBrowserClient
+	client: SupabaseClient<Database> = supabaseBrowserClient as SupabaseClient<Database>
 ): Promise<{ session: Session; user: User } | { session: null; user: null }> {
 	const {
 		data: { session }

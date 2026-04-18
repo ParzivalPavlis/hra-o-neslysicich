@@ -4,16 +4,15 @@
 	import LearningMenu from '$components/LearningMenu.svelte';
 	import PortraitOrientationWarning from '$components/PortraitOrientationWarning.svelte';
 	import VideoPlayer from '$components/VideoPlayer.svelte';
-	import { getOrientationInfo, shuffleArray } from '$lib/client/shared/utils';
+	import { getOrientationInfo, shuffleArray } from '$lib/client/shared/gameUtils';
 	import { answers } from '$lib/levels/7/answers';
 	import type { AnswerOptionType } from '$types/answer';
-	import {
-		initializeLevel7Game,
-		level7GameState,
-		modifyAnswer,
-		updateCurrentAnswer
-	} from '$lib/stores/level7';
+	import { level7 } from '$lib/stores/gameState';
 	import { onMount } from 'svelte';
+	import { checkIsPlaying } from '$lib/stores/lastPlayed';
+
+	const CURRENT_LEVEL_NUMBER = 7;
+	const level7State = level7.store;
 
 	let isPortrait = $state(true);
 	let isMobile = $state(false);
@@ -26,10 +25,10 @@
 	let showingFeedback = $state(false);
 	let isCorrect = $state(false);
 	let correctAnswerId = $state<string | null>(null);
-	let videoPlayerRef: any = $state(null);
+	let videoPlayerRef: VideoPlayer | null = $state(null);
 	let shuffledVideos = $state<number[]>([]);
 
-	let gameState = $derived($level7GameState);
+	let gameState = $derived($level7State);
 	let currentAnswerIndex = $derived(gameState.currentAnswerIndex);
 	let actualAnswerIndex = $derived(shuffledVideos[currentAnswerIndex] ?? currentAnswerIndex);
 
@@ -51,12 +50,12 @@
 			showingFeedback = true;
 
 			// Record the answer in the store
-			modifyAnswer(currentAnswerIndex, optionId, isCorrect);
+			level7.modifyAnswer(currentAnswerIndex, optionId, isCorrect);
 
 			setTimeout(() => {
 				showAnswerTab = false;
 				if (currentAnswerIndex < answers.length - 1) {
-					updateCurrentAnswer(currentAnswerIndex + 1);
+					level7.updateCurrentAnswer(currentAnswerIndex + 1);
 				} else {
 					showAnswerTab = true;
 				}
@@ -68,7 +67,7 @@
 
 	function handleSelectQuestion(questionIndex: number) {
 		if (questionIndex !== currentAnswerIndex) {
-			updateCurrentAnswer(questionIndex);
+			level7.updateCurrentAnswer(questionIndex);
 			videoEnded = false;
 			showAnswerTab = false;
 		}
@@ -78,14 +77,6 @@
 		videoEnded = true;
 		showAnswerTab = true;
 	}
-
-	onMount(() => {
-		updateOrientation();
-		initializeLevel7Game();
-		// Create shuffled array of video indices [0, 1, 2, ..., 17]
-		const indices = Array.from({ length: answers.length }, (_, i) => i);
-		shuffledVideos = shuffleArray(indices);
-	});
 
 	$effect(() => {
 		videoEnded = false;
@@ -97,10 +88,19 @@
 			correctAnswerId = correctOption?.id ?? null;
 		}
 	});
+
+	onMount(() => {
+		checkIsPlaying(CURRENT_LEVEL_NUMBER);
+		updateOrientation();
+		level7.initialize();
+		// Create shuffled array of video indices [0, 1, 2, ..., 17]
+		const indices = Array.from({ length: answers.length }, (_, i) => i);
+		shuffledVideos = shuffleArray(indices);
+	});
 </script>
 
 <svelte:head>
-	<title>Úroveň 7 | Deafio</title>
+	<title>Úroveň {CURRENT_LEVEL_NUMBER} | Deafio</title>
 </svelte:head>
 
 <svelte:window on:orientationchange={updateOrientation} on:resize={updateOrientation} />
@@ -113,7 +113,7 @@
 			{currentAnswerIndex}
 			totalQuestions={answers.length}
 			onSelectQuestion={handleSelectQuestion}
-			compleationLink="/levels/7/game"
+			compleationLink={`/levels/${CURRENT_LEVEL_NUMBER}/game`}
 			{isMobile}
 		/>
 		<div class="flex w-full flex-col items-center justify-center landscape:gap-2">
@@ -188,7 +188,7 @@
 			{currentAnswerIndex}
 			totalQuestions={answers.length}
 			onSelectQuestion={handleSelectQuestion}
-			compleationLink="/levels/7/game"
+			compleationLink={`/levels/${CURRENT_LEVEL_NUMBER}/game`}
 		/>
 	{/if}
 </Layout2>

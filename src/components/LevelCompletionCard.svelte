@@ -58,7 +58,7 @@
 				</div>
 			{:else if variant === 'lives'}
 				<div class="mb-4 flex justify-center">
-					<LivesIndicator orientation="horizontal" {lives} {maxLives} size={40} />
+					<LivesIndicator orientation="horizontal" direction="rtl" {lives} {maxLives} size={40} />
 				</div>
 			{/if}
 			<Paragraph>
@@ -71,7 +71,7 @@
 		</div>
 	</div>
 	<div class="flex gap-2">
-		{#each Array(3) as _, i}
+		{#each [0, 1, 2] as i (i)}
 			<div class="flex">
 				{#if i < stars}
 					<Star size={40} color="gold" fill="gold" />
