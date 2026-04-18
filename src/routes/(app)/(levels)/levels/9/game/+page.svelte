@@ -4,6 +4,7 @@
 	import { level9 } from '$lib/stores/gameState';
 	import WalkingMan from '$components/WalkingMan.svelte';
 	import ClickableObject from '$components/ClickableObject.svelte';
+	import ClickIndicator from '$components/ClickIndicator.svelte';
 
 	type GameEvent = {
 		title: string;
@@ -253,21 +254,16 @@
 </script>
 
 <div class="relative h-dvh w-full overflow-hidden bg-white select-none md:mr-10 md:ml-10">
-	<!-- Background click zone — walks character to clicked world position -->
 	<button
 		class="absolute inset-0 z-0 cursor-pointer opacity-0"
 		aria-label="Herní scéna"
 		onclick={handleBackgroundClick}
 	></button>
-
-	<!-- Scrolling world — objects slide with camera -->
 	<div
 		class="pointer-events-none absolute inset-0 z-10"
 		style="transform: translateX({-worldOffset}px)"
 	>
-		<!-- Ground line — ends at world boundary -->
-		<div class="absolute bottom-25 left-0 h-2 bg-black" style="width: {WORLD_WIDTH}px"></div>
-
+		<div class="absolute bottom-25 left-0 h-10 bg-black" style="width: {WORLD_WIDTH}px"></div>
 		{#each sceneObjects as obj}
 			{@const isDisabled = obj.event.isExit && !canExit}
 			<div
@@ -284,27 +280,15 @@
 			</div>
 		{/each}
 	</div>
-
-	<!-- Character — fixed screen X, world scrolls behind -->
 	<div
 		class="pointer-events-none absolute bottom-27 z-20"
 		style="left: {charScreenX}px; transform: translateX(-50%)"
 	>
 		<WalkingMan {facingRight} {isWalking} />
 	</div>
-
-	<!-- Click-to-walk indicator -->
 	{#if clickIndicatorScreenX !== null}
-		<div
-			class="pointer-events-none absolute bottom-25 z-15 -translate-x-1/2"
-			style="left: {clickIndicatorScreenX}px"
-		>
-			<div class="h-4 w-0.5 bg-gray-400"></div>
-			<div class="mt-0.5 h-1.5 w-1.5 -translate-x-1/4 rounded-full bg-gray-400"></div>
-		</div>
+		<ClickIndicator screenX={clickIndicatorScreenX} />
 	{/if}
-
-	<!-- Event modal -->
 	{#if activeEvent}
 		<div
 			class="absolute inset-0 z-40 flex cursor-default items-center justify-center bg-black/40 p-6 backdrop-blur-sm"
