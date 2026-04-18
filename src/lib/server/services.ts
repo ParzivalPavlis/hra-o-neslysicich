@@ -52,10 +52,7 @@ export async function initializeGameProgress(userId: string): Promise<GameProgre
 			level6: { stars: 0, locked: true },
 			level7: { stars: 0, locked: false },
 			level8: { stars: 0, locked: true },
-			level9: { stars: 0, locked: true },
-			level10: { stars: 0, locked: true },
-			level11: { stars: 0, locked: true },
-			level12: { stars: 0, locked: true }
+			level9: { stars: 0, locked: true }
 		}
 	};
 

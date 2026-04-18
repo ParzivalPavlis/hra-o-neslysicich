@@ -9,8 +9,8 @@ export const load: PageServerLoad = async ({ locals }) => {
 		redirect(303, '/login');
 	}
 
-	// Load progress for all 8 levels
-	const levelProgressPromises = Array.from({ length: 8 }, (_, i) =>
+	// Load progress for all 9 levels
+	const levelProgressPromises = Array.from({ length: 9 }, (_, i) =>
 		getLevelProgress(user.id, i + 1, supabase)
 	);
 
@@ -31,6 +31,6 @@ export const load: PageServerLoad = async ({ locals }) => {
 			locked: progress?.locked !== false
 		})),
 		totalStars,
-		maxStars: 24
+		maxStars: 27
 	};
 };

@@ -67,34 +67,10 @@ export const levels: LevelButtonType[] = [
 		trails: 5
 	},
 	{
-		icon: Hand,
-		stars: 0,
-		locked: true,
-		description: 'Kliknutím znovu pro spuštění',
-		href: '/levels/9/intro',
-		trails: 2
-	},
-	{
-		icon: PersonStanding,
-		stars: 0,
-		locked: false,
-		description: 'Kliknutím znovu pro spuštění',
-		href: '/levels/10',
-		trails: 5
-	},
-	{
 		icon: PersonStanding,
 		stars: 0,
 		locked: true,
 		description: 'Kliknutím znovu pro spuštění',
-		href: '/levels/11',
-		trails: 4
-	},
-	{
-		icon: PersonStanding,
-		stars: 0,
-		locked: true,
-		description: 'Kliknutím znovu pro spuštění',
-		href: '/levels/12'
+		href: '/levels/9/intro'
 	}
 ];

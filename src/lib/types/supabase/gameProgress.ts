@@ -9,9 +9,6 @@ export type GameProgressType = {
 		level7: LevelProgressType;
 		level8: LevelProgressType;
 		level9: LevelProgressType;
-		level10: LevelProgressType;
-		level11: LevelProgressType;
-		level12: LevelProgressType;
 	};
 };
 

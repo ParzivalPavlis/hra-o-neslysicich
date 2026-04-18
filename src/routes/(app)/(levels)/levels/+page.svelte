@@ -27,7 +27,8 @@
 		{ level: 4, src: '/assets/levelMap/manDoctor.png' },
 		{ level: 5, src: '/assets/levelMap/manBank.png' },
 		{ level: 7, src: '/assets/levelMap/womanLearning.png' },
-		{ level: 8, src: '/assets/levelMap/peopleSigning.png' }
+		{ level: 8, src: '/assets/levelMap/peopleSigning.png' },
+		{ level: 9, src: '/assets/levelMap/manWalking.png' }
 	];
 
 	const levelsWithProgress = $derived(
@@ -178,7 +179,7 @@
 
 <div class="relative min-h-screen">
 	<Particles className="fixed inset-0" />
-	<div class="relative flex min-h-screen flex-col items-center gap-50 overflow-x-hidden p-10">
+	<div class="relative flex min-h-screen flex-col items-center gap-50 overflow-x-hidden p-10 pb-25">
 		{#each levelsWithProgress as { icon, stars, locked, description, trails, href }, index (href)}
 			<div class="relative flex w-full justify-center" bind:this={levelButtonRefs[index]}>
 				<div class="hidden w-60 md:flex">
