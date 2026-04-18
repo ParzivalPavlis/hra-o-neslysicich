@@ -1,5 +1,6 @@
 import { createLevelQuestionsStore } from './levelQuestionsStore';
 import { createLevelGameStore } from './levelGameStore';
+import { createLevelWalkingStore } from './levelWalkingStore';
 import type { LevelQuestionsStoreInstance } from './levelQuestionsStore';
 import type { LevelGameStoreInstance } from './levelGameStore';
 
@@ -9,6 +10,7 @@ export const level4 = createLevelGameStore(4);
 export const level5 = createLevelGameStore(5);
 export const level7 = createLevelGameStore(7);
 export const level8 = createLevelGameStore(8);
+export const level9 = createLevelWalkingStore(9);
 
 const LEVEL_STORES = {
 	1: level1,

@@ -71,7 +71,7 @@ export const levels: LevelButtonType[] = [
 		stars: 0,
 		locked: true,
 		description: 'Kliknutím znovu pro spuštění',
-		href: '/levels/9',
+		href: '/levels/9/intro',
 		trails: 2
 	},
 	{
