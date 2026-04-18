@@ -21,7 +21,8 @@
 		'/levels/5/game',
 		'/levels/7/game',
 		'/levels/7/learn',
-		'/levels/8/game'
+		'/levels/8/game',
+		'/levels/9/game'
 	] as const;
 
 	function shouldBeLandscapeOnly(pathname: string): boolean {

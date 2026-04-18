@@ -5,6 +5,8 @@
 	import WalkingMan from '$components/WalkingMan.svelte';
 	import ClickableObject from '$components/ClickableObject.svelte';
 	import ClickIndicator from '$components/ClickIndicator.svelte';
+	import PortraitOrientationWarning from '$components/PortraitOrientationWarning.svelte';
+	import { getOrientationInfo } from '$lib/client/shared/gameUtils';
 
 	type GameEvent = {
 		title: string;
@@ -21,7 +23,7 @@
 		event: GameEvent;
 	};
 
-	const WALK_SPEED = 5; // px per animation frame (~150px/s at 60fps)
+	const WALK_SPEED = 4; // px per animation frame (~150px/s at 60fps)
 	const CAMERA_LOCK_RATIO = 0.33; // character locks at 33% of screen width
 	const INTERACT_DISTANCE = 80; // px in world space to trigger event
 	const WORLD_WIDTH = 4000; // px — total scrollable world length
@@ -107,6 +109,9 @@
 
 	const requiredIds = sceneObjects.filter((o) => !o.event.isExit).map((o) => o.id);
 
+	let isPortrait = $state(true);
+	let isMobile = $state(false);
+
 	let charWorldX = $state(50);
 	let screenWidth = $state(375);
 	let isWalking = $state(false);
@@ -128,6 +133,12 @@
 	let animFrameId: number | null = null;
 	let targetWorldX: number | null = null;
 	let targetObjectId: string | null = null;
+
+	function updateOrientation() {
+		const orientation = getOrientationInfo();
+		isMobile = orientation.isMobile;
+		isPortrait = orientation.isPortrait;
+	}
 
 	function animate() {
 		if (!walkDir) return;
@@ -210,6 +221,10 @@
 	}
 
 	onMount(() => {
+		const orientation = getOrientationInfo();
+		isMobile = orientation.isMobile;
+		isPortrait = orientation.isPortrait;
+
 		screenWidth = window.innerWidth;
 		const onResize = () => {
 			screenWidth = window.innerWidth;
@@ -253,61 +268,69 @@
 	});
 </script>
 
-<div class="relative h-dvh w-full overflow-hidden bg-white select-none md:mr-10 md:ml-10">
-	<button
-		class="absolute inset-0 z-0 cursor-pointer opacity-0"
-		aria-label="Herní scéna"
-		onclick={handleBackgroundClick}
-	></button>
-	<div
-		class="pointer-events-none absolute inset-0 z-10"
-		style="transform: translateX({-worldOffset}px)"
-	>
-		<div class="absolute bottom-25 left-0 h-10 bg-black" style="width: {WORLD_WIDTH}px"></div>
-		{#each sceneObjects as obj}
-			{@const isDisabled = obj.event.isExit && !canExit}
-			<div
-				class="pointer-events-auto absolute bottom-27"
-				style="left: {obj.worldX}px; transform: translateX(-50%)"
-			>
-				<ClickableObject
-					imageSrc={obj.imageSrc || undefined}
-					label={obj.label}
-					visited={visitedObjects.has(obj.id)}
-					disabled={isDisabled}
-					onclick={() => handleObjectClick(obj)}
-				/>
-			</div>
-		{/each}
-	</div>
-	<div
-		class="pointer-events-none absolute bottom-27 z-20"
-		style="left: {charScreenX}px; transform: translateX(-50%)"
-	>
-		<WalkingMan {facingRight} {isWalking} />
-	</div>
-	{#if clickIndicatorScreenX !== null}
-		<ClickIndicator screenX={clickIndicatorScreenX} />
-	{/if}
-	{#if activeEvent}
+<svelte:window on:orientationchange={updateOrientation} on:resize={updateOrientation} />
+{#if isMobile && isPortrait}
+	<PortraitOrientationWarning />
+{:else}
+	<div class="relative h-dvh w-full overflow-hidden bg-white select-none md:mr-10 md:ml-10">
+		<button
+			class="absolute inset-0 z-0 cursor-pointer opacity-0"
+			aria-label="Herní scéna"
+			onclick={handleBackgroundClick}
+		></button>
 		<div
-			class="absolute inset-0 z-40 flex cursor-default items-center justify-center bg-black/40 p-6 backdrop-blur-sm"
+			class="pointer-events-none absolute inset-0 z-10"
+			style="transform: translateX({-worldOffset}px)"
 		>
-			<div class="w-full max-w-sm rounded-2xl border border-gray-100 bg-white p-6 shadow-2xl">
-				<div class="mb-3 text-center text-6xl">{activeEvent.emoji}</div>
-				<h2 class="mb-4 text-center text-xl font-bold text-gray-800">{activeEvent.title}</h2>
-				<div class="mb-6 space-y-2">
-					{#each activeEvent.lines as line}
-						<p class="text-sm leading-relaxed text-gray-600">• {line}</p>
-					{/each}
-				</div>
-				<button
-					class="w-full cursor-pointer rounded-xl bg-[#0992c2] py-3 font-bold text-white transition-colors hover:bg-[#0779a8]"
-					onclick={closeEvent}
+			<div
+				class="absolute bottom-0 left-0 h-7 bg-black md:h-10 lg:bottom-25"
+				style="width: {WORLD_WIDTH}px"
+			></div>
+			{#each sceneObjects as obj}
+				{@const isDisabled = obj.event.isExit && !canExit}
+				<div
+					class="pointer-events-auto absolute bottom-7 lg:bottom-27"
+					style="left: {obj.worldX}px; transform: translateX(-50%)"
 				>
-					{activeEvent.isExit ? '🎉 Dokončit úroveň' : 'Rozumím ✓'}
-				</button>
-			</div>
+					<ClickableObject
+						imageSrc={obj.imageSrc || undefined}
+						label={obj.label}
+						visited={visitedObjects.has(obj.id)}
+						disabled={isDisabled}
+						onclick={() => handleObjectClick(obj)}
+					/>
+				</div>
+			{/each}
 		</div>
-	{/if}
-</div>
+		<div
+			class="pointer-events-none absolute bottom-3 z-20 lg:bottom-27"
+			style="left: {charScreenX}px; transform: translateX(-50%)"
+		>
+			<WalkingMan {facingRight} {isWalking} />
+		</div>
+		{#if clickIndicatorScreenX !== null}
+			<ClickIndicator screenX={clickIndicatorScreenX} />
+		{/if}
+		{#if activeEvent}
+			<div
+				class="absolute inset-0 z-40 flex cursor-default items-center justify-center bg-black/40 p-6 backdrop-blur-sm"
+			>
+				<div class="w-full max-w-sm rounded-2xl border border-gray-100 bg-white p-6 shadow-2xl">
+					<div class="mb-3 text-center text-6xl">{activeEvent.emoji}</div>
+					<h2 class="mb-4 text-center text-xl font-bold text-gray-800">{activeEvent.title}</h2>
+					<div class="mb-6 space-y-2">
+						{#each activeEvent.lines as line}
+							<p class="text-sm leading-relaxed text-gray-600">• {line}</p>
+						{/each}
+					</div>
+					<button
+						class="w-full cursor-pointer rounded-xl bg-[#0992c2] py-3 font-bold text-white transition-colors hover:bg-[#0779a8]"
+						onclick={closeEvent}
+					>
+						{activeEvent.isExit ? '🎉 Dokončit úroveň' : 'Rozumím ✓'}
+					</button>
+				</div>
+			</div>
+		{/if}
+	</div>
+{/if}

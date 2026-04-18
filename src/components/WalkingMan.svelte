@@ -42,7 +42,7 @@
 	alt="Tomáš"
 	draggable="false"
 	class={cn(
-		'block h-75 w-fit object-contain transition-transform duration-100',
+		'block h-55 w-fit object-contain transition-transform duration-100 lg:h-75',
 		facingRight && 'scale-x-[-1]'
 	)}
 />
