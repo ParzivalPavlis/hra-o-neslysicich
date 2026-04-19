@@ -19,7 +19,6 @@
 
 	type GameEvent = {
 		title: string;
-		emoji: string;
 		lines: string[];
 		encounterHref?: string;
 		isExit?: boolean;
@@ -46,7 +45,6 @@
 			imageSrc: '',
 			event: {
 				title: 'Vizuální menu',
-				emoji: '📋',
 				lines: [
 					'Kavárna má vizuální menu s fotografiemi jídel a nápojů.',
 					'Neslyšící zákazníci si mohou vybrat bez nutnosti mluvit.',
@@ -62,7 +60,6 @@
 			imageSrc: '',
 			event: {
 				title: 'Objednávka bez slov',
-				emoji: '✍️',
 				lines: [
 					'Barista má připravený zápisník pro psanou komunikaci.',
 					'Jednoduché gesto nebo napsaná objednávka stačí.',
@@ -78,7 +75,6 @@
 			imageSrc: '',
 			event: {
 				title: 'Aplikace pro přepis',
-				emoji: '📱',
 				lines: [
 					'Aplikace jako Google Live Transcribe převádí mluvené slovo na text.',
 					'Neslyšící mohou číst, co říkají lidé kolem nich, v reálném čase.',
@@ -94,7 +90,6 @@
 			imageSrc: '',
 			event: {
 				title: 'Vizuální upozornění',
-				emoji: '💡',
 				lines: [
 					'Místo akustického zvonku kavárna používá blikající světelné signály.',
 					'Vibrace v hodinkách nebo telefonu upozorní neslyšícího zákazníka.',
@@ -110,7 +105,6 @@
 			imageSrc: '',
 			event: {
 				title: 'Výborně!',
-				emoji: '🎉',
 				lines: [
 					'Prozkoumali jste celou kavárnu!',
 					'Dobře přizpůsobená místa jsou přístupná všem – slyšícím i neslyšícím.',
@@ -125,7 +119,6 @@
 
 	let isPortrait = $state(true);
 	let isMobile = $state(false);
-
 	let charWorldX = $state(get(level9.store).lastWorldX ?? 50);
 	let screenWidth = $state(375);
 	let isWalking = $state(false);
