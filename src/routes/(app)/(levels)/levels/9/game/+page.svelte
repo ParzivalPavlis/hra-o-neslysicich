@@ -32,6 +32,7 @@
 		event: GameEvent;
 	};
 
+	const CURRENT_LEVEL_NUMBER = 9;
 	const WALK_SPEED = 4; // px per animation frame (~150px/s at 60fps)
 	const CAMERA_LOCK_RATIO = 0.33; // character locks at 33% of screen width
 	const INTERACT_DISTANCE = 80; // px in world space to trigger event
@@ -50,7 +51,7 @@
 					'Neslyšící zákazníci si mohou vybrat bez nutnosti mluvit.',
 					'QR kódy na stolech vedou na digitální menu přímo v telefonu.'
 				],
-				encounterHref: '/levels/9/encounters/1'
+				encounterHref: `/levels/${CURRENT_LEVEL_NUMBER}/encounters/1`
 			}
 		},
 		{
@@ -65,7 +66,7 @@
 					'Jednoduché gesto nebo napsaná objednávka stačí.',
 					'Profesionální podniky školí zaměstnance v základní znakové řeči.'
 				],
-				encounterHref: '/levels/9/encounters/2'
+				encounterHref: `/levels/${CURRENT_LEVEL_NUMBER}/encounters/2`
 			}
 		},
 		{
@@ -80,7 +81,7 @@
 					'Neslyšící mohou číst, co říkají lidé kolem nich, v reálném čase.',
 					'Stačí položit telefon na stůl a sledovat text na obrazovce.'
 				],
-				encounterHref: '/levels/9/encounters/3'
+				encounterHref: `/levels/${CURRENT_LEVEL_NUMBER}/encounters/3`
 			}
 		},
 		{
@@ -95,7 +96,7 @@
 					'Vibrace v hodinkách nebo telefonu upozorní neslyšícího zákazníka.',
 					'Vibrační pagery jsou běžné v moderních restauracích a kavárnách.'
 				],
-				encounterHref: '/levels/9/encounters/4'
+				encounterHref: `/levels/${CURRENT_LEVEL_NUMBER}/encounters/4`
 			}
 		},
 		{
@@ -226,7 +227,7 @@
 		activeEvent = null;
 		if (isExiting) {
 			level9.markCompleted();
-			goto('/levels/9/overview');
+			goto(`/levels/${CURRENT_LEVEL_NUMBER}/overview`);
 		}
 	}
 

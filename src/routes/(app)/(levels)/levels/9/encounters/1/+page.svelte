@@ -8,6 +8,7 @@
 
 	type Phase = 'playing' | 'done' | 'failure';
 
+	const CURRENT_LEVEL_NUMBER = 9;
 	const totalRounds = Math.floor(Math.random() * 4) + 4;
 
 	let round = $state(0);
@@ -18,7 +19,6 @@
 	let isVibrating = $state(false);
 	let isLandscape = $state(false);
 	let isMobile = $state(false);
-
 	let hideTimeout: ReturnType<typeof setTimeout> | null = null;
 	let nextTimeout: ReturnType<typeof setTimeout> | null = null;
 
@@ -80,6 +80,8 @@
 		scheduleNext();
 	}
 
+	const gameActive = $derived(!isMobile || !isLandscape);
+
 	function updateOrientation() {
 		const orientation = getOrientationInfo();
 		isMobile = orientation.isMobile;
@@ -88,6 +90,21 @@
 
 	$effect(() => {
 		updateOrientation();
+	});
+
+	$effect(() => {
+		if (!gameActive) {
+			if (hideTimeout !== null) {
+				clearTimeout(hideTimeout);
+				hideTimeout = null;
+			}
+			if (nextTimeout !== null) {
+				clearTimeout(nextTimeout);
+				nextTimeout = null;
+			}
+			buttonVisible = false;
+			return;
+		}
 		scheduleNext();
 		return () => {
 			if (hideTimeout !== null) clearTimeout(hideTimeout);
@@ -129,20 +146,30 @@
 			</div>
 		{/if}
 		{#if phase === 'done'}
-			<div class="absolute inset-0 flex flex-col items-center justify-center gap-6 p-8 text-center">
-				<div class="text-6xl">✅</div>
+			<div
+				class="absolute inset-0 mx-auto flex w-full max-w-150 flex-col items-center justify-center gap-6 p-8 text-center"
+			>
 				<p class="text-xl font-bold text-green-600">Výborně! Zvládl jsi všechna kola.</p>
-				<GameButton onclick={() => goto('/levels/9/game')}>Zpět</GameButton>
+				<GameButton class="w-full" onclick={() => goto(`/levels/${CURRENT_LEVEL_NUMBER}/game`)}>
+					Zpět
+				</GameButton>
 			</div>
 		{/if}
 		{#if phase === 'failure'}
-			<div class="absolute inset-0 flex flex-col items-center justify-center gap-6 p-8 text-center">
-				<div class="text-6xl">❌</div>
+			<div
+				class="absolute inset-0 mx-auto flex w-full max-w-150 flex-col items-center justify-center gap-6 p-8 text-center"
+			>
 				<p class="text-xl font-bold text-red-500">
 					{isVibrating ? 'Nestiskl jsi včas!' : 'Telefon nevibrovalo!'}
 				</p>
-				<GameButton onclick={restart}>Zkusit znovu</GameButton>
-				<GameButton variant={4} onclick={() => goto('/levels/9/game')}>Zpět</GameButton>
+				<GameButton class="w-full" onclick={restart}>Zkusit znovu</GameButton>
+				<GameButton
+					class="w-full"
+					variant={4}
+					onclick={() => goto(`/levels/${CURRENT_LEVEL_NUMBER}/game`)}
+				>
+					Zpět
+				</GameButton>
 			</div>
 		{/if}
 	</div>
