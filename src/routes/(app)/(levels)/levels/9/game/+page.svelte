@@ -1,17 +1,18 @@
 <script lang="ts">
-	import { onMount } from 'svelte';
 	import { goto } from '$app/navigation';
 	import { level9 } from '$lib/stores/gameState';
 	import WalkingMan from '$components/WalkingMan.svelte';
 	import ClickableObject from '$components/ClickableObject.svelte';
 	import ClickIndicator from '$components/ClickIndicator.svelte';
 	import PortraitOrientationWarning from '$components/PortraitOrientationWarning.svelte';
+	import GameEventModal from '$components/GameEventModal.svelte';
 	import { getOrientationInfo } from '$lib/client/shared/gameUtils';
 
 	type GameEvent = {
 		title: string;
 		emoji: string;
 		lines: string[];
+		encounterHref?: string;
 		isExit?: boolean;
 	};
 
@@ -31,7 +32,7 @@
 	const sceneObjects: SceneObject[] = [
 		{
 			id: 'menu',
-			worldX: 300,
+			worldX: 600,
 			label: 'Jídelní lístek',
 			imageSrc: '',
 			event: {
@@ -41,12 +42,13 @@
 					'Kavárna má vizuální menu s fotografiemi jídel a nápojů.',
 					'Neslyšící zákazníci si mohou vybrat bez nutnosti mluvit.',
 					'QR kódy na stolech vedou na digitální menu přímo v telefonu.'
-				]
+				],
+				encounterHref: '/levels/9/encounters/1'
 			}
 		},
 		{
 			id: 'barista',
-			worldX: 700,
+			worldX: 1200,
 			label: 'Barista',
 			imageSrc: '',
 			event: {
@@ -56,12 +58,13 @@
 					'Barista má připravený zápisník pro psanou komunikaci.',
 					'Jednoduché gesto nebo napsaná objednávka stačí.',
 					'Profesionální podniky školí zaměstnance v základní znakové řeči.'
-				]
+				],
+				encounterHref: '/levels/9/encounters/2'
 			}
 		},
 		{
 			id: 'app',
-			worldX: 1100,
+			worldX: 1800,
 			label: 'Přepis řeči',
 			imageSrc: '',
 			event: {
@@ -71,12 +74,13 @@
 					'Aplikace jako Google Live Transcribe převádí mluvené slovo na text.',
 					'Neslyšící mohou číst, co říkají lidé kolem nich, v reálném čase.',
 					'Stačí položit telefon na stůl a sledovat text na obrazovce.'
-				]
+				],
+				encounterHref: '/levels/9/encounters/3'
 			}
 		},
 		{
 			id: 'light',
-			worldX: 1500,
+			worldX: 2400,
 			label: 'Světelný signál',
 			imageSrc: '',
 			event: {
@@ -86,12 +90,13 @@
 					'Místo akustického zvonku kavárna používá blikající světelné signály.',
 					'Vibrace v hodinkách nebo telefonu upozorní neslyšícího zákazníka.',
 					'Vibrační pagery jsou běžné v moderních restauracích a kavárnách.'
-				]
+				],
+				encounterHref: '/levels/9/encounters/4'
 			}
 		},
 		{
 			id: 'exit',
-			worldX: 1900,
+			worldX: 3000,
 			label: 'Odejít z kavárny',
 			imageSrc: '',
 			event: {
@@ -166,7 +171,7 @@
 			if (target && Math.abs(charWorldX - target.worldX) < INTERACT_DISTANCE) {
 				stopWalking();
 				targetObjectId = null;
-				visitedObjects = new Set([...visitedObjects, target.id]);
+				visitedObjects.add(target.id);
 				activeEvent = target.event;
 				return;
 			}
@@ -220,19 +225,16 @@
 		}
 	}
 
-	onMount(() => {
-		const orientation = getOrientationInfo();
-		isMobile = orientation.isMobile;
-		isPortrait = orientation.isPortrait;
-
+	$effect(() => {
+		updateOrientation();
 		screenWidth = window.innerWidth;
-		const onResize = () => {
-			screenWidth = window.innerWidth;
-		};
-		window.addEventListener('resize', onResize);
 
 		const heldKeys = new Set<string>();
 
+		const onResize = () => {
+			screenWidth = window.innerWidth;
+			updateOrientation();
+		};
 		const onKeyDown = (e: KeyboardEvent) => {
 			if (activeEvent) return;
 			const isLeft = e.key === 'ArrowLeft' || e.key === 'a' || e.key === 'A';
@@ -246,7 +248,6 @@
 			if (isRight) startWalking('right');
 			else startWalking('left');
 		};
-
 		const onKeyUp = (e: KeyboardEvent) => {
 			heldKeys.delete(e.key);
 			const leftHeld = heldKeys.has('ArrowLeft') || heldKeys.has('a') || heldKeys.has('A');
@@ -255,24 +256,31 @@
 			else if (leftHeld) startWalking('left');
 			else stopWalking();
 		};
+		const preventHorizontalScroll = (e: WheelEvent) => {
+			if (Math.abs(e.deltaX) > 0) e.preventDefault();
+		};
 
+		window.addEventListener('resize', onResize);
+		window.addEventListener('orientationchange', onResize);
 		window.addEventListener('keydown', onKeyDown);
 		window.addEventListener('keyup', onKeyUp);
+		window.addEventListener('wheel', preventHorizontalScroll, { passive: false });
 
 		return () => {
 			window.removeEventListener('resize', onResize);
+			window.removeEventListener('orientationchange', onResize);
 			window.removeEventListener('keydown', onKeyDown);
 			window.removeEventListener('keyup', onKeyUp);
+			window.removeEventListener('wheel', preventHorizontalScroll);
 			if (animFrameId !== null) cancelAnimationFrame(animFrameId);
 		};
 	});
 </script>
 
-<svelte:window on:orientationchange={updateOrientation} on:resize={updateOrientation} />
 {#if isMobile && isPortrait}
 	<PortraitOrientationWarning />
 {:else}
-	<div class="relative h-dvh w-full overflow-hidden bg-white select-none md:mr-10 md:ml-10">
+	<div class="relative h-dvh w-full overflow-hidden bg-white select-none md:mr-10">
 		<button
 			class="absolute inset-0 z-0 cursor-pointer opacity-0"
 			aria-label="Herní scéna"
@@ -312,25 +320,7 @@
 			<ClickIndicator screenX={clickIndicatorScreenX} />
 		{/if}
 		{#if activeEvent}
-			<div
-				class="absolute inset-0 z-40 flex cursor-default items-center justify-center bg-black/40 p-6 backdrop-blur-sm"
-			>
-				<div class="w-full max-w-sm rounded-2xl border border-gray-100 bg-white p-6 shadow-2xl">
-					<div class="mb-3 text-center text-6xl">{activeEvent.emoji}</div>
-					<h2 class="mb-4 text-center text-xl font-bold text-gray-800">{activeEvent.title}</h2>
-					<div class="mb-6 space-y-2">
-						{#each activeEvent.lines as line}
-							<p class="text-sm leading-relaxed text-gray-600">• {line}</p>
-						{/each}
-					</div>
-					<button
-						class="w-full cursor-pointer rounded-xl bg-[#0992c2] py-3 font-bold text-white transition-colors hover:bg-[#0779a8]"
-						onclick={closeEvent}
-					>
-						{activeEvent.isExit ? '🎉 Dokončit úroveň' : 'Rozumím ✓'}
-					</button>
-				</div>
-			</div>
+			<GameEventModal event={activeEvent} encounterHref={activeEvent.encounterHref} onclose={closeEvent} />
 		{/if}
 	</div>
 {/if}
