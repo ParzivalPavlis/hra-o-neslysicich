@@ -1,20 +1,23 @@
 <script lang="ts">
 	import { goto } from '$app/navigation';
 	import GameButton from '$components/GameButton.svelte';
+	import PortraitOrientationWarning from '$components/PortraitOrientationWarning.svelte';
+	import { getOrientationInfo } from '$lib/client/shared/gameUtils';
+	import { preventHorizontalScroll } from '$lib/client/shared/walkingUtils';
 	import { Vibrate, Hand } from '@lucide/svelte';
 
 	type Phase = 'playing' | 'done' | 'failure';
 
-	// 4–7 successful rounds needed, not shown to user
 	const totalRounds = Math.floor(Math.random() * 4) + 4;
+
 	let round = $state(0);
 	let phase = $state<Phase>('playing');
-
-	// Button state
 	let buttonVisible = $state(false);
-	let buttonX = $state(50); // percent
-	let buttonY = $state(50); // percent
-	let isVibrating = $state(false); // whether this appearance has vibration
+	let buttonX = $state(50);
+	let buttonY = $state(50);
+	let isVibrating = $state(false);
+	let isLandscape = $state(false);
+	let isMobile = $state(false);
 
 	let hideTimeout: ReturnType<typeof setTimeout> | null = null;
 	let nextTimeout: ReturnType<typeof setTimeout> | null = null;
@@ -25,12 +28,10 @@
 	}
 
 	function showButton() {
-		// Random position — keep away from edges
 		buttonX = 15 + Math.random() * 70;
 		buttonY = 20 + Math.random() * 60;
 
-		// Randomly decide if this appearance vibrates
-		isVibrating = Math.random() > 0.4; // 60% chance of vibration
+		isVibrating = Math.random() > 0.4;
 
 		if (isVibrating && typeof navigator !== 'undefined' && 'vibrate' in navigator) {
 			navigator.vibrate(400);
@@ -38,7 +39,6 @@
 
 		buttonVisible = true;
 
-		// Hide button after 1.2s — if vibrating and not pressed, fail
 		hideTimeout = setTimeout(() => {
 			if (buttonVisible) {
 				buttonVisible = false;
@@ -60,7 +60,7 @@
 		buttonVisible = false;
 
 		if (!isVibrating) {
-			phase = 'failure'; // pressed when not vibrating
+			phase = 'failure';
 			return;
 		}
 
@@ -80,7 +80,14 @@
 		scheduleNext();
 	}
 
+	function updateOrientation() {
+		const orientation = getOrientationInfo();
+		isMobile = orientation.isMobile;
+		isLandscape = !orientation.isPortrait;
+	}
+
 	$effect(() => {
+		updateOrientation();
 		scheduleNext();
 		return () => {
 			if (hideTimeout !== null) clearTimeout(hideTimeout);
@@ -89,44 +96,54 @@
 	});
 </script>
 
-<div class="relative flex h-dvh w-full overflow-hidden bg-white select-none">
-	{#if phase === 'playing'}
-		<div
-			class="pointer-events-none absolute inset-0 flex flex-col items-center justify-center gap-2 text-center"
-		>
-			<Vibrate class="text-gray-300" size={48} />
-			<h1 class="text-2xl font-bold text-gray-800">Cítíš vibrace?</h1>
-			<p class="text-sm text-gray-400">Stiskni tlačítko jen když zacítíš vibrace.</p>
-		</div>
-	{/if}
-	{#if phase === 'playing' && buttonVisible}
-		<div
-			class="absolute -translate-x-1/2 -translate-y-1/2"
-			style="left: {buttonX}%; top: {buttonY}%"
-		>
-			<button
-				onclick={handlePress}
-				class="flex h-18 w-18 cursor-pointer items-center justify-center rounded-full bg-secondary shadow-[0_6px_0_var(--secondary-2)] transition-all hover:-translate-y-0.5 hover:shadow-[0_8px_0_var(--secondary-2)] active:translate-y-0.5 active:shadow-[0_4px_0_var(--secondary-2)]"
+<svelte:window
+	onresize={updateOrientation}
+	onorientationchange={updateOrientation}
+	onwheel={preventHorizontalScroll}
+/>
+
+{#if isMobile && isLandscape}
+	<PortraitOrientationWarning mode="portrait" />
+{:else}
+	<div class="relative flex h-dvh w-full overflow-hidden bg-white select-none">
+		{#if phase === 'playing'}
+			<div
+				class="pointer-events-none absolute inset-0 flex flex-col items-center justify-center gap-2 text-center"
 			>
-				<Hand size={40} color="white" />
-			</button>
-		</div>
-	{/if}
-	{#if phase === 'done'}
-		<div class="absolute inset-0 flex flex-col items-center justify-center gap-6 p-8 text-center">
-			<div class="text-6xl">✅</div>
-			<p class="text-xl font-bold text-green-600">Výborně! Zvládl jsi všechna kola.</p>
-			<GameButton onclick={() => goto('/levels/9/game')}>Zpět</GameButton>
-		</div>
-	{/if}
-	{#if phase === 'failure'}
-		<div class="absolute inset-0 flex flex-col items-center justify-center gap-6 p-8 text-center">
-			<div class="text-6xl">❌</div>
-			<p class="text-xl font-bold text-red-500">
-				{isVibrating ? 'Nestiskl jsi včas!' : 'Telefon nevibrovalo!'}
-			</p>
-			<GameButton onclick={restart}>Zkusit znovu</GameButton>
-			<GameButton variant={4} onclick={() => goto('/levels/9/game')}>Zpět</GameButton>
-		</div>
-	{/if}
-</div>
+				<Vibrate class="text-gray-300" size={48} />
+				<h1 class="text-2xl font-bold text-gray-800">Cítíš vibrace?</h1>
+				<p class="text-sm text-gray-400">Stiskni tlačítko jen když zacítíš vibrace.</p>
+			</div>
+		{/if}
+		{#if phase === 'playing' && buttonVisible}
+			<div
+				class="absolute -translate-x-1/2 -translate-y-1/2"
+				style="left: {buttonX}%; top: {buttonY}%"
+			>
+				<button
+					onclick={handlePress}
+					class="flex h-18 w-18 cursor-pointer items-center justify-center rounded-full bg-secondary shadow-[0_6px_0_var(--secondary-2)] transition-all hover:-translate-y-0.5 hover:shadow-[0_8px_0_var(--secondary-2)] active:translate-y-0.5 active:shadow-[0_4px_0_var(--secondary-2)]"
+				>
+					<Hand size={40} color="white" />
+				</button>
+			</div>
+		{/if}
+		{#if phase === 'done'}
+			<div class="absolute inset-0 flex flex-col items-center justify-center gap-6 p-8 text-center">
+				<div class="text-6xl">✅</div>
+				<p class="text-xl font-bold text-green-600">Výborně! Zvládl jsi všechna kola.</p>
+				<GameButton onclick={() => goto('/levels/9/game')}>Zpět</GameButton>
+			</div>
+		{/if}
+		{#if phase === 'failure'}
+			<div class="absolute inset-0 flex flex-col items-center justify-center gap-6 p-8 text-center">
+				<div class="text-6xl">❌</div>
+				<p class="text-xl font-bold text-red-500">
+					{isVibrating ? 'Nestiskl jsi včas!' : 'Telefon nevibrovalo!'}
+				</p>
+				<GameButton onclick={restart}>Zkusit znovu</GameButton>
+				<GameButton variant={4} onclick={() => goto('/levels/9/game')}>Zpět</GameButton>
+			</div>
+		{/if}
+	</div>
+{/if}

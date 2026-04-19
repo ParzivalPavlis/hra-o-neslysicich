@@ -7,7 +7,15 @@
 	import PortraitOrientationWarning from '$components/PortraitOrientationWarning.svelte';
 	import GameEventModal from '$components/GameEventModal.svelte';
 	import { getOrientationInfo } from '$lib/client/shared/gameUtils';
+	import {
+		isLeftKey,
+		isRightKey,
+		preventHorizontalScroll,
+		calcWorldOffset,
+		calcCharScreenX
+	} from '$lib/client/shared/walkingUtils';
 	import { get } from 'svelte/store';
+	import { onMount } from 'svelte';
 
 	type GameEvent = {
 		title: string;
@@ -127,8 +135,8 @@
 	let visitedObjects = $state(new Set<string>());
 
 	const cameraLockPx = $derived(screenWidth * CAMERA_LOCK_RATIO);
-	const worldOffset = $derived(Math.max(0, charWorldX - cameraLockPx));
-	const charScreenX = $derived(Math.min(charWorldX, cameraLockPx));
+	const worldOffset = $derived(calcWorldOffset(charWorldX, cameraLockPx));
+	const charScreenX = $derived(calcCharScreenX(charWorldX, cameraLockPx));
 	const canExit = $derived(requiredIds.every((id) => visitedObjects.has(id)));
 
 	let clickIndicatorWorldX = $state<number | null>(null);
@@ -207,6 +215,7 @@
 		targetWorldX = Math.min(WORLD_WIDTH, clickWorldX);
 		clickIndicatorWorldX = Math.min(WORLD_WIDTH, clickWorldX);
 		startWalking(clickWorldX > charWorldX ? 'right' : 'left');
+		level9.savePosition(charWorldX);
 	}
 
 	function handleObjectClick(obj: SceneObject) {
@@ -216,6 +225,7 @@
 		clickIndicatorWorldX = null;
 		targetObjectId = obj.id;
 		startWalking(charWorldX < obj.worldX ? 'right' : 'left');
+		level9.savePosition(charWorldX);
 	}
 
 	function closeEvent() {
@@ -223,63 +233,69 @@
 		activeEvent = null;
 		if (isExiting) {
 			level9.markCompleted();
-			level9.clearPosition();
 			goto('/levels/9/overview');
 		}
+	}
+
+	const heldKeys = new Set<string>();
+
+	function onResize() {
+		screenWidth = window.innerWidth;
+		updateOrientation();
+	}
+
+	function onKeyDown(e: KeyboardEvent) {
+		if (activeEvent) return;
+		const left = isLeftKey(e.key);
+		const right = isRightKey(e.key);
+		if (!left && !right) return;
+		e.preventDefault();
+		heldKeys.add(e.key);
+		targetWorldX = null;
+		targetObjectId = null;
+		clickIndicatorWorldX = null;
+		if (right) startWalking('right');
+		else startWalking('left');
+		level9.savePosition(charWorldX);
+	}
+
+	function onKeyUp(e: KeyboardEvent) {
+		heldKeys.delete(e.key);
+		const leftHeld = [...heldKeys].some(isLeftKey);
+		const rightHeld = [...heldKeys].some(isRightKey);
+		if (rightHeld) startWalking('right');
+		else if (leftHeld) startWalking('left');
+		else stopWalking();
+		level9.savePosition(charWorldX);
+	}
+
+	function onWheel(e: WheelEvent) {
+		preventHorizontalScroll(e);
 	}
 
 	$effect(() => {
 		updateOrientation();
 		screenWidth = window.innerWidth;
 
-		const heldKeys = new Set<string>();
-
-		const onResize = () => {
-			screenWidth = window.innerWidth;
-			updateOrientation();
-		};
-		const onKeyDown = (e: KeyboardEvent) => {
-			if (activeEvent) return;
-			const isLeft = e.key === 'ArrowLeft' || e.key === 'a' || e.key === 'A';
-			const isRight = e.key === 'ArrowRight' || e.key === 'd' || e.key === 'D';
-			if (!isLeft && !isRight) return;
-			e.preventDefault();
-			heldKeys.add(e.key);
-			targetWorldX = null;
-			targetObjectId = null;
-			clickIndicatorWorldX = null;
-			if (isRight) startWalking('right');
-			else startWalking('left');
-		};
-		const onKeyUp = (e: KeyboardEvent) => {
-			heldKeys.delete(e.key);
-			const leftHeld = heldKeys.has('ArrowLeft') || heldKeys.has('a') || heldKeys.has('A');
-			const rightHeld = heldKeys.has('ArrowRight') || heldKeys.has('d') || heldKeys.has('D');
-			if (rightHeld) startWalking('right');
-			else if (leftHeld) startWalking('left');
-			else stopWalking();
-		};
-		const preventHorizontalScroll = (e: WheelEvent) => {
-			if (Math.abs(e.deltaX) > 0) e.preventDefault();
-		};
-
-		window.addEventListener('resize', onResize);
-		window.addEventListener('orientationchange', onResize);
-		window.addEventListener('keydown', onKeyDown);
-		window.addEventListener('keyup', onKeyUp);
-		window.addEventListener('wheel', preventHorizontalScroll, { passive: false });
-
 		return () => {
-			window.removeEventListener('resize', onResize);
-			window.removeEventListener('orientationchange', onResize);
-			window.removeEventListener('keydown', onKeyDown);
-			window.removeEventListener('keyup', onKeyUp);
-			window.removeEventListener('wheel', preventHorizontalScroll);
 			if (animFrameId !== null) cancelAnimationFrame(animFrameId);
 		};
 	});
+
+	onMount(() => {
+		updateOrientation();
+		screenWidth = window.innerWidth;
+		level9.initialize();
+	});
 </script>
 
+<svelte:window
+	onresize={onResize}
+	onorientationchange={onResize}
+	onkeydown={onKeyDown}
+	onkeyup={onKeyUp}
+	onwheel={onWheel}
+/>
 {#if isMobile && isPortrait}
 	<PortraitOrientationWarning />
 {:else}
@@ -323,7 +339,11 @@
 			<ClickIndicator screenX={clickIndicatorScreenX} />
 		{/if}
 		{#if activeEvent}
-			<GameEventModal event={activeEvent} encounterHref={activeEvent.encounterHref} onclose={closeEvent} />
+			<GameEventModal
+				event={activeEvent}
+				encounterHref={activeEvent.encounterHref}
+				onclose={closeEvent}
+			/>
 		{/if}
 	</div>
 {/if}

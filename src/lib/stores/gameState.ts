@@ -3,6 +3,7 @@ import { createLevelGameStore } from './levelGameStore';
 import { createLevelWalkingStore } from './levelWalkingStore';
 import type { LevelQuestionsStoreInstance } from './levelQuestionsStore';
 import type { LevelGameStoreInstance } from './levelGameStore';
+import type { LevelWalkingStoreInstance } from './levelWalkingStore';
 
 export const level1 = createLevelQuestionsStore(1);
 export const level2 = createLevelQuestionsStore(2);
@@ -18,11 +19,15 @@ const LEVEL_STORES = {
 	4: level4,
 	5: level5,
 	7: level7,
-	8: level8
+	8: level8,
+	9: level9
 } as const;
 
 export type LevelNumber = keyof typeof LEVEL_STORES;
-export type LevelStoreInstance = LevelQuestionsStoreInstance | LevelGameStoreInstance;
+export type LevelStoreInstance =
+	| LevelQuestionsStoreInstance
+	| LevelGameStoreInstance
+	| LevelWalkingStoreInstance;
 
 export function getLevelStore(levelNumber: LevelNumber): LevelStoreInstance {
 	return LEVEL_STORES[levelNumber];
