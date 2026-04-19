@@ -1,9 +1,8 @@
 <script lang="ts">
-	import GameButton from './GameButton.svelte';
+	import GameButton from '$components/GameButton.svelte';
 
 	type GameEvent = {
 		title: string;
-		emoji: string;
 		lines: string[];
 		isExit?: boolean;
 	};
@@ -20,12 +19,15 @@
 <div
 	class="absolute inset-0 z-40 flex cursor-default items-center justify-center bg-black/40 p-6 backdrop-blur-sm"
 >
-	<div class="w-full max-w-sm rounded-2xl border border-gray-100 bg-white p-6 shadow-2xl">
-		<div class="mb-3 text-center text-6xl">{event.emoji}</div>
-		<h2 class="mb-4 text-center text-xl font-bold text-gray-800">{event.title}</h2>
-		<div class="mb-6 space-y-2">
+	<div
+		class="w-full max-w-xs rounded-xl border border-gray-100 bg-white p-3 shadow-2xl lg:max-w-sm lg:rounded-2xl lg:p-6"
+	>
+		<h2 class="mb-2 text-center text-sm font-bold text-gray-800 lg:mb-4 lg:text-xl">
+			{event.title}
+		</h2>
+		<div class="mb-3 space-y-1 lg:mb-6 lg:space-y-2">
 			{#each event.lines as line}
-				<p class="text-sm leading-relaxed text-gray-600">• {line}</p>
+				<p class="text-[11px] leading-relaxed text-gray-600 lg:text-sm">• {line}</p>
 			{/each}
 		</div>
 		<div class="flex flex-col gap-3">

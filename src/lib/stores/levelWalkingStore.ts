@@ -3,11 +3,13 @@ import { persisted } from 'svelte-persisted-store';
 type WalkingGameState = {
 	completed: boolean;
 	objectsVisited: string[];
+	lastWorldX: number | null;
 };
 
 const DEFAULT_STATE: WalkingGameState = {
 	completed: false,
-	objectsVisited: []
+	objectsVisited: [],
+	lastWorldX: null
 };
 
 export function createLevelWalkingStore(levelNumber: number) {
@@ -32,11 +34,19 @@ export function createLevelWalkingStore(levelNumber: number) {
 		store.update((s) => ({ ...s, completed: true }));
 	}
 
+	function savePosition(x: number) {
+		store.update((s) => ({ ...s, lastWorldX: x }));
+	}
+
+	function clearPosition() {
+		store.update((s) => ({ ...s, lastWorldX: null }));
+	}
+
 	function clear() {
 		store.set({ ...DEFAULT_STATE });
 	}
 
-	return { store, initialize, visitObject, markCompleted, clear };
+	return { store, initialize, visitObject, markCompleted, savePosition, clearPosition, clear };
 }
 
 export type LevelWalkingStoreInstance = ReturnType<typeof createLevelWalkingStore>;

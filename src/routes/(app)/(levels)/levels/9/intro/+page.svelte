@@ -4,6 +4,7 @@
 	import Layout1 from '$components/layouts/Layout1.svelte';
 	import Paragraph from '$components/typography/Paragraph.svelte';
 	import { setLastPlayed } from '$lib/stores/lastPlayed';
+	import { level9 } from '$lib/stores/gameState';
 	import { onMount } from 'svelte';
 	import { fade } from 'svelte/transition';
 	import SkipIntro from '$components/SkipIntro.svelte';
@@ -18,6 +19,7 @@
 	let showIntroContent = $state(false);
 
 	function handleContinue() {
+		level9.clearPosition();
 		goto(`/levels/${CURRENT_LEVEL_NUMBER}/game`);
 	}
 

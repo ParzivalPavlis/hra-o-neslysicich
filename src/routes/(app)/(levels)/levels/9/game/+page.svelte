@@ -7,6 +7,7 @@
 	import PortraitOrientationWarning from '$components/PortraitOrientationWarning.svelte';
 	import GameEventModal from '$components/GameEventModal.svelte';
 	import { getOrientationInfo } from '$lib/client/shared/gameUtils';
+	import { get } from 'svelte/store';
 
 	type GameEvent = {
 		title: string;
@@ -117,7 +118,7 @@
 	let isPortrait = $state(true);
 	let isMobile = $state(false);
 
-	let charWorldX = $state(50);
+	let charWorldX = $state(get(level9.store).lastWorldX ?? 50);
 	let screenWidth = $state(375);
 	let isWalking = $state(false);
 	let facingRight = $state(false);
@@ -173,6 +174,7 @@
 				targetObjectId = null;
 				visitedObjects.add(target.id);
 				activeEvent = target.event;
+				level9.savePosition(charWorldX);
 				return;
 			}
 		}
@@ -221,6 +223,7 @@
 		activeEvent = null;
 		if (isExiting) {
 			level9.markCompleted();
+			level9.clearPosition();
 			goto('/levels/9/overview');
 		}
 	}

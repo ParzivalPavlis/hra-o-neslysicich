@@ -58,10 +58,7 @@ export async function initializeGameProgress(userId: string): Promise<GameProgre
 
 	const { data, error } = await supabaseAdminClient
 		.from('game_progress')
-		.insert({
-			user_id: userId,
-			progress: gameProgress
-		})
+		.upsert({ user_id: userId, progress: gameProgress }, { onConflict: 'user_id', ignoreDuplicates: true })
 		.select()
 		.single();
 
@@ -87,16 +84,16 @@ export async function getGameProgress(
 	// Make sure user_id column has a database index for faster queries
 	const { data, error } = await client
 		.from('game_progress')
-		.select('progress', { count: 'exact' })
+		.select('progress')
 		.eq('user_id', userId)
-		.maybeSingle();
+		.limit(1);
 
 	if (error) {
 		console.error('Error fetching game progress:', error);
 		return null;
 	}
 
-	return data?.progress as GameProgressType | null;
+	return (data?.[0]?.progress ?? null) as GameProgressType | null;
 }
 
 /**

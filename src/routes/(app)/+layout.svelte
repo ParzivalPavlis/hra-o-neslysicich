@@ -25,11 +25,21 @@
 		'/levels/9/game'
 	] as const;
 
+	// Pages that should be portrait-only
+	const PORTRAIT_ONLY = [
+		'/levels/9/encounters'
+	] as const;
+
 	function shouldBeLandscapeOnly(pathname: string): boolean {
 		return LANDSCAPE_ONLY.some((p) => pathname.includes(p));
 	}
 
+	function shouldBePortraitOnly(pathname: string): boolean {
+		return PORTRAIT_ONLY.some((p) => pathname.includes(p));
+	}
+
 	let isLandscapePage = $derived(shouldBeLandscapeOnly(page.url.pathname));
+	let isPortraitPage = $derived(shouldBePortraitOnly(page.url.pathname));
 
 	function checkIsMobile() {
 		const userAgent = navigator.userAgent.toLowerCase();
@@ -63,8 +73,7 @@
 		const match = page.url.pathname.match(/\/levels\/(\d+)/);
 		levelNumber = match ? parseInt(match[1]) : null;
 
-		// By default lock portrait, unlock only for landscape-only pages
-		if (shouldBeLandscapeOnly(page.url.pathname)) {
+		if (isLandscapePage) {
 			lockLandscapeOrientation();
 		} else {
 			lockPortraitOrientation();
@@ -75,7 +84,7 @@
 <svelte:window on:resize={checkIsMobile} />
 <div class="relative">
 	{@render children()}
-	{#if !isLandscapePage || !isMobile}
+	{#if (!isLandscapePage && !isPortraitPage) || !isMobile}
 		<nav
 			class="fixed right-0 bottom-0 left-0 z-100 mx-auto h-13 border-t-4 border-r-4 border-l-4 border-white {isMobile
 				? 'w-[96%]'
