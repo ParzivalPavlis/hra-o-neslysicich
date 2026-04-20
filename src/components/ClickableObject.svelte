@@ -1,11 +1,15 @@
 <script lang="ts">
+	import { onMount } from 'svelte';
+	import { getOrientationInfo } from '$lib/client/shared/gameUtils';
+
 	type Props = {
 		imageSrc?: string;
 		label: string;
 		visited?: boolean;
 		disabled?: boolean;
 		onclick?: () => void;
-		imageHeight?: number;
+		imageHeightMobile?: number;
+		imageHeightDesktop?: number;
 	};
 
 	let {
@@ -14,13 +18,29 @@
 		visited = false,
 		disabled = false,
 		onclick = () => {},
-		imageHeight = 90
+		imageHeightMobile = 180,
+		imageHeightDesktop = 200
 	}: Props = $props();
+
+	let isMobile = $state(false);
+
+	function updateOrientation() {
+		const orientation = getOrientationInfo();
+		isMobile = orientation.isMobile;
+	}
+
+	const imageHeight = $derived(isMobile ? imageHeightMobile : imageHeightDesktop);
+
+	onMount(() => {
+		updateOrientation();
+	});
 </script>
+
+<svelte:window onresize={updateOrientation} onorientationchange={updateOrientation} />
 
 <button
 	class="flex flex-col items-center gap-1 transition-all duration-150
-	       {disabled
+	{disabled
 		? 'cursor-not-allowed opacity-40'
 		: 'cursor-pointer hover:-translate-y-2 active:translate-y-0'}"
 	{onclick}

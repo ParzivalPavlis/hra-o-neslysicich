@@ -43,10 +43,10 @@
 		{
 			id: 'menu',
 			worldX: 600,
-			label: 'Jídelní lístek',
-			imageSrc: '',
+			label: 'Vstávání',
+			imageSrc: '/assets/level10/encounter1.png',
 			event: {
-				title: 'Vizuální menu',
+				title: 'Vstávání',
 				lines: [
 					'Kavárna má vizuální menu s fotografiemi jídel a nápojů.',
 					'Neslyšící zákazníci si mohou vybrat bez nutnosti mluvit.',
