@@ -4,7 +4,9 @@
 	import PortraitOrientationWarning from '$components/PortraitOrientationWarning.svelte';
 	import { getOrientationInfo } from '$lib/client/shared/gameUtils';
 	import { preventHorizontalScroll } from '$lib/client/shared/walkingUtils';
+	import { checkIsPlaying } from '$lib/stores/lastPlayed';
 	import { Vibrate, Hand } from '@lucide/svelte';
+	import { onMount } from 'svelte';
 
 	type Phase = 'playing' | 'done' | 'failure';
 
@@ -110,6 +112,11 @@
 			if (hideTimeout !== null) clearTimeout(hideTimeout);
 			if (nextTimeout !== null) clearTimeout(nextTimeout);
 		};
+	});
+
+	onMount(() => {
+		checkIsPlaying(CURRENT_LEVEL_NUMBER);
+		updateOrientation();
 	});
 </script>
 

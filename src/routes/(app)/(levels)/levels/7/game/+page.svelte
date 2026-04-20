@@ -16,6 +16,7 @@
 	} from '$lib/client/shared/walkingUtils';
 	import { get } from 'svelte/store';
 	import { onMount } from 'svelte';
+	import { checkIsPlaying } from '$lib/stores/lastPlayed';
 
 	type GameEvent = {
 		title: string;
@@ -277,6 +278,7 @@
 	});
 
 	onMount(() => {
+		checkIsPlaying(CURRENT_LEVEL_NUMBER);
 		updateOrientation();
 		screenWidth = window.innerWidth;
 		level7.initialize();

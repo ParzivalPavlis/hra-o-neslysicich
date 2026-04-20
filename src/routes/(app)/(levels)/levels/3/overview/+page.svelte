@@ -1,7 +1,7 @@
 <script lang="ts">
 	import LevelCompletionCard from '$components/LevelCompletionCard.svelte';
 	import { level3 } from '$lib/stores/gameState';
-	import { goto, invalidate } from '$app/navigation';
+	import { goto } from '$app/navigation';
 	import { onMount } from 'svelte';
 	import Layout1 from '$components/layouts/Layout1.svelte';
 	import { checkIsPlaying, setFirstThreeStars } from '$lib/stores/lastPlayed';
@@ -65,9 +65,6 @@
 
 				if (actionResult.firstTimeThreeStars === true) {
 					setFirstThreeStars(CURRENT_LEVEL_NUMBER);
-				}
-				if (actionResult.success) {
-					await invalidate('game:progress');
 				}
 			}
 		};
