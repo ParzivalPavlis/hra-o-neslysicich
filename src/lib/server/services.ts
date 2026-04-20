@@ -308,6 +308,36 @@ export async function getLevelProgress(
 }
 
 /**
+ * Get the last played level for a user
+ * @param {string} userId - The user ID to fetch progress for
+ * @param {SupabaseClient<Database>} client - The authenticated Supabase client
+ * @returns {Promise<number|null>} The level number that has lastPlayed set to true, or null if not found
+ */
+export async function getLastPlayedLevel(
+	userId: string,
+	client: SupabaseClient<Database> = supabaseBrowserClient as SupabaseClient<Database>
+): Promise<number | null> {
+	// Get the full game progress
+	const gameProgress = await getGameProgress(userId, client);
+
+	if (!gameProgress) {
+		console.error('No game progress found for user:', userId);
+		return null;
+	}
+
+	// Find the level with lastPlayed set to true
+	for (const [key, level] of Object.entries(gameProgress.levels)) {
+		if (level.lastPlayed) {
+			// Extract the level number from the key (e.g., "level1" -> 1)
+			const levelNumber = parseInt(key.replace('level', ''), 10);
+			return levelNumber;
+		}
+	}
+
+	return null;
+}
+
+/**
  * Unlock level for a user
  * @param {string} userId - The user ID to update progress for
  * @param {number} levelNumber - The level number to unlock

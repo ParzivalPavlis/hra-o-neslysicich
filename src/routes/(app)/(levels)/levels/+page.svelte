@@ -75,12 +75,14 @@
 	}
 
 	afterNavigate(() => {
-		if ($lastPlayedStore.level) {
-			const index = $lastPlayedStore.level - 1;
+		const lastLevel = $lastPlayedStore.level || data.lastPlayedLevel;
+
+		if (lastLevel) {
+			const index = lastLevel - 1;
 			isScrollingAfterNavigation = true;
 
 			setTimeout(() => {
-				const levelButton = document.getElementById(`level-${$lastPlayedStore.level}`);
+				const levelButton = document.getElementById(`level-${lastLevel}`);
 				if (levelButton) {
 					levelButton.scrollIntoView({ behavior: 'smooth', block: 'center' });
 					// Wait for scroll to complete, then allow animations to trigger
