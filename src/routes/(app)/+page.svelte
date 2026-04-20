@@ -3,10 +3,12 @@
 	import GameButton from '$components/GameButton.svelte';
 	import Logo from '$components/Logo.svelte';
 	import Particles from '$components/Particles.svelte';
+	import { clearAllStores } from '$lib/stores/gameState';
 
 	const handleLogout = async () => {
 		const res = await fetch('/api/v1/auth/logout', { method: 'POST' });
 		if (res.ok) {
+			clearAllStores();
 			goto('/login');
 		}
 	};

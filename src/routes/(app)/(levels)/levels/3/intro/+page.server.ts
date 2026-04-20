@@ -2,7 +2,7 @@ import { setPlayedLevel } from '$lib/server/services';
 import { redirect } from '@sveltejs/kit';
 import type { PageServerLoad } from './$types';
 
-const CURRENT_LEVEL_NUMBER = 8;
+const CURRENT_LEVEL_NUMBER = 3;
 
 export const load: PageServerLoad = async ({ locals }) => {
 	const { user, supabase } = locals;

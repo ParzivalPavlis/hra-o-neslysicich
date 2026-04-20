@@ -1,6 +1,6 @@
 <script lang="ts">
 	import LevelCompletionCard from '$components/LevelCompletionCard.svelte';
-	import { level8 } from '$lib/stores/gameState';
+	import { level6 } from '$lib/stores/gameState';
 	import { goto, invalidate } from '$app/navigation';
 	import { onMount } from 'svelte';
 	import Layout1 from '$components/layouts/Layout1.svelte';
@@ -8,11 +8,11 @@
 	import { enhance } from '$app/forms';
 	import type { FormSaveLevelProgressResponseType } from '$lib/types/form';
 
-	const CURRENT_LEVEL_NUMBER = 8;
+	const CURRENT_LEVEL_NUMBER = 6;
 	const MAX_LIVES = 4;
-	const level8State = level8.store;
+	const level6State = level6.store;
 
-	let gameState = $derived($level8State);
+	let gameState = $derived($level6State);
 	let answers = $derived(gameState.answers);
 	let lives = $derived(gameState.lives);
 	let totalQuestions = $derived(answers.length);
@@ -40,7 +40,7 @@
 	}
 
 	onMount(() => {
-		if (!$level8State.completed) {
+		if (!$level6State.completed) {
 			goto(`/levels/${CURRENT_LEVEL_NUMBER}/game`);
 		} else {
 			checkIsPlaying(CURRENT_LEVEL_NUMBER);

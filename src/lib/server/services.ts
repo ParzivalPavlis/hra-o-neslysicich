@@ -46,19 +46,20 @@ export async function initializeGameProgress(userId: string): Promise<GameProgre
 		levels: {
 			level1: { stars: 0, lastPlayed: true, locked: false },
 			level2: { stars: 0, locked: true },
-			level3: { stars: 0, locked: true },
-			level4: { stars: 0, locked: false },
-			level5: { stars: 0, locked: true },
+			level3: { stars: 0, locked: false },
+			level4: { stars: 0, locked: true },
+			level5: { stars: 0, locked: false },
 			level6: { stars: 0, locked: true },
-			level7: { stars: 0, locked: false },
-			level8: { stars: 0, locked: true },
-			level9: { stars: 0, locked: true }
+			level7: { stars: 0, locked: true }
 		}
 	};
 
 	const { data, error } = await supabaseAdminClient
 		.from('game_progress')
-		.upsert({ user_id: userId, progress: gameProgress }, { onConflict: 'user_id', ignoreDuplicates: true })
+		.upsert(
+			{ user_id: userId, progress: gameProgress },
+			{ onConflict: 'user_id', ignoreDuplicates: true }
+		)
 		.select()
 		.single();
 

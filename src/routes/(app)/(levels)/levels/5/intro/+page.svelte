@@ -1,36 +1,29 @@
 <script lang="ts">
-	import { fade } from 'svelte/transition';
-	import Paragraph from '$components/typography/Paragraph.svelte';
-	import { onMount } from 'svelte';
 	import { goto } from '$app/navigation';
 	import GameButton from '$components/GameButton.svelte';
 	import Layout1 from '$components/layouts/Layout1.svelte';
+	import Paragraph from '$components/typography/Paragraph.svelte';
 	import { setLastPlayed } from '$lib/stores/lastPlayed';
-	import ReplayButtonTutorial from '$components/tutorials/ReplayButton.svelte';
-	import LivesTutorial from '$components/tutorials/Lives.svelte';
-	import AlertButtonTutorial from '$components/tutorials/AlertButton.svelte';
+	import { onMount } from 'svelte';
+	import { fade } from 'svelte/transition';
+	import SkipIntro from '$components/SkipIntro.svelte';
 	import type { PageProps } from './$types';
 
 	let { data }: PageProps = $props();
 
 	const CURRENT_LEVEL_NUMBER = 5;
 
-	let loadAnimation = $state(false);
-	let animate = $state(true);
-	let introState = $state<1 | 2>(1);
+	let fadeAnimations = $state(false);
+	let alreadyPlayed = $derived(data.alreadyPlayed);
+	let showIntroContent = $state(false);
 
 	function handleContinue() {
-		if (introState === 1) {
-			introState = 2;
-		} else {
-			goto(`/levels/${CURRENT_LEVEL_NUMBER}/game`);
-		}
+		goto(`/levels/${CURRENT_LEVEL_NUMBER}/tutorial`);
 	}
 
 	onMount(() => {
 		setLastPlayed(CURRENT_LEVEL_NUMBER);
-		loadAnimation = true;
-		animate = data.alreadyPlayed ? false : true;
+		fadeAnimations = true;
 	});
 </script>
 
@@ -38,47 +31,36 @@
 	<title>Úroveň {CURRENT_LEVEL_NUMBER} | Deafio</title>
 </svelte:head>
 
-<Layout1>
-	<div class="flex w-full max-w-150 flex-col gap-3 text-justify">
-		{#if introState === 1 && loadAnimation}
-			<Paragraph inTransition={animate ? { duration: 3000 } : undefined}
-				>Navštívili jste banku, kde si chcete zařídit několik věcí:</Paragraph
-			>
-			<div in:fade={animate ? { delay: 3000, duration: 3000 } : undefined}>
-				<ul class="mx-auto list-disc pl-5 text-[15px] md:text-[17px]">
-					<li class="font-bold">založit si spořicí účet</li>
-					<li class="font-bold">uložit na něj 50 000 Kč</li>
-					<li class="font-bold">zjistit informace o úrokové sazbě</li>
-					<li class="font-bold">nastavit si internetové bankovnictví</li>
-				</ul>
-			</div>
-			<div in:fade={animate ? { delay: 6000, duration: 3000 } : undefined}>
-				<Paragraph>
-					Nemáte žádný úvěr ani dluhy a jedná se o vaši první návštěvu této banky. Nemáte zájém o
-					investice a žádné podoné služby.
+{#if alreadyPlayed}
+	<SkipIntro
+		skipTo="tutorial"
+		levelNumber={CURRENT_LEVEL_NUMBER}
+		onContinue={() => {
+			fadeAnimations = false;
+			showIntroContent = true;
+			setTimeout(() => {
+				fadeAnimations = true;
+			}, 50);
+		}}
+	/>
+{/if}
+{#if !alreadyPlayed || showIntroContent}
+	<Layout1>
+		<div class="text-justif flex w-full max-w-150 flex-col items-center gap-3">
+			{#if fadeAnimations}
+				<Paragraph inTransition={{ duration: 3000 }}>
+					Znaková řeč je pro neslyšící lidi přirozeným způsobem komunikace a hraje v jejich každy
+					den ním životě klíčovou roli.
 				</Paragraph>
-				<Paragraph>
-					Pracovník banky ví, že jste neslyšící, ale zdá se, že úplně neví, jak s vámi komunikovat.
+				<Paragraph inTransition={{ delay: 3000, duration: 3000 }}>
+					Díky znakové řeči mohou neslyšící lidé sdílet informace, vyjadřovat emoce a plnohodnotně
+					komunikovat s ostatními. Zároveň jim umožňuje lépe porozumět světu kolem sebe a aktivně se
+					zapojit do běžných situací, které jsou pro slyšící samozřejmé.
 				</Paragraph>
-			</div>
-			<Paragraph inTransition={animate ? { delay: 9000, duration: 3000 } : undefined}>
-				Vaším cílem je správně odpovídat na jeho otázky. Občas nebudete rozumět, bude si zakrývat
-				ústa, nebo vám nebude dávat oční kontakt.
-			</Paragraph>
-			<div class="w-full" in:fade={animate ? { delay: 12000, duration: 3000 } : undefined}>
-				<GameButton onclick={handleContinue} class="w-full">Pokračovat</GameButton>
-			</div>
-		{/if}
-		{#if introState === 2}
-			<Paragraph variant={3} className="text-center font-bold">Vystvětlivky:</Paragraph>
-			<Paragraph>
-				V této úrovni budete sledovat videa, která simulují návštěvu banky, ale bez zvuku. Budete
-				muset pracovníkovy odezírat z úst.
-			</Paragraph>
-			<AlertButtonTutorial />
-			<ReplayButtonTutorial />
-			<LivesTutorial />
-			<GameButton onclick={handleContinue} class="w-full">Začít</GameButton>
-		{/if}
-	</div>
-</Layout1>
+				<div class="w-full" in:fade={{ delay: 6000, duration: 3000 }}>
+					<GameButton onclick={handleContinue} class="mt-5 w-full">Pokračovat</GameButton>
+				</div>
+			{/if}
+		</div>
+	</Layout1>
+{/if}

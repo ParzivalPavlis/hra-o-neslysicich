@@ -1,185 +1,211 @@
-import type { AnswerType } from '$types/answer';
+import type { VariableAnswerType } from '$types/answer';
 
-export const answers: AnswerType[] = [
+export const answers: VariableAnswerType[] = [
 	{
 		id: 1,
-		videoSrc: '/assets/level4/1.mp4',
+		videoSrc: ['/assets/level5/normal/1-normal.mp4', '/assets/level5/wrong/1-wrong.mp4'],
 		options: [
 			{
 				id: 'a',
-				text: 'Jan Novák a narodil jsem se 12. března 1998',
+				text: 'Chtěl/a bych si založit spořicí účet',
 				correct: true
 			},
 			{
 				id: 'b',
-				text: 'V posledních dnech mi není úplně dobře',
+				text: 'Jsem tady poprvé, ještě u vás účet nemám',
 				correct: false
 			},
 			{
 				id: 'c',
-				text: 'Ano, jsem tu poprvé',
+				text: 'Chtěl/a bych vložit asi padesát tisíc korun',
 				correct: false
 			},
 			{
 				id: 'd',
-				text: 'Ne, už jsem tu byl',
+				text: 'Ano prosím, to by se mi hodilo',
 				correct: false
 			}
 		]
 	},
 	{
 		id: 2,
-		videoSrc: '/assets/level4/2.mp4',
+		videoSrc: ['/assets/level5/normal/2-normal.mp4', '/assets/level5/wrong/2-wrong.mp4'],
 		options: [
 			{
 				id: 'a',
-				text: 'Potíže na sobě cítím už poslední 3 dny',
+				text: 'Chtěl/a bych vložit asi padesát tisíc korun',
 				correct: false
 			},
 			{
 				id: 'b',
-				text: 'V posledních dnech mi není úplně dobře, hlavně mě bolí v krku',
+				text: 'Jsem tady poprvé, ještě u vás účet nemám',
 				correct: true
 			},
 			{
 				id: 'c',
-				text: 'Nejsem alergický na žádné léky',
+				text: 'Ano prosím, to by se mi hodilo',
 				correct: false
 			},
 			{
 				id: 'd',
-				text: 'Ano, teplotu jsem si naměřil a mám 38 °C',
+				text: 'Chtěl/a bych zjistit, jaké máte úrokové sazby',
 				correct: false
 			}
 		]
 	},
 	{
 		id: 3,
-		videoSrc: '/assets/level4/3.mp4',
+		videoSrc: ['/assets/level5/normal/3-normal.mp4', '/assets/level5/wrong/3-wrong.mp4'],
 		options: [
 			{
 				id: 'a',
-				text: 'Ano, teplotu jsem si naměřil a mám 38 °C',
+				text: 'Nemám známé, kteří by měli účet u vás',
 				correct: false
 			},
 			{
 				id: 'b',
-				text: 'Bolesti břicha ani průjem nemám',
+				text: 'Ano prosím, to by se mi hodilo',
 				correct: false
 			},
 			{
 				id: 'c',
-				text: 'Podobné potíže jsem neměl nikdy předtím',
+				text: 'Chtěl/a bych zjistit, jaké máte úrokové sazby',
 				correct: false
 			},
 			{
 				id: 'd',
-				text: 'Potíže na sobě cítím už poslední 3 dny',
+				text: 'Děkuji, ale nemám zájem',
 				correct: true
 			}
 		]
 	},
 	{
 		id: 4,
-		videoSrc: '/assets/level4/4.mp4',
+		videoSrc: ['/assets/level5/normal/4-normal.mp4', '/assets/level5/wrong/4-wrong.mp4'],
 		options: [
 			{
 				id: 'a',
-				text: 'Bolesti břicha ani průjem nemám',
+				text: 'Ano prosím, to by se mi hodilo',
 				correct: false
 			},
 			{
 				id: 'b',
-				text: 'Ano, měřil jsem si ji a měl jsem asi 38 °C',
+				text: 'Chtěl/a bych vložit asi padesát tisíc korun',
 				correct: true
 			},
 			{
 				id: 'c',
-				text: 'Podobné potíže jsem neměl nikdy předtím',
+				text: 'Zatím nemám zájem, děkuji',
 				correct: false
 			},
 			{
 				id: 'd',
-				text: 'Ano, jsem tu poprvé',
+				text: 'Chtěl/a bych zjistit, jaké máte úrokové sazby',
 				correct: false
 			}
 		]
 	},
 	{
 		id: 5,
-		videoSrc: '/assets/level4/5.mp4',
+		videoSrc: ['/assets/level5/normal/5-normal.mp4', '/assets/level5/wrong/5-wrong.mp4'],
 		options: [
 			{
 				id: 'a',
-				text: 'Nejsem alergický na žádné léky',
+				text: 'Nemám známé, kteří by měli účet u vás',
 				correct: false
 			},
 			{
 				id: 'b',
-				text: 'Ano kašel mám, ale je to jen lehký kašel',
+				text: 'Ne, hotovost u sebe nemám',
 				correct: true
 			},
 			{
 				id: 'c',
-				text: 'Bolestma hlavy ani únavou netrpím',
+				text: 'Chtěl/a bych zjistit, jaké máte úrokové sazby',
 				correct: false
 			},
 			{
 				id: 'd',
-				text: 'Ne, nikdo v rodině podobné potíže neměl',
+				text: 'Ano, kartu bych chtěl/a',
 				correct: false
 			}
 		]
 	},
 	{
 		id: 6,
-		videoSrc: '/assets/level4/6.mp4',
+		videoSrc: ['/assets/level5/normal/6-normal.mp4', '/assets/level5/wrong/6-wrong.mp4'],
 		options: [
 			{
 				id: 'a',
-				text: 'Bolestma hlavy ani únavou netrpím',
+				text: '[Pracovník zmínil úrokovou sazbu 3% ročně]',
 				correct: true
 			},
 			{
 				id: 'b',
-				text: 'Ne, nikdo v rodině podobné potíže neměl',
+				text: '[Pracovník zmínil úrokovou sazbu 2% ročně]',
 				correct: false
 			},
 			{
 				id: 'c',
-				text: 'Podobné potíže jsem neměl nikdy předtím',
+				text: '[Pracovník zmínil úrokovou sazbu 4% ročně]',
 				correct: false
 			},
 			{
 				id: 'd',
-				text: 'Ano, jsem tu poprvé',
+				text: '[Pracovník zmínil úrokovou sazbu 1% ročně]',
 				correct: false
 			}
 		]
 	},
 	{
 		id: 7,
-		videoSrc: '/assets/level4/7.mp4',
+		videoSrc: ['/assets/level5/normal/7-normal.mp4', '/assets/level5/wrong/7-wrong.mp4'],
 		options: [
 			{
 				id: 'a',
-				text: 'Ne, nikdo v rodině podobné potíže neměl',
+				text: 'O to nemám zájem, děkuji',
 				correct: false
 			},
 			{
 				id: 'b',
-				text: 'Nejsem alergický na žádné léky',
+				text: 'Ano prosím, to by se mi hodilo',
 				correct: true
 			},
 			{
 				id: 'c',
-				text: 'Podobné potíže jsem neměl nikdy předtím',
+				text: 'Ano, kartu bych chtěl/a',
 				correct: false
 			},
 			{
 				id: 'd',
-				text: 'Žádné další příznaky nemám',
+				text: 'Ne, hotovost u sebe nemám',
 				correct: false
+			}
+		]
+	},
+	{
+		id: 8,
+		videoSrc: ['/assets/level5/normal/8-normal.mp4', '/assets/level5/wrong/8-wrong.mp4'],
+		options: [
+			{
+				id: 'a',
+				text: 'Ano prosím, to by se mi hodilo',
+				correct: false
+			},
+			{
+				id: 'b',
+				text: 'Chtěl/a bych si promluvit o podmínkách spořicího účtu',
+				correct: false
+			},
+			{
+				id: 'c',
+				text: 'Nemám známé, kteří by měli účet u vás',
+				correct: false
+			},
+			{
+				id: 'd',
+				text: 'Zatím nemám zájem, děkuji',
+				correct: true
 			}
 		]
 	}

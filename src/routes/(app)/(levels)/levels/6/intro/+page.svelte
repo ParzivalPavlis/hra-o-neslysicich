@@ -4,7 +4,6 @@
 	import Layout1 from '$components/layouts/Layout1.svelte';
 	import Paragraph from '$components/typography/Paragraph.svelte';
 	import { setLastPlayed } from '$lib/stores/lastPlayed';
-	import { level9 } from '$lib/stores/gameState';
 	import { onMount } from 'svelte';
 	import { fade } from 'svelte/transition';
 	import SkipIntro from '$components/SkipIntro.svelte';
@@ -12,15 +11,14 @@
 
 	let { data }: PageProps = $props();
 
-	const CURRENT_LEVEL_NUMBER = 9;
+	const CURRENT_LEVEL_NUMBER = 6;
 
 	let fadeAnimations = $state(false);
 	let alreadyPlayed = $derived(data.alreadyPlayed);
 	let showIntroContent = $state(false);
 
 	function handleContinue() {
-		level9.clearPosition();
-		goto(`/levels/${CURRENT_LEVEL_NUMBER}/game`);
+		goto(`/levels/${CURRENT_LEVEL_NUMBER}/tutorial`);
 	}
 
 	onMount(() => {
@@ -35,7 +33,7 @@
 
 {#if alreadyPlayed}
 	<SkipIntro
-		skipTo="game"
+		skipTo="tutorial"
 		levelNumber={CURRENT_LEVEL_NUMBER}
 		onContinue={() => {
 			fadeAnimations = false;
@@ -51,15 +49,16 @@
 		<div class="flex w-full max-w-150 flex-col items-center gap-3 text-justify">
 			{#if fadeAnimations}
 				<Paragraph inTransition={{ duration: 3000 }}>
-					Každý den řešíme desítky situací – objednáme si kávu, zeptáme se na cestu, zaplatíme v
-					obchodě. Pro neslyšící člověka může být každá taková chvíle výzvou.
+					Představte si konverzaci, ve které neuslyšíte ani jediné slovo. Místo hlasu, intonace a
+					zvuků probíhá vše pouze pomocí pohybů rukou, mimiky a výrazů tváře.
 				</Paragraph>
 				<Paragraph inTransition={{ delay: 3000, duration: 3000 }}>
-					Tomáš je neslyšící a právě přišel do kavárny. Pomůžete mu prozkoumat, jak je toto místo
-					přizpůsobeno pro neslyšící zákazníky? Klikejte na předměty a zjistěte, co vám prozradí.
+					Pro neslyšící je to přirozený způsob komunikace. Znaková řeč nahrazuje mluvené slovo a
+					umožňuje sdílet myšlenky, emoce i informace bez jediného zvuku. Každé gesto má svůj význam
+					a stejně důležité jsou i detaily jako tempo nebo výraz obličeje.
 				</Paragraph>
 				<div class="w-full" in:fade={{ delay: 6000, duration: 3000 }}>
-					<GameButton onclick={handleContinue} class="w-full">Vstoupit do kavárny</GameButton>
+					<GameButton onclick={handleContinue} class="w-full">Pokračovat</GameButton>
 				</div>
 			{/if}
 		</div>

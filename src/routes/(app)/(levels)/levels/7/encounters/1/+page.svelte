@@ -8,7 +8,7 @@
 
 	type Phase = 'playing' | 'done' | 'failure';
 
-	const CURRENT_LEVEL_NUMBER = 9;
+	const CURRENT_LEVEL_NUMBER = 7;
 	const totalRounds = Math.floor(Math.random() * 4) + 4;
 
 	let round = $state(0);

@@ -14,9 +14,13 @@
 	import type { AnswerOptionType } from '$types/answer';
 	import { level4 } from '$lib/stores/gameState';
 	import LivesIndicator from '$components/LivesIndicator.svelte';
+	import AlertButton from '$components/AlertButton.svelte';
 	import { checkIsPlaying } from '$lib/stores/lastPlayed';
 
 	const CURRENT_LEVEL_NUMBER = 4;
+	const MAX_VARIABLE_VIDEOS = 5;
+	const MIN_VARIABLE_VIDEOS = 3;
+	const BUTTON_SHOW_DURATION = 3000;
 	const level4State = level4.store;
 
 	let isPortrait = $state(true);
@@ -31,12 +35,74 @@
 	let showingFeedback = $state(false);
 	let isCorrect = $state(false);
 	let disabledButtons = $state<Record<string, boolean>>({});
-	let videoPlayerRef: VideoPlayer | null = $state(null);
+	let videoPlayerRef: any = $state(null);
+	let currentVideoSrc = $state<string>('');
+	let answersWithRandomVideo = $state<Set<number>>(new Set());
+	let showInteractiveButton = $state(false);
+	let buttonTimeoutId: NodeJS.Timeout | null = null;
+	let buttonHideTimeoutId: NodeJS.Timeout | null = null;
+	let videoDuration = $state(0);
+	let buttonPosition = $state({ x: 0, y: 0 });
 
 	// Derived state from store
 	let gameState = $derived($level4State);
 	let currentAnswerIndex = $derived(gameState.currentAnswerIndex);
 	let lives = $derived(gameState.lives);
+
+	function initializeRandomAnswers() {
+		answersWithRandomVideo.clear();
+		const randomCount = Math.floor(
+			Math.random() * (MAX_VARIABLE_VIDEOS - MIN_VARIABLE_VIDEOS + 1) + MIN_VARIABLE_VIDEOS
+		);
+		const answerIndices = Array.from({ length: answers.length }, (_, i) => i);
+		for (let i = 0; i < randomCount; i++) {
+			const randomIdx = Math.floor(Math.random() * answerIndices.length);
+			answersWithRandomVideo.add(answerIndices[randomIdx]);
+			answerIndices.splice(randomIdx, 1);
+		}
+	}
+
+	function initializeVideoForAnswer() {
+		const currentAnswer = answers[currentAnswerIndex];
+		if (currentAnswer && currentAnswer.videoSrc.length > 0) {
+			if (answersWithRandomVideo.has(currentAnswerIndex) && currentAnswer.videoSrc.length > 1) {
+				currentVideoSrc = currentAnswer.videoSrc[1];
+			} else {
+				currentVideoSrc = currentAnswer.videoSrc[0];
+			}
+		}
+	}
+
+	function scheduleInteractiveButton() {
+		// Clear any existing timeouts
+		if (buttonTimeoutId) clearTimeout(buttonTimeoutId);
+		if (buttonHideTimeoutId) clearTimeout(buttonHideTimeoutId);
+
+		// Only show button if this answer has a random video
+		if (!answersWithRandomVideo.has(currentAnswerIndex)) {
+			return;
+		}
+
+		// Show button at 60% of video duration
+		const delay = videoDuration * 0.6;
+
+		buttonTimeoutId = setTimeout(() => {
+			// Generate random position within ±128px from center (256x256 square)
+			buttonPosition = {
+				x: Math.random() * 256 - 128,
+				y: Math.random() * 256 - 128
+			};
+			showInteractiveButton = true;
+			// Hide button after 1.5 seconds
+			buttonHideTimeoutId = setTimeout(() => {
+				showInteractiveButton = false;
+			}, BUTTON_SHOW_DURATION);
+		}, delay);
+	}
+
+	function handleVideoLoadedMetadata(duration: number) {
+		videoDuration = duration;
+	}
 
 	function updateOrientation() {
 		const orientation = getOrientationInfo();
@@ -75,10 +141,36 @@
 		if (helpUses > 0) {
 			helpUses--;
 			videoEnded = false;
+			scheduleInteractiveButton();
+		}
+	}
+
+	function handleAlertButtonClick() {
+		// Change to the first video and start playing
+		const currentAnswer = answers[currentAnswerIndex];
+		if (currentAnswer && currentAnswer.videoSrc.length > 0) {
+			// Remove from random video set so it doesn't revert
+			answersWithRandomVideo.delete(currentAnswerIndex);
+			currentVideoSrc = currentAnswer.videoSrc[0];
+			videoEnded = false;
+			// Reset video to beginning and play
+			if (videoPlayerRef) {
+				setTimeout(() => {
+					if (videoPlayerRef && videoPlayerRef.currentTime !== undefined) {
+						videoPlayerRef.currentTime = 0;
+					}
+					if (videoPlayerRef && videoPlayerRef.play) {
+						videoPlayerRef.play();
+					}
+				}, 0);
+			}
 		}
 	}
 
 	function handleVideoEnd() {
+		if (buttonTimeoutId) clearTimeout(buttonTimeoutId);
+		if (buttonHideTimeoutId) clearTimeout(buttonHideTimeoutId);
+		showInteractiveButton = false;
 		videoEnded = true;
 		showAnswerTab = true;
 	}
@@ -87,6 +179,12 @@
 		videoEnded = false;
 		autoplayPrevented = false;
 		disabledButtons = {};
+		showInteractiveButton = false;
+		buttonPosition = { x: 0, y: 0 };
+		if (buttonTimeoutId) clearTimeout(buttonTimeoutId);
+		if (buttonHideTimeoutId) clearTimeout(buttonHideTimeoutId);
+		initializeVideoForAnswer();
+		scheduleInteractiveButton();
 		if (answers[currentAnswerIndex]) {
 			shuffledOptions = shuffleArray(answers[currentAnswerIndex].options);
 		}
@@ -103,6 +201,7 @@
 		checkIsPlaying(CURRENT_LEVEL_NUMBER);
 		updateOrientation();
 		level4.initialize();
+		initializeRandomAnswers();
 	});
 </script>
 
@@ -124,14 +223,23 @@
 					>
 						<VideoPlayer
 							bind:this={videoPlayerRef}
-							videoSrc={answers[currentAnswerIndex].videoSrc}
+							videoSrc={currentVideoSrc}
 							bind:videoEnded
 							bind:autoplayPrevented
 							{helpUses}
 							showSkipButton={true}
 							onReplay={replayVideo}
 							onVideoEnd={handleVideoEnd}
+							onDurationChange={handleVideoLoadedMetadata}
 						/>
+						{#if showInteractiveButton}
+							<div
+								class="absolute flex items-center justify-center"
+								style="left: calc(50% + {buttonPosition.x}px); top: calc(50% + {buttonPosition.y}px); transform: translate(-50%, -50%);"
+							>
+								<AlertButton onclick={handleAlertButtonClick} />
+							</div>
+						{/if}
 					</div>
 					<!-- Lives indicator for desktop - absolute positioned -->
 					<div class="absolute top-4 right-4 flex flex-col gap-2">
@@ -147,14 +255,23 @@
 				>
 					<VideoPlayer
 						bind:this={videoPlayerRef}
-						videoSrc={answers[currentAnswerIndex].videoSrc}
+						videoSrc={currentVideoSrc}
 						bind:videoEnded
 						bind:autoplayPrevented
 						{helpUses}
 						showSkipButton={true}
 						onReplay={replayVideo}
 						onVideoEnd={handleVideoEnd}
+						onDurationChange={handleVideoLoadedMetadata}
 					/>
+					{#if showInteractiveButton}
+						<div
+							class="absolute flex items-center justify-center"
+							style="left: calc(50% + {buttonPosition.x}px); top: calc(50% + {buttonPosition.y}px); transform: translate(-50%, -50%);"
+						>
+							<AlertButton onclick={handleAlertButtonClick} />
+						</div>
+					{/if}
 				</div>
 			{/if}
 			<!-- Desktop answer tab -->

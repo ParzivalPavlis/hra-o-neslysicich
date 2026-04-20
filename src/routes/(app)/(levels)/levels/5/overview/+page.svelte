@@ -26,9 +26,9 @@
 	});
 
 	const messages = {
-		excellent: 'Výborně! Předvedli jste skvělé porozumění videa.',
+		excellent: 'Výborně! Předvedli jste skvělé porozumění znakového jazyka.',
 		good: 'Dobře! S větší pozorností to bude ještě lepší.',
-		tryAgain: 'Zkuste to znovu a věnujte více pozornosti detailům.'
+		tryAgain: 'Projděte si znovu jednotlivé znaky.'
 	};
 
 	function handleRetry() {

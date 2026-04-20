@@ -10,14 +10,14 @@
 	} from '$lib/client/shared/gameUtils';
 	import { onMount } from 'svelte';
 	import { goto } from '$app/navigation';
-	import { answers } from '$lib/levels/5/answers';
-	import type { AnswerOptionType, AnswerType } from '$types/answer';
-	import { level5 } from '$lib/stores/gameState';
+	import { answers } from '$lib/levels/3/answers';
+	import type { AnswerOptionType } from '$types/answer';
+	import { level3 } from '$lib/stores/gameState';
 	import LivesIndicator from '$components/LivesIndicator.svelte';
 	import { checkIsPlaying } from '$lib/stores/lastPlayed';
 
-	const CURRENT_LEVEL_NUMBER = 5;
-	const level5State = level5.store;
+	const CURRENT_LEVEL_NUMBER = 3;
+	const level3State = level3.store;
 
 	let isPortrait = $state(true);
 	let isMobile = $state(false);
@@ -32,10 +32,9 @@
 	let isCorrect = $state(false);
 	let disabledButtons = $state<Record<string, boolean>>({});
 	let videoPlayerRef: VideoPlayer | null = $state(null);
-	let shuffledVideos = $state<AnswerType[]>([]);
 
 	// Derived state from store
-	let gameState = $derived($level5State);
+	let gameState = $derived($level3State);
 	let currentAnswerIndex = $derived(gameState.currentAnswerIndex);
 	let lives = $derived(gameState.lives);
 
@@ -46,11 +45,11 @@
 	}
 
 	const handleAnswerClick = createAnswerClickHandler(
-		level5,
+		level3,
 		CURRENT_LEVEL_NUMBER,
 		{
 			isShowingFeedback: () => showingFeedback,
-			getVideos: () => shuffledVideos,
+			getVideos: () => answers,
 			getCurrentAnswerIndex: () => currentAnswerIndex
 		},
 		{
@@ -88,14 +87,14 @@
 		videoEnded = false;
 		autoplayPrevented = false;
 		disabledButtons = {};
-		if (shuffledVideos[currentAnswerIndex]) {
-			shuffledOptions = shuffleArray(shuffledVideos[currentAnswerIndex].options);
+		if (answers[currentAnswerIndex]) {
+			shuffledOptions = shuffleArray(answers[currentAnswerIndex].options);
 		}
 	});
 
 	$effect(() => {
 		if (lives === 0) {
-			level5.markCompleted();
+			level3.markCompleted();
 			goto(`/levels/${CURRENT_LEVEL_NUMBER}/overview`);
 		}
 	});
@@ -103,10 +102,7 @@
 	onMount(() => {
 		checkIsPlaying(CURRENT_LEVEL_NUMBER);
 		updateOrientation();
-		level5.initialize();
-		// Shuffle answers and take first 10
-		const allAnswersShuffled = shuffleArray([...answers]);
-		shuffledVideos = allAnswersShuffled.slice(0, 10);
+		level3.initialize();
 	});
 </script>
 
@@ -128,7 +124,7 @@
 					>
 						<VideoPlayer
 							bind:this={videoPlayerRef}
-							videoSrc={shuffledVideos[currentAnswerIndex]?.videoSrc}
+							videoSrc={answers[currentAnswerIndex].videoSrc}
 							bind:videoEnded
 							bind:autoplayPrevented
 							{helpUses}
@@ -151,7 +147,7 @@
 				>
 					<VideoPlayer
 						bind:this={videoPlayerRef}
-						videoSrc={shuffledVideos[currentAnswerIndex]?.videoSrc}
+						videoSrc={answers[currentAnswerIndex].videoSrc}
 						bind:videoEnded
 						bind:autoplayPrevented
 						{helpUses}

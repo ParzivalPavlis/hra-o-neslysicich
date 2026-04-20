@@ -9,9 +9,11 @@ const DEFAULT_STATE: LevelQuestionsState = {
 };
 
 export function createLevelQuestionsStore(levelNumber: number) {
-	const store = persisted<LevelQuestionsState>(`level${levelNumber}-questions-state`, {
-		...DEFAULT_STATE
-	});
+	const store = persisted<LevelQuestionsState>(
+		`level${levelNumber}-questions-state`,
+		{ ...DEFAULT_STATE },
+		{ storage: 'session' }
+	);
 
 	function initialize(questionIds: number[]) {
 		store.set({ ...DEFAULT_STATE, questionIds });
@@ -36,7 +38,11 @@ export function createLevelQuestionsStore(levelNumber: number) {
 		store.set({ ...DEFAULT_STATE });
 	}
 
-	return { store, initialize, updateCurrentQuestion, addAnswer, markCompleted, clear };
+	function remove() {
+		sessionStorage.removeItem(`level${levelNumber}-questions-state`);
+	}
+
+	return { store, initialize, updateCurrentQuestion, addAnswer, markCompleted, clear, remove };
 }
 
 export type LevelQuestionsStoreInstance = ReturnType<typeof createLevelQuestionsStore>;

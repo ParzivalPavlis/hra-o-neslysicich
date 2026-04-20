@@ -13,5 +13,5 @@ export const load: PageServerLoad = async ({ locals }) => {
 
 	const setPlayed = await setPlayedLevel(user.id, CURRENT_LEVEL_NUMBER, supabase);
 
-	if (setPlayed === 'already-played') return { alreadyPlayed: true };
+	return { alreadyPlayed: setPlayed === 'already-played' };
 };

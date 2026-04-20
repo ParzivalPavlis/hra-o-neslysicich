@@ -13,9 +13,11 @@ const DEFAULT_STATE: WalkingGameState = {
 };
 
 export function createLevelWalkingStore(levelNumber: number) {
-	const store = persisted<WalkingGameState>(`level${levelNumber}-walking-state`, {
-		...DEFAULT_STATE
-	});
+	const store = persisted<WalkingGameState>(
+		`level${levelNumber}-walking-state`,
+		{ ...DEFAULT_STATE },
+		{ storage: 'session' }
+	);
 
 	function initialize() {
 		store.set({ ...DEFAULT_STATE });
@@ -46,7 +48,11 @@ export function createLevelWalkingStore(levelNumber: number) {
 		store.set({ ...DEFAULT_STATE });
 	}
 
-	return { store, initialize, visitObject, markCompleted, savePosition, clearPosition, clear };
+	function remove() {
+		sessionStorage.removeItem(`level${levelNumber}-walking-state`);
+	}
+
+	return { store, initialize, visitObject, markCompleted, savePosition, clearPosition, clear, remove };
 }
 
 export type LevelWalkingStoreInstance = ReturnType<typeof createLevelWalkingStore>;

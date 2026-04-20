@@ -1,211 +1,471 @@
-import type { VariableAnswerType } from '$types/answer';
+import type { AnswerType } from '$types/answer';
 
-export const answers: VariableAnswerType[] = [
+export const answers: AnswerType[] = [
 	{
 		id: 1,
-		videoSrc: ['/assets/level5/normal/1-normal.mp4', '/assets/level5/wrong/1-wrong.mp4'],
+		videoSrc: '/assets/level7/chodit.mp4',
 		options: [
 			{
 				id: 'a',
-				text: 'Chtěl/a bych si založit spořicí účet',
-				correct: true
+				text: 'Metro',
+				correct: false
 			},
 			{
 				id: 'b',
-				text: 'Jsem tady poprvé, ještě u vás účet nemám',
+				text: 'Lékař',
 				correct: false
 			},
 			{
 				id: 'c',
-				text: 'Chtěl/a bych vložit asi padesát tisíc korun',
-				correct: false
+				text: 'Chodit',
+				correct: true
 			},
 			{
 				id: 'd',
-				text: 'Ano prosím, to by se mi hodilo',
+				text: 'Co',
 				correct: false
 			}
 		]
 	},
 	{
 		id: 2,
-		videoSrc: ['/assets/level5/normal/2-normal.mp4', '/assets/level5/wrong/2-wrong.mp4'],
+		videoSrc: '/assets/level7/co.mp4',
 		options: [
 			{
 				id: 'a',
-				text: 'Chtěl/a bych vložit asi padesát tisíc korun',
-				correct: false
-			},
-			{
-				id: 'b',
-				text: 'Jsem tady poprvé, ještě u vás účet nemám',
+				text: 'Co',
 				correct: true
 			},
 			{
+				id: 'b',
+				text: 'Kde',
+				correct: false
+			},
+			{
 				id: 'c',
-				text: 'Ano prosím, to by se mi hodilo',
+				text: 'Spolu',
 				correct: false
 			},
 			{
 				id: 'd',
-				text: 'Chtěl/a bych zjistit, jaké máte úrokové sazby',
+				text: 'Dělat',
 				correct: false
 			}
 		]
 	},
 	{
 		id: 3,
-		videoSrc: ['/assets/level5/normal/3-normal.mp4', '/assets/level5/wrong/3-wrong.mp4'],
+		videoSrc: '/assets/level7/dekuji.mp4',
 		options: [
 			{
 				id: 'a',
-				text: 'Nemám známé, kteří by měli účet u vás',
+				text: 'Snídaně',
 				correct: false
 			},
 			{
 				id: 'b',
-				text: 'Ano prosím, to by se mi hodilo',
+				text: 'Ztratit',
 				correct: false
 			},
 			{
 				id: 'c',
-				text: 'Chtěl/a bych zjistit, jaké máte úrokové sazby',
+				text: 'Chodit',
 				correct: false
 			},
 			{
 				id: 'd',
-				text: 'Děkuji, ale nemám zájem',
+				text: 'Děkuji',
 				correct: true
 			}
 		]
 	},
 	{
 		id: 4,
-		videoSrc: ['/assets/level5/normal/4-normal.mp4', '/assets/level5/wrong/4-wrong.mp4'],
+		videoSrc: '/assets/level7/delat.mp4',
 		options: [
 			{
 				id: 'a',
-				text: 'Ano prosím, to by se mi hodilo',
+				text: 'Dobrý den',
 				correct: false
 			},
 			{
 				id: 'b',
-				text: 'Chtěl/a bych vložit asi padesát tisíc korun',
+				text: 'Dělat',
 				correct: true
 			},
 			{
 				id: 'c',
-				text: 'Zatím nemám zájem, děkuji',
+				text: 'Jak se máš?',
 				correct: false
 			},
 			{
 				id: 'd',
-				text: 'Chtěl/a bych zjistit, jaké máte úrokové sazby',
+				text: 'Necítím se dobře',
 				correct: false
 			}
 		]
 	},
 	{
 		id: 5,
-		videoSrc: ['/assets/level5/normal/5-normal.mp4', '/assets/level5/wrong/5-wrong.mp4'],
+		videoSrc: '/assets/level7/dneska.mp4',
 		options: [
 			{
 				id: 'a',
-				text: 'Nemám známé, kteří by měli účet u vás',
+				text: 'Na shledanou',
 				correct: false
 			},
 			{
 				id: 'b',
-				text: 'Ne, hotovost u sebe nemám',
-				correct: true
-			},
-			{
-				id: 'c',
-				text: 'Chtěl/a bych zjistit, jaké máte úrokové sazby',
+				text: 'Dobré ráno',
 				correct: false
 			},
 			{
+				id: 'c',
+				text: 'Dneska',
+				correct: true
+			},
+			{
 				id: 'd',
-				text: 'Ano, kartu bych chtěl/a',
+				text: 'Míchané vejce',
 				correct: false
 			}
 		]
 	},
 	{
 		id: 6,
-		videoSrc: ['/assets/level5/normal/6-normal.mp4', '/assets/level5/wrong/6-wrong.mp4'],
+		videoSrc: '/assets/level7/dobre_rano.mp4',
 		options: [
 			{
 				id: 'a',
-				text: '[Pracovník zmínil úrokovou sazbu 3% ročně]',
+				text: 'Dobré ráno',
 				correct: true
 			},
 			{
 				id: 'b',
-				text: '[Pracovník zmínil úrokovou sazbu 2% ročně]',
+				text: 'Za rohem',
 				correct: false
 			},
 			{
 				id: 'c',
-				text: '[Pracovník zmínil úrokovou sazbu 4% ročně]',
+				text: 'Lékař',
 				correct: false
 			},
 			{
 				id: 'd',
-				text: '[Pracovník zmínil úrokovou sazbu 1% ročně]',
+				text: 'Metro',
 				correct: false
 			}
 		]
 	},
 	{
 		id: 7,
-		videoSrc: ['/assets/level5/normal/7-normal.mp4', '/assets/level5/wrong/7-wrong.mp4'],
+		videoSrc: '/assets/level7/dobry_den.mp4',
 		options: [
 			{
 				id: 'a',
-				text: 'O to nemám zájem, děkuji',
+				text: 'Chodit',
 				correct: false
 			},
 			{
 				id: 'b',
-				text: 'Ano prosím, to by se mi hodilo',
-				correct: true
+				text: 'Co',
+				correct: false
 			},
 			{
 				id: 'c',
-				text: 'Ano, kartu bych chtěl/a',
+				text: 'Dneska',
 				correct: false
 			},
 			{
 				id: 'd',
-				text: 'Ne, hotovost u sebe nemám',
-				correct: false
+				text: 'Dobrý den',
+				correct: true
 			}
 		]
 	},
 	{
 		id: 8,
-		videoSrc: ['/assets/level5/normal/8-normal.mp4', '/assets/level5/wrong/8-wrong.mp4'],
+		videoSrc: '/assets/level7/jak_se_mas.mp4',
 		options: [
 			{
 				id: 'a',
-				text: 'Ano prosím, to by se mi hodilo',
+				text: 'Spolu',
 				correct: false
 			},
 			{
 				id: 'b',
-				text: 'Chtěl/a bych si promluvit o podmínkách spořicího účtu',
-				correct: false
+				text: 'Jak se máš?',
+				correct: true
 			},
 			{
 				id: 'c',
-				text: 'Nemám známé, kteří by měli účet u vás',
+				text: 'Necítím se dobře',
 				correct: false
 			},
 			{
 				id: 'd',
-				text: 'Zatím nemám zájem, děkuji',
+				text: 'Ztratit',
+				correct: false
+			}
+		]
+	},
+	{
+		id: 9,
+		videoSrc: '/assets/level7/kde_je.mp4',
+		options: [
+			{
+				id: 'a',
+				text: 'Dělat',
+				correct: false
+			},
+			{
+				id: 'b',
+				text: 'Snídaně',
+				correct: false
+			},
+			{
+				id: 'c',
+				text: 'Kde',
 				correct: true
+			},
+			{
+				id: 'd',
+				text: 'Dobré ráno',
+				correct: false
+			}
+		]
+	},
+	{
+		id: 10,
+		videoSrc: '/assets/level7/lekar.mp4',
+		options: [
+			{
+				id: 'a',
+				text: 'Lékař',
+				correct: true
+			},
+			{
+				id: 'b',
+				text: 'Dobrý den',
+				correct: false
+			},
+			{
+				id: 'c',
+				text: 'Míchané vejce',
+				correct: false
+			},
+			{
+				id: 'd',
+				text: 'Za rohem',
+				correct: false
+			}
+		]
+	},
+	{
+		id: 11,
+		videoSrc: '/assets/level7/metro.mp4',
+		options: [
+			{
+				id: 'a',
+				text: 'Chodit',
+				correct: false
+			},
+			{
+				id: 'b',
+				text: 'Metro',
+				correct: true
+			},
+			{
+				id: 'c',
+				text: 'Děkuji',
+				correct: false
+			},
+			{
+				id: 'd',
+				text: 'Jak se máš?',
+				correct: false
+			}
+		]
+	},
+	{
+		id: 12,
+		videoSrc: '/assets/level7/michane_vejce.mp4',
+		options: [
+			{
+				id: 'a',
+				text: 'Dneska',
+				correct: false
+			},
+			{
+				id: 'b',
+				text: 'Spolu',
+				correct: false
+			},
+			{
+				id: 'c',
+				text: 'Co',
+				correct: false
+			},
+			{
+				id: 'd',
+				text: 'Míchané vejce',
+				correct: true
+			}
+		]
+	},
+	{
+		id: 13,
+		videoSrc: '/assets/level7/nashledanou.mp4',
+		options: [
+			{
+				id: 'a',
+				text: 'Na shledanou',
+				correct: true
+			},
+			{
+				id: 'b',
+				text: 'Lékař',
+				correct: false
+			},
+			{
+				id: 'c',
+				text: 'Ztratit',
+				correct: false
+			},
+			{
+				id: 'd',
+				text: 'Necítím se dobře',
+				correct: false
+			}
+		]
+	},
+	{
+		id: 14,
+		videoSrc: '/assets/level7/necitim_se_dobre.mp4',
+		options: [
+			{
+				id: 'a',
+				text: 'Kde',
+				correct: false
+			},
+			{
+				id: 'b',
+				text: 'Dobré ráno',
+				correct: false
+			},
+			{
+				id: 'c',
+				text: 'Necítím se dobře',
+				correct: true
+			},
+			{
+				id: 'd',
+				text: 'Metro',
+				correct: false
+			}
+		]
+	},
+	{
+		id: 15,
+		videoSrc: '/assets/level7/snídaně.mp4',
+		options: [
+			{
+				id: 'a',
+				text: 'Dělat',
+				correct: false
+			},
+			{
+				id: 'b',
+				text: 'Snídaně',
+				correct: true
+			},
+			{
+				id: 'c',
+				text: 'Za rohem',
+				correct: false
+			},
+			{
+				id: 'd',
+				text: 'Jak se máš?',
+				correct: false
+			}
+		]
+	},
+	{
+		id: 16,
+		videoSrc: '/assets/level7/spolu.mp4',
+		options: [
+			{
+				id: 'a',
+				text: 'Lékař',
+				correct: false
+			},
+			{
+				id: 'b',
+				text: 'Co',
+				correct: false
+			},
+			{
+				id: 'c',
+				text: 'Dneska',
+				correct: false
+			},
+			{
+				id: 'd',
+				text: 'Spolu',
+				correct: true
+			}
+		]
+	},
+	{
+		id: 17,
+		videoSrc: '/assets/level7/za_rohem.mp4',
+		options: [
+			{
+				id: 'a',
+				text: 'Kde',
+				correct: false
+			},
+			{
+				id: 'b',
+				text: 'Snídaně',
+				correct: false
+			},
+			{
+				id: 'c',
+				text: 'Za rohem',
+				correct: true
+			},
+			{
+				id: 'd',
+				text: 'Necítím se dobře',
+				correct: false
+			}
+		]
+	},
+	{
+		id: 18,
+		videoSrc: '/assets/level7/ztratit.mp4',
+		options: [
+			{
+				id: 'a',
+				text: 'Ztratit',
+				correct: true
+			},
+			{
+				id: 'b',
+				text: 'Dobrý den',
+				correct: false
+			},
+			{
+				id: 'c',
+				text: 'Kde',
+				correct: false
+			},
+			{
+				id: 'd',
+				text: 'Dneska',
+				correct: false
 			}
 		]
 	}

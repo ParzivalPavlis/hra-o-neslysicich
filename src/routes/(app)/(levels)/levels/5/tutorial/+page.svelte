@@ -7,7 +7,7 @@
 	import { onMount } from 'svelte';
 	import { checkIsPlaying } from '$lib/stores/lastPlayed';
 
-	const CURRENT_LEVEL_NUMBER = 7;
+	const CURRENT_LEVEL_NUMBER = 5;
 
 	function handleContinue() {
 		goto(`/levels/${CURRENT_LEVEL_NUMBER}/game`);

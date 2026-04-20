@@ -2,7 +2,7 @@ import { setPlayedLevel } from '$lib/server/services';
 import { redirect } from '@sveltejs/kit';
 import type { PageServerLoad } from './$types';
 
-const CURRENT_LEVEL_NUMBER = 9;
+const CURRENT_LEVEL_NUMBER = 6;
 
 export const load: PageServerLoad = async ({ locals }) => {
 	const { user, supabase } = locals;
@@ -13,5 +13,5 @@ export const load: PageServerLoad = async ({ locals }) => {
 
 	const setPlayed = await setPlayedLevel(user.id, CURRENT_LEVEL_NUMBER, supabase);
 
-	return { alreadyPlayed: setPlayed === 'already-played' };
+	if (setPlayed === 'already-played') return { alreadyPlayed: true };
 };

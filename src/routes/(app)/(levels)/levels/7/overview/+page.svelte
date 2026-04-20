@@ -9,29 +9,16 @@
 	import type { FormSaveLevelProgressResponseType } from '$lib/types/form';
 
 	const CURRENT_LEVEL_NUMBER = 7;
-	const MAX_LIVES = 4;
 	const level7State = level7.store;
 
-	let gameState = $derived($level7State);
-	let answers = $derived(gameState.answers);
-	let lives = $derived(gameState.lives);
-	let totalQuestions = $derived(answers.length);
-
-	let stars = $derived(() => {
-		// Stars based on remaining lives (out of 4)
-		if (lives === MAX_LIVES) return 3;
-		if (lives >= 2) return 2;
-		if (lives === 1) return 1;
-		return 0;
-	});
-
 	const messages = {
-		excellent: 'Výborně! Předvedli jste skvělé porozumění znakového jazyka.',
-		good: 'Dobře! S větší pozorností to bude ještě lepší.',
-		tryAgain: 'Projděte si znovu jednotlivé znaky.'
+		excellent: 'Výborně! Úspěšně jste prozkoumali kavárnu a pomohli Tomášovi.',
+		good: 'Skvělá práce! Tomáš se cítil v kavárně jako doma.',
+		tryAgain: 'Zkuste to znovu a prozkoumejte všechny možnosti.'
 	};
 
 	function handleRetry() {
+		level7.initialize();
 		goto(`/levels/${CURRENT_LEVEL_NUMBER}/game`);
 	}
 
@@ -44,7 +31,6 @@
 			goto(`/levels/${CURRENT_LEVEL_NUMBER}/game`);
 		} else {
 			checkIsPlaying(CURRENT_LEVEL_NUMBER);
-			// Auto-submit the form on mount
 			const form = document.querySelector('form');
 			if (form) form.requestSubmit();
 		}
@@ -73,20 +59,18 @@
 		};
 	}}
 >
-	<input type="hidden" name="stars" value={stars()} />
+	<input type="hidden" name="stars" value={3} />
 	<input type="hidden" name="completed" value="true" />
 </form>
 
 <Layout1 centered={false}>
 	<LevelCompletionCard
-		{totalQuestions}
+		totalQuestions={4}
+		correctAnswers={4}
 		onRetry={handleRetry}
 		onBackToLevels={handleBackToLevels}
 		title={`Úroveň ${CURRENT_LEVEL_NUMBER} dokončena!`}
 		{messages}
-		stars={stars()}
-		variant="lives"
-		maxLives={MAX_LIVES}
-		{lives}
+		stars={3}
 	/>
 </Layout1>

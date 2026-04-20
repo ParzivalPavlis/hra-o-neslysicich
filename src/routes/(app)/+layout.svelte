@@ -17,17 +17,17 @@
 
 	// Pages that should be landscape-only
 	const LANDSCAPE_ONLY = [
+		'/levels/3/game',
 		'/levels/4/game',
 		'/levels/5/game',
-		'/levels/7/game',
-		'/levels/7/learn',
-		'/levels/8/game',
-		'/levels/9/game'
+		'/levels/5/learn',
+		'/levels/6/game',
+		'/levels/7/game'
 	] as const;
 
 	// Pages that should be portrait-only
 	const PORTRAIT_ONLY = [
-		'/levels/9/encounters'
+		'/levels/7/encounters'
 	] as const;
 
 	function shouldBeLandscapeOnly(pathname: string): boolean {

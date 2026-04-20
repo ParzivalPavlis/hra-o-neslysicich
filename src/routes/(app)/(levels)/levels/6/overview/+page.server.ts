@@ -2,7 +2,7 @@ import type { Actions } from './$types';
 import { updateLevelProgress, getLevelProgress } from '$lib/server/services';
 import type { FormSaveLevelProgressResponseType } from '$types/form';
 
-const CURRENT_LEVEL_NUMBER = 9;
+const CURRENT_LEVEL_NUMBER = 6;
 
 export const actions: Actions = {
 	saveLevelProgress: async (event): Promise<FormSaveLevelProgressResponseType> => {
@@ -16,10 +16,13 @@ export const actions: Actions = {
 		const formData = await event.request.formData();
 		const newStars = parseInt(formData.get('stars') as string) as 0 | 1 | 2 | 3;
 
+		// Get current level progress
 		const currentProgress = await getLevelProgress(user.id, CURRENT_LEVEL_NUMBER, supabase);
 
+		// Check if this is first time getting 3 stars
 		const firstTimeThreeStars = newStars === 3 && (!currentProgress || currentProgress.stars < 3);
 
+		// Only update if user got more stars than before
 		if (currentProgress && currentProgress.stars >= newStars) {
 			return { success: true };
 		}
@@ -27,14 +30,24 @@ export const actions: Actions = {
 		const result = await updateLevelProgress(
 			user.id,
 			CURRENT_LEVEL_NUMBER,
-			{ stars: newStars, locked: false },
+			{
+				stars: newStars,
+				locked: false
+			},
 			supabase
 		);
 
 		if (!result) {
-			return { success: false, error: 'Failed to save progress' };
+			return {
+				success: false,
+				error: 'Failed to save progress'
+			};
 		}
 
-		return { success: true, message: 'Progress updated!', firstTimeThreeStars };
+		return {
+			success: true,
+			message: 'Progress updated!',
+			firstTimeThreeStars
+		};
 	}
 };
