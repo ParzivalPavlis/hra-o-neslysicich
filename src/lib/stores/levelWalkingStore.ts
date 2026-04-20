@@ -52,7 +52,16 @@ export function createLevelWalkingStore(levelNumber: number) {
 		sessionStorage.removeItem(`level${levelNumber}-walking-state`);
 	}
 
-	return { store, initialize, visitObject, markCompleted, savePosition, clearPosition, clear, remove };
+	return {
+		store,
+		initialize,
+		visitObject,
+		markCompleted,
+		savePosition,
+		clearPosition,
+		clear,
+		remove
+	};
 }
 
 export type LevelWalkingStoreInstance = ReturnType<typeof createLevelWalkingStore>;

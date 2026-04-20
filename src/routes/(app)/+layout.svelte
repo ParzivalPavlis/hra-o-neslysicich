@@ -26,9 +26,7 @@
 	] as const;
 
 	// Pages that should be portrait-only
-	const PORTRAIT_ONLY = [
-		'/levels/7/encounters'
-	] as const;
+	const PORTRAIT_ONLY = ['/levels/7/encounters'] as const;
 
 	function shouldBeLandscapeOnly(pathname: string): boolean {
 		return LANDSCAPE_ONLY.some((p) => pathname.includes(p));
