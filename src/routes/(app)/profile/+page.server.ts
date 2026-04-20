@@ -26,7 +26,6 @@ export const load: PageServerLoad = async ({ locals }) => {
 	return {
 		user: {
 			email: user.email,
-			id: user.id,
 			createdAt: user.created_at
 		},
 		levelProgress: levelProgress.map((progress, index) => ({
