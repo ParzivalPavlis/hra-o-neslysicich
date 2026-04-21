@@ -1,9 +1,7 @@
-<script lang="ts" module>
-	const activeImages = new Set<string>();
-</script>
-
 <script lang="ts">
 	import { onMount, onDestroy } from 'svelte';
+
+	const activeImages = new Set<string>();
 
 	const SLOT_COUNT = 2;
 
