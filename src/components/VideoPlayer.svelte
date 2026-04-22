@@ -1,4 +1,5 @@
 <script lang="ts">
+	import { isLocalhost } from '$lib/client/shared/gameUtils';
 	import ReplayButton from './ReplayButton.svelte';
 	import { Play } from '@lucide/svelte';
 	import { fade } from 'svelte/transition';
@@ -72,7 +73,7 @@
 	});
 </script>
 
-{#if showSkipButton}
+{#if showSkipButton && isLocalhost()}
 	<button
 		onclick={handleSkip}
 		class="fixed top-4 left-4 z-50 flex items-center justify-center border-2 border-foreground bg-red-500 px-4 py-2 font-semibold text-white hover:bg-red-600 active:bg-red-600"

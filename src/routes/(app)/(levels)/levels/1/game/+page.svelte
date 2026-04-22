@@ -5,6 +5,7 @@
 	import Button from '$components/ui/button/button.svelte';
 	import characterGroups from '$lib/levels/1/characterGroups';
 	import { deleteFromMap, getRandomDuration, updateMap } from '$lib/client/shared/questionsUtils';
+	import { isLocalhost } from '$lib/client/shared/gameUtils';
 	import { level1 } from '$lib/stores/gameState';
 	import { RotateCcw } from '@lucide/svelte';
 	import { SvelteSet } from 'svelte/reactivity';
@@ -242,7 +243,7 @@
 <Layout1>
 	{#if conversationStarted}
 		<!-- Development skip button -->
-		{#if !allConversationsFinished}
+		{#if !allConversationsFinished && isLocalhost()}
 			<div class="mb-6 flex justify-center">
 				<Button
 					onclick={skipConversation}

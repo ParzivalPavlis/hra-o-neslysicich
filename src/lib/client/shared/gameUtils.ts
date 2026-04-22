@@ -69,6 +69,10 @@ export function shuffleArray<T>(array: T[]): T[] {
 	return shuffled;
 }
 
+export function isLocalhost() {
+	return window.location.hostname === 'localhost';
+}
+
 export function getOrientationInfo() {
 	const userAgent = navigator.userAgent.toLowerCase();
 	const isMobile = /android|webos|iphone|ipad|ipod|blackberry|iemobile|opera mini/.test(userAgent);
