@@ -87,7 +87,7 @@ const group2: QuestionType[] = [
 	},
 	{
 		id: 10,
-		question: 'Co Luciini rodiče rekonstruují?',
+		question: 'Co rodiče Lucky rekonstruují?',
 		options: [
 			{ id: 'a', text: 'Koupelnu', correct: false },
 			{ id: 'b', text: 'Kuchyň', correct: true },
