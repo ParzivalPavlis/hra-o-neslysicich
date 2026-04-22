@@ -70,7 +70,7 @@ export function shuffleArray<T>(array: T[]): T[] {
 }
 
 export function isLocalhost() {
-	return window.location.hostname === 'localhost';
+	return typeof window !== 'undefined' && window.location.hostname === 'localhost';
 }
 
 export function getOrientationInfo() {

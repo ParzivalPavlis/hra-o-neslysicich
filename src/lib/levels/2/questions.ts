@@ -3,218 +3,158 @@ import type { QuestionType } from '$types/question';
 const group1: QuestionType[] = [
 	{
 		id: 1,
-		question: 'Kolik projektů má Matěj aktuálně rozpracovaných současně?',
+		question: 'Jaký dort si Tereza dala v kavárně?',
 		options: [
-			{ id: 'a', text: 'Tři projekty', correct: false },
-			{ id: 'b', text: 'Čtyři projekty', correct: true },
-			{ id: 'c', text: 'Pět projektů', correct: false }
+			{ id: 'a', text: 'Citronový cheesecake', correct: false },
+			{ id: 'b', text: 'Pistáciový cheesecake', correct: true },
+			{ id: 'c', text: 'Čokoládový dort', correct: false }
 		]
 	},
 	{
 		id: 2,
-		question: 'Kolik stojí dvouletý psychologický kurz, o kterém Tereza uvažuje?',
+		question: 'Na čem Matěj pracoval pro klienta z Brna?',
 		options: [
-			{ id: 'a', text: '60 000 Kč za celý program', correct: false },
-			{ id: 'b', text: '80 000 Kč za celý program', correct: true },
-			{ id: 'c', text: '90 000 Kč za celý program', correct: false }
+			{ id: 'a', text: 'Na nové mobilní aplikaci', correct: false },
+			{ id: 'b', text: 'Na redesignu webu', correct: true },
+			{ id: 'c', text: 'Na reklamní kampani', correct: false }
 		]
 	},
 	{
 		id: 3,
-		question: 'Proč chce Tereza změnit obor?',
+		question: 'Kdy má Matěj deadline?',
 		options: [
-			{ id: 'a', text: 'Je nespokojená s kolegy a pracovním prostředím', correct: false },
-			{ id: 'b', text: 'Chce vyšší plat a větší stabilitu', correct: false },
-			{
-				id: 'c',
-				text: 'Má pocit, že v marketingu jen sleduje čísla a nic skutečně netvoří',
-				correct: true
-			}
+			{ id: 'a', text: 'V pátek', correct: false },
+			{ id: 'b', text: 'V pondělí', correct: true },
+			{ id: 'c', text: 'V úterý', correct: false }
 		]
 	},
 	{
 		id: 4,
-		question: 'Čeho se Matěj nejvíce obává v souvislosti s kurzem digitálního designu?',
+		question: 'O jakém kurzu Matěj přemýšlí?',
 		options: [
-			{ id: 'a', text: 'Že kurz nebude kvalitní a nepřinese mu nové dovednosti', correct: false },
-			{ id: 'b', text: 'Že nezvládne finanční náklady', correct: false },
-			{
-				id: 'c',
-				text: 'Že to časově nezvládne kvůli množství práce',
-				correct: true
-			}
+			{ id: 'a', text: 'O kurzu programování', correct: false },
+			{ id: 'b', text: 'O kurzu digitálního designu', correct: true },
+			{ id: 'c', text: 'O kurzu marketingu', correct: false }
 		]
 	},
 	{
 		id: 5,
-		question: 'Jakou barevnou kombinaci chce klient použít při redesignu webu?',
+		question: 'Jaký obor už Terezu tolik nenaplňuje?',
 		options: [
-			{ id: 'a', text: 'Modrou a oranžovou', correct: true },
-			{ id: 'b', text: 'Tmavě zelenou a šedou', correct: false },
-			{
-				id: 'c',
-				text: 'Modrou a zelenou',
-				correct: false
-			}
+			{ id: 'a', text: 'Psychologie', correct: false },
+			{ id: 'b', text: 'Marketing', correct: true },
+			{ id: 'c', text: 'Grafika', correct: false }
 		]
 	},
 	{
 		id: 6,
-		question: 'Jak dlouho Tereza pracuje v marketingu?',
+		question: 'Co Terezu láká za nový obor?',
 		options: [
-			{ id: 'a', text: 'Šest let', correct: false },
-			{ id: 'b', text: 'Sest a půl let', correct: false },
-			{
-				id: 'c',
-				text: 'Sedm let',
-				correct: true
-			}
+			{ id: 'a', text: 'Psychologie', correct: true },
+			{ id: 'b', text: 'Ekonomie', correct: false },
+			{ id: 'c', text: 'Architektura', correct: false }
 		]
 	},
 	{
 		id: 7,
-		question: 'Kolik let je Tereze?',
+		question: 'Čeho se Tereza nejvíc bojí v souvislosti se změnou oboru?',
 		options: [
-			{ id: 'a', text: '31 let', correct: false },
-			{ id: 'b', text: '32 let', correct: true },
-			{
-				id: 'c',
-				text: '30 let',
-				correct: false
-			}
+			{ id: 'a', text: 'Že bude mít menší plat', correct: false },
+			{ id: 'b', text: 'Že začne úplně od nuly', correct: true },
+			{ id: 'c', text: 'Že se bude muset přestěhovat', correct: false }
 		]
 	},
 	{
 		id: 8,
-		question: 'Kdy má Matěj deadline na prezentaci pro klienta z Brna?',
+		question: 'Co si dal Matěj v kavárně?',
 		options: [
-			{ id: 'a', text: 'V pátek', correct: false },
-			{ id: 'b', text: 'V neděli', correct: false },
-			{
-				id: 'c',
-				text: 'V pondělí',
-				correct: true
-			}
-		]
-	},
-	{
-		id: 9,
-		question: 'Čeho se Tereza nejvíce obává v souvislosti s kurzem psychologie?',
-		options: [
-			{ id: 'a', text: 'Že nebude mít dost zkušeností oproti ostatním', correct: false },
-			{ id: 'b', text: 'Že začne od nuly', correct: true },
-			{
-				id: 'c',
-				text: 'Že nebude zvládat online část výuky',
-				correct: false
-			}
-		]
-	},
-	{
-		id: 10,
-		question: 'Jak dlouho má trvat Matějův kurz digitálního designu?',
-		options: [
-			{ id: 'a', text: 'Tři měsíce', correct: false },
-			{ id: 'b', text: 'Půl roku', correct: true },
-			{
-				id: 'c',
-				text: 'Jeden rok',
-				correct: false
-			}
+			{ id: 'a', text: 'Cappuccino', correct: false },
+			{ id: 'b', text: 'Espresso', correct: true },
+			{ id: 'c', text: 'Latte', correct: false }
 		]
 	}
 ];
 
 const group2: QuestionType[] = [
 	{
-		id: 11,
-		question:
-			'O kolik se rekonstrukce kuchyně u Luciiných rodičů prodražila oproti původnímu plánu?',
+		id: 9,
+		question: 'Kam Lucie skoro každý víkend jezdila?',
 		options: [
-			{ id: 'a', text: 'O 80 000 Kč', correct: false },
-			{ id: 'b', text: 'O 90 000 Kč', correct: true },
-			{ id: 'c', text: 'O 100 000 Kč', correct: false }
+			{ id: 'a', text: 'Za rodiči', correct: true },
+			{ id: 'b', text: 'Za kamarády', correct: false },
+			{ id: 'c', text: 'Na chatu', correct: false }
+		]
+	},
+	{
+		id: 10,
+		question: 'Co Luciini rodiče rekonstruují?',
+		options: [
+			{ id: 'a', text: 'Koupelnu', correct: false },
+			{ id: 'b', text: 'Kuchyň', correct: true },
+			{ id: 'c', text: 'Obývák', correct: false }
+		]
+	},
+	{
+		id: 11,
+		question: 'Kolik měla rekonstrukce původně stát?',
+		options: [
+			{ id: 'a', text: '250 tisíc korun', correct: true },
+			{ id: 'b', text: '300 tisíc korun', correct: false },
+			{ id: 'c', text: '340 tisíc korun', correct: false }
 		]
 	},
 	{
 		id: 12,
-		question: 'Kolik let bylo Petrovi, když se odstěhoval od rodičů?',
+		question: 'Na kolik se rekonstrukce nakonec vyšplhala?',
 		options: [
-			{ id: 'a', text: '23 let', correct: false },
-			{ id: 'b', text: '24 let', correct: true },
-			{ id: 'c', text: '25 let', correct: false }
+			{ id: 'a', text: '310 tisíc korun', correct: false },
+			{ id: 'b', text: '340 tisíc korun', correct: true },
+			{ id: 'c', text: '350 tisíc korun', correct: false }
 		]
 	},
 	{
 		id: 13,
-		question: 'Jak vysoký je Luciin měsíční nájem?',
+		question: 'Co chtěla Luciina máma do nové kuchyně?',
 		options: [
-			{ id: 'a', text: '18 000 Kč', correct: true },
-			{ id: 'b', text: '15 000 Kč', correct: false },
-			{ id: 'c', text: '17 000 Kč', correct: false }
+			{ id: 'a', text: 'Lepší troubu', correct: true },
+			{ id: 'b', text: 'Novou lednici', correct: false },
+			{ id: 'c', text: 'Myčku', correct: false }
 		]
 	},
 	{
 		id: 14,
-		question: 'Jak velký je Petrův byt a kolik za něj platí měsíčně?',
+		question: 'Co chtěl Luciin táta?',
 		options: [
-			{ id: 'a', text: '48 m² a 15 000 Kč', correct: true },
-			{ id: 'b', text: '50 m² a 15 000 Kč', correct: false },
-			{ id: 'c', text: '48 m² a 18 000 Kč', correct: false }
+			{ id: 'a', text: 'Dřevěnou pracovní desku', correct: false },
+			{ id: 'b', text: 'Kamennou desku', correct: true },
+			{ id: 'c', text: 'Nový sporák', correct: false }
 		]
 	},
 	{
 		id: 15,
-		question: 'Kolik si Petr a Lucie měsíčně spoří?',
+		question: 'Jakou zkušenost zmínil Petr z vlastní rodiny?',
 		options: [
-			{ id: 'a', text: 'Petr 5 000 Kč, Lucie 8 000 Kč', correct: false },
-			{ id: 'b', text: 'Petr 8 000 Kč, Lucie 5 000 Kč', correct: true },
-			{ id: 'c', text: 'Petr 8 000 Kč, Lucie 6 000 Kč', correct: false }
+			{ id: 'a', text: 'Kuchyně jim vyšla levněji', correct: false },
+			{ id: 'b', text: 'Rodičům se koupelna taky prodražila', correct: true },
+			{ id: 'c', text: 'Nikdy nic nerekonstruovali', correct: false }
 		]
 	},
 	{
 		id: 16,
-		question: 'Kolik stál Petrův nový fotoaparát?',
+		question: 'O čem Petr říká, že teď víc přemýšlí?',
 		options: [
-			{ id: 'a', text: 'Přibližně 30 000 Kč', correct: false },
-			{ id: 'b', text: 'Přibližně 32 000 Kč', correct: true },
-			{ id: 'c', text: 'Přibližně 35 000 Kč', correct: false }
+			{ id: 'a', text: 'O změně práce', correct: false },
+			{ id: 'b', text: 'O rovnováze mezi prací, rodinou a koníčky', correct: true },
+			{ id: 'c', text: 'O stěhování do jiného města', correct: false }
 		]
 	},
 	{
 		id: 17,
-		question: 'Jaký roční fotografický cíl si Petr stanovil a kolik sérií už má hotových?',
+		question: 'Jak Petr hodnotí poslední měsíc?',
 		options: [
-			{ id: 'a', text: '10 sérií, hotové 4', correct: false },
-			{ id: 'b', text: '12 sérií, hotové 3', correct: false },
-			{ id: 'c', text: '12 sérií, hotové 4', correct: true }
-		]
-	},
-	{
-		id: 18,
-		question: 'Jak často běhá Lucie a jak dlouhou vzdálenost obvykle uběhne?',
-		options: [
-			{ id: 'a', text: 'Dvakrát týdně, kolem 5 km', correct: true },
-			{ id: 'b', text: 'Třikrát týdně, kolem 5 km', correct: false },
-			{ id: 'c', text: 'Dvakrát týdně, kolem 10 km', correct: false }
-		]
-	},
-	{
-		id: 19,
-		question: 'Jak často Petr běhá a jak dlouhou trasu obvykle zvolí?',
-		options: [
-			{ id: 'a', text: 'Jednou týdně, kolem 10 km', correct: true },
-			{ id: 'b', text: 'Dvakrát týdně, kolem 10 km', correct: false },
-			{ id: 'c', text: 'Jednou týdně, kolem 8 km', correct: false }
-		]
-	},
-	{
-		id: 20,
-		question: 'Kam jel Petr minulý rok na dovolenou v létě a kam v zimě?',
-		options: [
-			{ id: 'a', text: 'V létě do Chorvatska, v zimě do Špindlerova Mlýna', correct: false },
-			{ id: 'b', text: 'V létě na Makarskou riviéru, v zimě do Špindlerova Mlýna', correct: true },
-			{ id: 'c', text: 'V létě na Makarskou riviéru, v zimě do Krkonoš', correct: false }
+			{ id: 'a', text: 'Byl klidný', correct: false },
+			{ id: 'b', text: 'Byl hektický', correct: true },
+			{ id: 'c', text: 'Byl nudný', correct: false }
 		]
 	}
 ];
