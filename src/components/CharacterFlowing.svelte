@@ -21,7 +21,10 @@
 		'/assets/levelMap/peopleSigning.png',
 		'/assets/levelMap/manDrinking.png',
 		'/assets/levelMap/womanLearning.png',
-		'/assets/levelMap/manStudying.png'
+		'/assets/levelMap/manStudying.png',
+		'/assets/levelMap/peopleSigning2.png',
+		'/assets/levelMap/womanDrinking.png',
+		'/assets/levelMap/manPreparing.png'
 	];
 
 	const occupiedSlots = new Set<number>();
