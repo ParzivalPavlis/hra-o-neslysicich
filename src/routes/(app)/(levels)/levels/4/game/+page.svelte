@@ -27,7 +27,7 @@
 	let isMobile = $state(false);
 	let showAnswerTab = $state(false);
 	let answerTabCollapsed = $state(false);
-	let helpUses = $state(3);
+	let helpUses = $state(12);
 	let videoEnded = $state(false);
 	let autoplayPrevented = $state(false);
 	let shuffledOptions = $state<AnswerOptionType[]>([]);
