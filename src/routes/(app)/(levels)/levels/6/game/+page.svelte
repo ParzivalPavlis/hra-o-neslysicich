@@ -10,14 +10,14 @@
 	} from '$lib/client/shared/gameUtils';
 	import { onMount } from 'svelte';
 	import { goto } from '$app/navigation';
-	import { answers } from '$lib/levels/8/answers';
+	import { answers } from '$lib/levels/6/answers';
 	import type { ConversationAnswerType, ConversationOptionType } from '$types/answer';
-	import { level8 } from '$lib/stores/gameState';
+	import { level6 } from '$lib/stores/gameState';
 	import LivesIndicator from '$components/LivesIndicator.svelte';
 	import { checkIsPlaying } from '$lib/stores/lastPlayed';
 
-	const CURRENT_LEVEL_NUMBER = 8;
-	const level8State = level8.store;
+	const CURRENT_LEVEL_NUMBER = 6;
+	const level6State = level6.store;
 
 	let isPortrait = $state(true);
 	let isMobile = $state(false);
@@ -35,7 +35,7 @@
 	let shuffledVideos = $state<ConversationAnswerType[]>([]);
 
 	// Derived state from store
-	let gameState = $derived($level8State);
+	let gameState = $derived($level6State);
 	let currentAnswerIndex = $derived(gameState.currentAnswerIndex);
 	let lives = $derived(gameState.lives);
 
@@ -46,7 +46,7 @@
 	}
 
 	const handleAnswerClick = createAnswerClickHandler(
-		level8,
+		level6,
 		CURRENT_LEVEL_NUMBER,
 		{
 			isShowingFeedback: () => showingFeedback,
@@ -95,7 +95,7 @@
 
 	$effect(() => {
 		if (lives === 0) {
-			level8.markCompleted();
+			level6.markCompleted();
 			goto(`/levels/${CURRENT_LEVEL_NUMBER}/overview`);
 		}
 	});
@@ -103,7 +103,7 @@
 	onMount(() => {
 		checkIsPlaying(CURRENT_LEVEL_NUMBER);
 		updateOrientation();
-		level8.initialize();
+		level6.initialize();
 		// Shuffle videos array
 		shuffledVideos = shuffleArray([...answers]);
 	});

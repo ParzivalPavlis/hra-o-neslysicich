@@ -10,7 +10,7 @@
 	let { fillColor = colors.primary, class: className = '' }: Props = $props();
 </script>
 
-<div>
+<div class="logo-pulse">
 	<svg
 		xmlns="http://www.w3.org/2000/svg"
 		version="1.0"
@@ -55,4 +55,29 @@
 			/>
 		</g>
 	</svg>
+	<p
+		class="absolute right-2 bottom-0 text-[14px] md:right-3 md:text-[20px]"
+		style="color: {fillColor}"
+	>
+		Hra o neslyšících
+	</p>
 </div>
+
+<style>
+	.logo-pulse {
+		animation: pulse 3s ease-in-out infinite;
+		display: inline-flex;
+		flex-direction: column;
+		align-items: center;
+	}
+
+	@keyframes pulse {
+		0%,
+		100% {
+			transform: scale(1);
+		}
+		50% {
+			transform: scale(1.06);
+		}
+	}
+</style>

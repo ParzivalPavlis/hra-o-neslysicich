@@ -11,7 +11,7 @@
 
 	let { data }: PageProps = $props();
 
-	const CURRENT_LEVEL_NUMBER = 8;
+	const CURRENT_LEVEL_NUMBER = 6;
 
 	let fadeAnimations = $state(false);
 	let alreadyPlayed = $derived(data.alreadyPlayed);

@@ -29,8 +29,8 @@ export const actions: Actions = {
 		const errors: FormErrorsType = {};
 
 		// Password validation
-		if (!password || password.length < 6) {
-			errors.password = 'Heslo musí mít alespoň 6 znaků';
+		if (!password || password.length < 8) {
+			errors.password = 'Heslo musí mít alespoň 8 znaků';
 		}
 
 		// Password confirmation

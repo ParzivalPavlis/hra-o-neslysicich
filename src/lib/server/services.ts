@@ -46,25 +46,20 @@ export async function initializeGameProgress(userId: string): Promise<GameProgre
 		levels: {
 			level1: { stars: 0, lastPlayed: true, locked: false },
 			level2: { stars: 0, locked: true },
-			level3: { stars: 0, locked: true },
-			level4: { stars: 0, locked: false },
-			level5: { stars: 0, locked: true },
+			level3: { stars: 0, locked: false },
+			level4: { stars: 0, locked: true },
+			level5: { stars: 0, locked: false },
 			level6: { stars: 0, locked: true },
-			level7: { stars: 0, locked: false },
-			level8: { stars: 0, locked: true },
-			level9: { stars: 0, locked: true },
-			level10: { stars: 0, locked: true },
-			level11: { stars: 0, locked: true },
-			level12: { stars: 0, locked: true }
+			level7: { stars: 0, locked: true }
 		}
 	};
 
 	const { data, error } = await supabaseAdminClient
 		.from('game_progress')
-		.insert({
-			user_id: userId,
-			progress: gameProgress
-		})
+		.upsert(
+			{ user_id: userId, progress: gameProgress },
+			{ onConflict: 'user_id', ignoreDuplicates: true }
+		)
 		.select()
 		.single();
 
@@ -90,16 +85,16 @@ export async function getGameProgress(
 	// Make sure user_id column has a database index for faster queries
 	const { data, error } = await client
 		.from('game_progress')
-		.select('progress', { count: 'exact' })
+		.select('progress')
 		.eq('user_id', userId)
-		.maybeSingle();
+		.limit(1);
 
 	if (error) {
 		console.error('Error fetching game progress:', error);
 		return null;
 	}
 
-	return data?.progress as GameProgressType | null;
+	return (data?.[0]?.progress ?? null) as GameProgressType | null;
 }
 
 /**
@@ -310,6 +305,36 @@ export async function getLevelProgress(
 
 	// Return the specific level's attributes
 	return gameProgress.levels[levelKey] || null;
+}
+
+/**
+ * Get the last played level for a user
+ * @param {string} userId - The user ID to fetch progress for
+ * @param {SupabaseClient<Database>} client - The authenticated Supabase client
+ * @returns {Promise<number|null>} The level number that has lastPlayed set to true, or null if not found
+ */
+export async function getLastPlayedLevel(
+	userId: string,
+	client: SupabaseClient<Database> = supabaseBrowserClient as SupabaseClient<Database>
+): Promise<number | null> {
+	// Get the full game progress
+	const gameProgress = await getGameProgress(userId, client);
+
+	if (!gameProgress) {
+		console.error('No game progress found for user:', userId);
+		return null;
+	}
+
+	// Find the level with lastPlayed set to true
+	for (const [key, level] of Object.entries(gameProgress.levels)) {
+		if (level.lastPlayed) {
+			// Extract the level number from the key (e.g., "level1" -> 1)
+			const levelNumber = parseInt(key.replace('level', ''), 10);
+			return levelNumber;
+		}
+	}
+
+	return null;
 }
 
 /**

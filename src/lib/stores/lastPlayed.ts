@@ -9,12 +9,16 @@ export interface LastPlayedState {
 }
 
 // Store for persisting the last played level and first level with 3 stars
-export const lastPlayedStore = persisted<LastPlayedState>('last-played-level', {
-	level: null,
-	firstThreeStars: null,
-	justUnlockedLevel: null,
-	isPlaying: null
-});
+export const lastPlayedStore = persisted<LastPlayedState>(
+	'last-played-level',
+	{
+		level: null,
+		firstThreeStars: null,
+		justUnlockedLevel: null,
+		isPlaying: null
+	},
+	{ storage: 'session' }
+);
 
 // Helper function to update last played level
 export function setLastPlayed(levelNumber: number) {

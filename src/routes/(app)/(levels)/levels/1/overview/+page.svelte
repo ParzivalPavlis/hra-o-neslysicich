@@ -2,7 +2,7 @@
 	import LevelCompletionCard from '$components/LevelCompletionCard.svelte';
 	import { level1 } from '$lib/stores/gameState';
 	import { checkIsPlaying, setFirstThreeStars, setJustUnlockedLevel } from '$lib/stores/lastPlayed';
-	import { goto, invalidate } from '$app/navigation';
+	import { goto } from '$app/navigation';
 	import Layout1 from '$components/layouts/Layout1.svelte';
 	import { enhance } from '$app/forms';
 	import { onMount } from 'svelte';
@@ -67,9 +67,6 @@
 				}
 				if (actionResult.unlockedLevel) {
 					setJustUnlockedLevel(actionResult.unlockedLevel);
-				}
-				if (actionResult.success) {
-					await invalidate('game:progress');
 				}
 			}
 		};

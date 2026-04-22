@@ -9,7 +9,11 @@ const DEFAULT_STATE: LevelVideosState = {
 };
 
 export function createLevelGameStore(levelNumber: number) {
-	const store = persisted<LevelVideosState>(`level${levelNumber}-game-state`, { ...DEFAULT_STATE });
+	const store = persisted<LevelVideosState>(
+		`level${levelNumber}-game-state`,
+		{ ...DEFAULT_STATE },
+		{ storage: 'session' }
+	);
 
 	function initialize() {
 		store.set({ ...DEFAULT_STATE });
@@ -53,6 +57,10 @@ export function createLevelGameStore(levelNumber: number) {
 		store.set({ ...DEFAULT_STATE });
 	}
 
+	function remove() {
+		sessionStorage.removeItem(`level${levelNumber}-game-state`);
+	}
+
 	return {
 		store,
 		initialize,
@@ -61,7 +69,8 @@ export function createLevelGameStore(levelNumber: number) {
 		addAnswer,
 		modifyAnswer,
 		markCompleted,
-		clear
+		clear,
+		remove
 	};
 }
 

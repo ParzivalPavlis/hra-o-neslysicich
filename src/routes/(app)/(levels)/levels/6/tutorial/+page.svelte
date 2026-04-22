@@ -8,7 +8,7 @@
 	import { onMount } from 'svelte';
 	import { checkIsPlaying } from '$lib/stores/lastPlayed';
 
-	const CURRENT_LEVEL_NUMBER = 8;
+	const CURRENT_LEVEL_NUMBER = 6;
 
 	function handleContinue() {
 		goto(`/levels/${CURRENT_LEVEL_NUMBER}/game`);
@@ -24,7 +24,7 @@
 		<Paragraph variant={3} className="font-bold">Vysvětlivky:</Paragraph>
 		<Paragraph>
 			V této úrovni musíte uhodnout, o čem si neslyšící postavy povídají. Konverzace obsahují znaky
-			z úrovně 7.
+			z úrovně {CURRENT_LEVEL_NUMBER - 1}.
 		</Paragraph>
 		<ReplayButtonTutorial />
 		<LivesTutorial />

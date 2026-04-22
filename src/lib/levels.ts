@@ -19,19 +19,11 @@ export const levels: LevelButtonType[] = [
 		trails: 5
 	},
 	{
-		icon: Speech,
-		stars: 0,
-		locked: true,
-		description: 'Kliknutím znovu pro spuštění',
-		href: '/levels/3',
-		trails: 2
-	},
-	{
 		icon: Eye,
 		stars: 0,
 		locked: false,
 		description: 'Zkuste si návštěvu u lékaře',
-		href: '/levels/4/intro',
+		href: '/levels/3/intro',
 		trails: 4
 	},
 	{
@@ -39,23 +31,15 @@ export const levels: LevelButtonType[] = [
 		stars: 0,
 		locked: true,
 		description: 'Zkuste si návštěvu v bance',
-		href: '/levels/5/intro',
+		href: '/levels/4/intro',
 		trails: 1
-	},
-	{
-		icon: Eye,
-		stars: 0,
-		locked: true,
-		description: 'Kliknutím znovu pro spuštění',
-		href: '/levels/6',
-		trails: 6
 	},
 	{
 		icon: Hand,
 		stars: 0,
 		locked: false,
 		description: 'Zkuste si znakovou řeč',
-		href: '/levels/7/intro',
+		href: '/levels/5/intro',
 		trails: 3
 	},
 	{
@@ -63,23 +47,7 @@ export const levels: LevelButtonType[] = [
 		stars: 0,
 		locked: true,
 		description: 'Porozumějte znakované konverzaci',
-		href: '/levels/8/intro',
-		trails: 5
-	},
-	{
-		icon: Hand,
-		stars: 0,
-		locked: true,
-		description: 'Kliknutím znovu pro spuštění',
-		href: '/levels/9',
-		trails: 2
-	},
-	{
-		icon: PersonStanding,
-		stars: 0,
-		locked: false,
-		description: 'Kliknutím znovu pro spuštění',
-		href: '/levels/10',
+		href: '/levels/6/intro',
 		trails: 5
 	},
 	{
@@ -87,14 +55,6 @@ export const levels: LevelButtonType[] = [
 		stars: 0,
 		locked: true,
 		description: 'Kliknutím znovu pro spuštění',
-		href: '/levels/11',
-		trails: 4
-	},
-	{
-		icon: PersonStanding,
-		stars: 0,
-		locked: true,
-		description: 'Kliknutím znovu pro spuštění',
-		href: '/levels/12'
+		href: '/levels/7/intro'
 	}
 ];
