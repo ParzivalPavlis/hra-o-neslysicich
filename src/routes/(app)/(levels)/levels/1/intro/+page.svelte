@@ -239,7 +239,9 @@
 					<Paragraph className="text-center" inTransition={{ delay: 6000, duration: 3000 }}>
 						Co se ale stane, když o něj přijdeme?
 					</Paragraph>
-					<GameButton onclick={handleContinue} class="mt-5 w-full">Pokračovat</GameButton>
+					<div class="w-full" in:fade={{ delay: 9000, duration: 3000 }}>
+						<GameButton onclick={handleContinue} class="mt-5 w-full">Pokračovat</GameButton>
+					</div>
 				</div>
 			{/if}
 		</div>

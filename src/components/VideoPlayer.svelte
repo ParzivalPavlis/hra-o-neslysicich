@@ -52,6 +52,10 @@
 		onReplay?.();
 	}
 
+	export function replay() {
+		handleReplay();
+	}
+
 	function handleSkip() {
 		if (videoElement) {
 			videoElement.currentTime = videoElement.duration;

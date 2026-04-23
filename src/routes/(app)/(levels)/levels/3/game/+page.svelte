@@ -31,7 +31,8 @@
 	let showingFeedback = $state(false);
 	let isCorrect = $state(false);
 	let disabledButtons = $state<Record<string, boolean>>({});
-	let videoPlayerRef: VideoPlayer | null = $state(null);
+	let currentVideoSrc = $state('');
+	let levelCompleting = $state(false);
 
 	// Derived state from store
 	let gameState = $derived($level3State);
@@ -68,10 +69,18 @@
 			disableButton: (id) => {
 				disabledButtons[id] = true;
 			}
+		},
+		{
+			onComplete: () => {
+				levelCompleting = true;
+				currentVideoSrc = '/assets/level4/8.mp4';
+				videoEnded = false;
+			}
 		}
 	);
 
 	function replayVideo() {
+		if (levelCompleting) return;
 		if (helpUses > 0) {
 			helpUses--;
 			videoEnded = false;
@@ -80,6 +89,10 @@
 
 	function handleVideoEnd() {
 		videoEnded = true;
+		if (levelCompleting) {
+			goto(`/levels/${CURRENT_LEVEL_NUMBER}/overview`);
+			return;
+		}
 		showAnswerTab = true;
 	}
 
@@ -88,6 +101,7 @@
 		autoplayPrevented = false;
 		disabledButtons = {};
 		if (answers[currentAnswerIndex]) {
+			currentVideoSrc = answers[currentAnswerIndex].videoSrc;
 			shuffledOptions = shuffleArray(answers[currentAnswerIndex].options);
 		}
 	});
@@ -123,8 +137,7 @@
 						class="relative aspect-video overflow-hidden rounded-lg border-2 border-foreground bg-transparent landscape:h-auto landscape:max-h-[calc(100vh-2rem)]"
 					>
 						<VideoPlayer
-							bind:this={videoPlayerRef}
-							videoSrc={answers[currentAnswerIndex].videoSrc}
+							videoSrc={currentVideoSrc}
 							bind:videoEnded
 							bind:autoplayPrevented
 							{helpUses}

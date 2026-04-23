@@ -36,6 +36,7 @@
 	let isCorrect = $state(false);
 	let disabledButtons = $state<Record<string, boolean>>({});
 	let videoPlayerRef: any = $state(null);
+	let levelCompleting = $state(false);
 	let currentVideoSrc = $state<string>('');
 	let answersWithRandomVideo = $state<Set<number>>(new Set());
 	let showInteractiveButton = $state(false);
@@ -134,10 +135,18 @@
 			disableButton: (id) => {
 				disabledButtons[id] = true;
 			}
+		},
+		{
+			onComplete: () => {
+				levelCompleting = true;
+				currentVideoSrc = '/assets/level5/normal/9.mp4';
+				videoEnded = false;
+			}
 		}
 	);
 
 	function replayVideo() {
+		if (levelCompleting) return;
 		if (helpUses > 0) {
 			helpUses--;
 			videoEnded = false;
@@ -172,6 +181,10 @@
 		if (buttonHideTimeoutId) clearTimeout(buttonHideTimeoutId);
 		showInteractiveButton = false;
 		videoEnded = true;
+		if (levelCompleting) {
+			goto(`/levels/${CURRENT_LEVEL_NUMBER}/overview`);
+			return;
+		}
 		showAnswerTab = true;
 	}
 

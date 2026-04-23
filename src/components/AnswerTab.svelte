@@ -185,7 +185,7 @@
 				/>
 			</div>
 		{:else}
-			<div class="mx-auto mt-4 flex w-full max-w-6xl flex-col gap-4">
+			<div class="mx-auto mt-4 flex w-full max-w-6xl flex-col gap-4 md:pb-25">
 				{#each shuffledOptions as option (option.id)}
 					<GameButton
 						size="small"

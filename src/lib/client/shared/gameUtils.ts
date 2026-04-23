@@ -25,6 +25,9 @@ export function createAnswerClickHandler(
 		setIsCorrect: (v: boolean) => void;
 		setShowAnswerTab: (v: boolean) => void;
 		disableButton: (id: string) => void;
+	},
+	callbacks?: {
+		onComplete?: () => void;
 	}
 ) {
 	return function handleAnswerClick(optionId: string) {
@@ -47,7 +50,11 @@ export function createAnswerClickHandler(
 					levelStore.updateCurrentAnswer(index + 1);
 				} else {
 					levelStore.markCompleted();
-					goto(`/levels/${levelNumber}/overview`);
+					if (callbacks?.onComplete) {
+						callbacks.onComplete();
+					} else {
+						goto(`/levels/${levelNumber}/overview`);
+					}
 				}
 			} else {
 				levelStore.decreaseLives();
