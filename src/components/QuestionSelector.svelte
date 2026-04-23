@@ -55,6 +55,6 @@
 		{/each}
 	</div>
 	{#if isLastQuestionAnswered && compleationLink && onContinue}
-		<GameButton class="mt-4" onclick={onContinue}>Pokračovat</GameButton>
+		<GameButton class="mt-4" onclick={onContinue}>Pokračovat na test</GameButton>
 	{/if}
 </div>

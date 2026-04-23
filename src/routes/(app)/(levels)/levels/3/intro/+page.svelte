@@ -41,10 +41,14 @@
 	<div class="flex w-full max-w-150 flex-col gap-3 text-justify">
 		{#if introState === 1 && loadAnimation}
 			<Paragraph inTransition={animate ? { duration: 3000 } : undefined}>
+				Jaké by to bylo navštívít lékaře, kdybychom neslyšeli jeho hlas? Jak bychom mu vysvětlili
+				své potíže a porozuměli jeho radám? V této úrovni se ponoříte přesně do takové situace.
+			</Paragraph>
+			<Paragraph inTransition={animate ? { delay: 3000, duration: 3000 } : undefined}>
 				Necítíte se dobře a rozhodl/a jste se navštívit praktického lékaře. Poslední dny máte tyto
 				potíže:
 			</Paragraph>
-			<div in:fade={animate ? { delay: 3000, duration: 3000 } : undefined}>
+			<div in:fade={animate ? { delay: 6000, duration: 3000 } : undefined}>
 				<ul class="mx-auto list-disc pl-5 text-[15px] md:text-[17px]">
 					<li class="font-bold">bolest v krku</li>
 					<li class="font-bold">teplotu 38 °C</li>

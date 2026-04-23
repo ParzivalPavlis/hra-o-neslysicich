@@ -10,6 +10,7 @@
 	import { onMount } from 'svelte';
 	import { checkIsPlaying } from '$lib/stores/lastPlayed';
 	import { SvelteSet } from 'svelte/reactivity';
+	import { isLocalhost } from '$lib/client/shared/gameUtils';
 
 	const CURRENT_LEVEL_NUMBER = 2;
 	const SHOW_FULL_DIALOG = true;
@@ -242,7 +243,7 @@
 <Layout1>
 	{#if conversationStarted}
 		<!-- Development skip button -->
-		{#if !allConversationsFinished}
+		{#if !allConversationsFinished && isLocalhost()}
 			<div class="mb-6 flex justify-center">
 				<Button
 					onclick={skipConversation}

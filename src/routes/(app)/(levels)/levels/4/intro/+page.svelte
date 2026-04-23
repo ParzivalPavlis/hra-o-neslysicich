@@ -41,8 +41,8 @@
 <Layout1>
 	<div class="flex w-full max-w-150 flex-col gap-3 text-justify">
 		{#if introState === 1 && loadAnimation}
-			<Paragraph inTransition={animate ? { duration: 3000 } : undefined}
-				>Navštívili jste banku, kde si chcete zařídit několik věcí:</Paragraph
+			<Paragraph inTransition={animate ? { duration: 3000 } : undefined}>
+				Navštívili jste banku, kde si chcete zařídit několik věcí:</Paragraph
 			>
 			<div in:fade={animate ? { delay: 3000, duration: 3000 } : undefined}>
 				<ul class="mx-auto list-disc pl-5 text-[15px] md:text-[17px]">

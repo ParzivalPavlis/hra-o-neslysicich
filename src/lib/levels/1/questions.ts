@@ -3,92 +3,92 @@ import type { QuestionType } from '$types/question';
 const group1: QuestionType[] = [
 	{
 		id: 1,
-		question: 'Kolik času strávil Honza prací na projektu o víkendu?',
+		question: 'Co dělal Karel včera večer?',
 		options: [
-			{ id: 'a', text: 'Jen pár hodin', correct: false },
-			{ id: 'b', text: 'Skoro celý víkend', correct: true },
-			{ id: 'c', text: 'Celý týden', correct: false }
+			{ id: 'a', text: 'Hrál hry s kamarády', correct: false },
+			{ id: 'b', text: 'Seděl nad poznámkami', correct: true },
+			{ id: 'c', text: 'Byl venku s kamarády', correct: false }
 		]
 	},
 	{
 		id: 2,
-		question: 'Co Honza často dělá místo učení?',
+		question: 'Co Honza musí udělat v projektu na informatiku?',
 		options: [
-			{ id: 'a', text: 'Dívá se na filmy', correct: false },
-			{ id: 'b', text: 'Hraje hry', correct: true },
-			{ id: 'c', text: 'Chodí ven', correct: false }
+			{ id: 'a', text: 'Webovou aplikaci a krátkou dokumentaci', correct: true },
+			{ id: 'b', text: 'Mobilní aplikaci a prezentaci', correct: false },
+			{ id: 'c', text: 'Databázi a seminární práci', correct: false }
 		]
 	},
 	{
 		id: 3,
-		question: 'Do kolika hodin byl Honza vzhůru, když hrál?',
+		question: 'Kdy je odevzdání Honzova projektu?',
 		options: [
-			{ id: 'a', text: 'Do jedné ráno', correct: false },
-			{ id: 'b', text: 'Do dvou ráno', correct: true },
-			{ id: 'c', text: 'Do tří ráno', correct: false }
+			{ id: 'a', text: 'Ve středu', correct: false },
+			{ id: 'b', text: 'V pátek', correct: true },
+			{ id: 'c', text: 'Příští pondělí', correct: false }
 		]
 	},
 	{
 		id: 4,
-		question: 'Jaký typ projektu Honza vytváří?',
+		question: 'Co Honzovi ještě chybí dodělat?',
 		options: [
-			{ id: 'a', text: 'Mobilní aplikaci', correct: false },
-			{ id: 'b', text: 'Webovou aplikaci', correct: true },
-			{ id: 'c', text: 'Hru', correct: false }
+			{ id: 'a', text: 'Grafický návrh a prezentace', correct: false },
+			{ id: 'b', text: 'Přihlašování a pár věcí v databázi', correct: true },
+			{ id: 'c', text: 'Dokumentace', correct: false }
 		]
 	},
 	{
 		id: 5,
-		question: 'Jaký problém má Honza při učení matematiky?',
+		question: 'Z jakého předmětu mají příští týden test?',
 		options: [
-			{ id: 'a', text: 'Nechápe vzorce', correct: false },
-			{ id: 'b', text: 'Ztrácí se ve slovních úlohách', correct: true },
-			{ id: 'c', text: 'Nemá poznámky', correct: false }
+			{ id: 'a', text: 'Z ekonomiky', correct: false },
+			{ id: 'b', text: 'Z matematiky', correct: true },
+			{ id: 'c', text: 'Z informatiky', correct: false }
 		]
 	},
 	{
 		id: 6,
-		question: 'Jaký druh pohybu dělá Honza kromě běhání?',
+		question: 'Co dělal Honza místo učení?',
 		options: [
-			{ id: 'a', text: 'Plavání', correct: false },
-			{ id: 'b', text: 'Cvičení ve fitku', correct: true },
-			{ id: 'c', text: 'Jógu', correct: false }
+			{ id: 'a', text: 'Díval se na seriál', correct: false },
+			{ id: 'b', text: 'Hrál Minecraft', correct: true },
+			{ id: 'c', text: 'Četl si', correct: false }
 		]
 	},
 	{
 		id: 7,
-		question: 'Co Karel říká o své produktivitě?',
+		question: 'Do kolika hodin byl Honza vzhůru?',
 		options: [
-			{ id: 'a', text: 'Že pracuje efektivně celý den', correct: false },
-			{ id: 'b', text: 'Že často nic neudělá, i když chce', correct: true },
-			{ id: 'c', text: 'Že se učí jen ráno', correct: false }
+			{ id: 'a', text: 'Skoro do jedné ráno', correct: false },
+			{ id: 'b', text: 'Skoro do dvou ráno', correct: true },
+			{ id: 'c', text: 'Skoro do tří ráno', correct: false }
 		]
 	},
 	{
 		id: 8,
-		question: 'Co Karel říká o běhání?',
+		question: 'Za jak dlouho má Karel termín seminárky?',
 		options: [
-			{ id: 'a', text: 'Že ho baví víc než kolo', correct: false },
-			{ id: 'b', text: 'Že by ho chtěl začít dělat', correct: false },
-			{ id: 'c', text: 'Že ho spíš nebaví', correct: true }
+			{ id: 'a', text: 'Za dva týdny', correct: false },
+			{ id: 'b', text: 'Za tři týdny', correct: true },
+			{ id: 'c', text: 'Za měsíc', correct: false }
 		]
 	},
 	{
 		id: 9,
-		question: 'Co mají Honza a Karel společné?',
+		question: 'Kolik stran má mít Karlova seminárka?',
 		options: [
-			{ id: 'a', text: 'Oba rádi běhají', correct: false },
-			{ id: 'b', text: 'Oba odkládají povinnosti', correct: true },
-			{ id: 'c', text: 'Oba pracují na stejném projektu', correct: false }
+			{ id: 'a', text: 'Deset stran', correct: false },
+			{ id: 'b', text: 'Patnáct stran', correct: true },
+			{ id: 'c', text: 'Dvacet stran', correct: false }
 		]
 	},
 	{
 		id: 10,
-		question: 'Co plánují udělat po skončení semestru?',
+		question: 'Co Karlovi dělá problém v matematice?',
 		options: [
-			{ id: 'a', text: 'Jet na hory', correct: true },
-			{ id: 'b', text: 'Začít nový projekt', correct: false },
-			{ id: 'c', text: 'Najít si brigádu', correct: false }
+			{ id: 'a', text: 'Rovnice', correct: false },
+			{ id: 'b', text: 'Slovní úlohy', correct: true },
+			{ id: 'c', text: 'Geometrie', correct: false }
 		]
 	}
 ];
