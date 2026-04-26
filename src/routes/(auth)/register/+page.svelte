@@ -4,6 +4,7 @@
 	import GameButton from '$components/GameButton.svelte';
 	import Logo from '$components/Logo.svelte';
 	import Paragraph from '$components/typography/Paragraph.svelte';
+	import AlertMessage from '$components/AlertMessage.svelte';
 	import type { ActionData, SubmitFunction } from './$types';
 
 	let { form }: { form: ActionData } = $props();
@@ -49,15 +50,7 @@
 		use:enhance={handleSubmit}
 	>
 		{#if form?.message !== undefined}
-			<div
-				class={`mb-6 rounded-md p-4 text-sm ${
-					form?.success
-						? 'border border-green-200 bg-green-50 text-green-800'
-						: 'border border-red-200 bg-red-50 text-red-800'
-				}`}
-			>
-				{form?.message}
-			</div>
+			<AlertMessage message={form.message} variant={form?.success ? 'success' : 'error'} />
 		{/if}
 		<!-- Email -->
 		<FormInput
