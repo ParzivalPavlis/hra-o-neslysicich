@@ -27,11 +27,6 @@ export const actions: Actions = {
 			errors.email = 'Prosím zadejte platnou e-mailovou adresu';
 		}
 
-		// Password validation
-		if (!password || password.length < 6) {
-			errors.password = 'Heslo musí mít alespoň 6 znaků';
-		}
-
 		// Return early if validation errors
 		if (Object.keys(errors).length > 0) {
 			return fail(400, {

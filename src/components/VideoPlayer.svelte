@@ -70,6 +70,8 @@
 
 	$effect(() => {
 		if (videoElement && videoSrc) {
+			videoEnded = false;
+			autoplayPrevented = false;
 			videoElement.play().catch(() => {
 				autoplayPrevented = true;
 			});

@@ -18,6 +18,7 @@
 	let isMobile = $state(false);
 	let showAnswerTab = $state(false);
 	let answerTabCollapsed = $state(false);
+	let openListTabOnShow = $state(false);
 	let videoEnded = $state(false);
 	let autoplayPrevented = $state(false);
 	let shuffledOptions = $state<AnswerOptionType[]>([]);
@@ -57,6 +58,7 @@
 				if (currentAnswerIndex < answers.length - 1) {
 					level5.updateCurrentAnswer(currentAnswerIndex + 1);
 				} else {
+					openListTabOnShow = true;
 					showAnswerTab = true;
 				}
 				showingFeedback = false;
@@ -70,11 +72,13 @@
 			level5.updateCurrentAnswer(questionIndex);
 			videoEnded = false;
 			showAnswerTab = false;
+			openListTabOnShow = false;
 		}
 	}
 
 	function handleVideoEnd() {
 		videoEnded = true;
+		openListTabOnShow = false;
 		showAnswerTab = true;
 	}
 
@@ -184,6 +188,7 @@
 			{correctAnswerId}
 			{isPortrait}
 			{isMobile}
+			openListTab={openListTabOnShow}
 			answers={gameState.answers}
 			{currentAnswerIndex}
 			totalQuestions={answers.length}

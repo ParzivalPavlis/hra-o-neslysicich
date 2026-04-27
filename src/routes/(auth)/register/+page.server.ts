@@ -30,8 +30,8 @@ export const actions: Actions = {
 		}
 
 		// Password validation
-		if (!password || password.length < 6) {
-			errors.password = 'Heslo musí mít alespoň 6 znaků';
+		if (!password || password.length < 8) {
+			errors.password = 'Heslo musí mít alespoň 8 znaků';
 		}
 
 		// Password confirmation
@@ -57,10 +57,18 @@ export const actions: Actions = {
 		});
 
 		if (error) {
+			let message = 'Registrace selhala. Prosím zkuste znovu.';
+			if (
+				error.message?.toLowerCase().includes('already registered') ||
+				error.message?.toLowerCase().includes('already exists') ||
+				error.code === 'user_already_exists'
+			) {
+				message = 'Účet s tímto e-mailem již existuje.';
+			}
 			return fail(400, {
 				success: false,
 				email,
-				message: error.message || 'Registrace selhala. Prosím zkuste znovu.'
+				message
 			} as FormResponseType);
 		}
 
