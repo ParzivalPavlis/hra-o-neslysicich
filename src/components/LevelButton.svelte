@@ -2,6 +2,7 @@
 	import { Button } from '$components/ui/button';
 	import LevelTrail from '$components/LevelTrail.svelte';
 	import { goto } from '$app/navigation';
+	import { fade } from 'svelte/transition';
 	import { cn } from '$lib/utils';
 	import { Lock } from '@lucide/svelte';
 	import Paragraph from '$components/typography/Paragraph.svelte';
@@ -187,8 +188,24 @@
 						<IconComponent class="h-7 w-7" />
 					{/if}
 				</div>
-				<div class="text-2xl font-extrabold text-white uppercase drop-shadow">
-					Úroveň {attributes.level}
+				<div
+					class="relative flex h-8 items-center justify-center text-2xl font-extrabold text-white uppercase drop-shadow"
+				>
+					{#if clickCount > 0}
+						<span class="absolute whitespace-nowrap" transition:fade={{ duration: 150 }}>
+							ZAČÍT
+						</span>
+					{:else}
+						<span class="absolute whitespace-nowrap" transition:fade={{ duration: 150 }}>
+							Úroveň {attributes.level}
+						</span>
+					{/if}
+					{#if clickCount > 0}
+						<span
+							class="absolute -bottom-4 left-1/2 -translate-x-1/2 text-[10px] whitespace-nowrap"
+							transition:fade={{ duration: 150 }}>(Klikněte znovu)</span
+						>
+					{/if}
 				</div>
 			</div>
 		</Button>

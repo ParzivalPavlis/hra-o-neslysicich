@@ -27,6 +27,7 @@
 		totalQuestions?: number;
 		onSelectQuestion?: (index: number) => void;
 		compleationLink?: string;
+		openListTab?: boolean;
 	};
 
 	let {
@@ -47,7 +48,8 @@
 		currentAnswerIndex = 0,
 		totalQuestions = 0,
 		onSelectQuestion,
-		compleationLink
+		compleationLink,
+		openListTab = false
 	}: Props = $props();
 
 	let listTabCollapsed = $state(true);
@@ -91,8 +93,13 @@
 
 	$effect(() => {
 		if (showAnswerTab) {
-			listTabCollapsed = true;
-			answerTabCollapsed = false;
+			if (openListTab) {
+				listTabCollapsed = false;
+				answerTabCollapsed = true;
+			} else {
+				listTabCollapsed = true;
+				answerTabCollapsed = false;
+			}
 		}
 	});
 
