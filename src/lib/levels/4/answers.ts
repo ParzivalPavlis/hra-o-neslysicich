@@ -3,7 +3,7 @@ import type { VariableAnswerType } from '$types/answer';
 export const answers: VariableAnswerType[] = [
 	{
 		id: 1,
-		videoSrc: ['/assets/level5/normal/1-normal.mp4', '/assets/level5/wrong/1-wrong.mp4'],
+		videoSrc: ['/assets/level4/normal/1-normal.mp4', '/assets/level4/wrong/1-wrong.mp4'],
 		options: [
 			{
 				id: 'a',
@@ -29,7 +29,7 @@ export const answers: VariableAnswerType[] = [
 	},
 	{
 		id: 2,
-		videoSrc: ['/assets/level5/normal/2-normal.mp4', '/assets/level5/wrong/2-wrong.mp4'],
+		videoSrc: ['/assets/level4/normal/2-normal.mp4', '/assets/level4/wrong/2-wrong.mp4'],
 		options: [
 			{
 				id: 'a',
@@ -55,7 +55,7 @@ export const answers: VariableAnswerType[] = [
 	},
 	{
 		id: 3,
-		videoSrc: ['/assets/level5/normal/3-normal.mp4', '/assets/level5/wrong/3-wrong.mp4'],
+		videoSrc: ['/assets/level4/normal/3-normal.mp4', '/assets/level4/wrong/3-wrong.mp4'],
 		options: [
 			{
 				id: 'a',
@@ -81,7 +81,7 @@ export const answers: VariableAnswerType[] = [
 	},
 	{
 		id: 4,
-		videoSrc: ['/assets/level5/normal/4-normal.mp4', '/assets/level5/wrong/4-wrong.mp4'],
+		videoSrc: ['/assets/level4/normal/4-normal.mp4', '/assets/level4/wrong/4-wrong.mp4'],
 		options: [
 			{
 				id: 'a',
@@ -107,7 +107,7 @@ export const answers: VariableAnswerType[] = [
 	},
 	{
 		id: 5,
-		videoSrc: ['/assets/level5/normal/5-normal.mp4', '/assets/level5/wrong/5-wrong.mp4'],
+		videoSrc: ['/assets/level4/normal/5-normal.mp4', '/assets/level4/wrong/5-wrong.mp4'],
 		options: [
 			{
 				id: 'a',
@@ -133,7 +133,7 @@ export const answers: VariableAnswerType[] = [
 	},
 	{
 		id: 6,
-		videoSrc: ['/assets/level5/normal/6-normal.mp4', '/assets/level5/wrong/6-wrong.mp4'],
+		videoSrc: ['/assets/level4/normal/6-normal.mp4', '/assets/level4/wrong/6-wrong.mp4'],
 		options: [
 			{
 				id: 'a',
@@ -159,7 +159,7 @@ export const answers: VariableAnswerType[] = [
 	},
 	{
 		id: 7,
-		videoSrc: ['/assets/level5/normal/7-normal.mp4', '/assets/level5/wrong/7-wrong.mp4'],
+		videoSrc: ['/assets/level4/normal/7-normal.mp4', '/assets/level4/wrong/7-wrong.mp4'],
 		options: [
 			{
 				id: 'a',
@@ -185,7 +185,7 @@ export const answers: VariableAnswerType[] = [
 	},
 	{
 		id: 8,
-		videoSrc: ['/assets/level5/normal/8-normal.mp4', '/assets/level5/wrong/8-wrong.mp4'],
+		videoSrc: ['/assets/level4/normal/8-normal.mp4', '/assets/level4/wrong/8-wrong.mp4'],
 		options: [
 			{
 				id: 'a',

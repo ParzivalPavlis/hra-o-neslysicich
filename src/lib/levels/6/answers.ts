@@ -3,7 +3,7 @@ import type { ConversationAnswerType } from '$types/answer';
 export const answers: ConversationAnswerType[] = [
 	{
 		id: 1,
-		videoSrc: '/assets/level8/konverzace1.mp4',
+		videoSrc: '/assets/level6/konverzace1.mp4',
 		options: [
 			{
 				id: 'a',
@@ -45,7 +45,7 @@ export const answers: ConversationAnswerType[] = [
 	},
 	{
 		id: 2,
-		videoSrc: '/assets/level8/konverzace2.mp4',
+		videoSrc: '/assets/level6/konverzace2.mp4',
 		options: [
 			{
 				id: 'a',
@@ -84,7 +84,7 @@ export const answers: ConversationAnswerType[] = [
 	},
 	{
 		id: 3,
-		videoSrc: '/assets/level8/konverzace3.mp4',
+		videoSrc: '/assets/level6/konverzace3.mp4',
 		options: [
 			{
 				id: 'a',
@@ -123,7 +123,7 @@ export const answers: ConversationAnswerType[] = [
 	},
 	{
 		id: 4,
-		videoSrc: '/assets/level8/konverzace4.mp4',
+		videoSrc: '/assets/level6/konverzace4.mp4',
 		options: [
 			{
 				id: 'a',
