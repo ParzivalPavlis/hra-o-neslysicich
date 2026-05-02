@@ -1,4 +1,3 @@
-import { supabaseBrowserClient } from '$lib/client/supabase';
 import { supabaseAdminClient } from '$lib/server/supabase';
 import type { Session, User } from '@supabase/supabase-js';
 import type { GameProgressType, LevelProgressType } from '$types/supabase/gameProgress';
@@ -79,7 +78,7 @@ export async function initializeGameProgress(userId: string): Promise<GameProgre
  */
 export async function getGameProgress(
 	userId: string,
-	client: SupabaseClient<Database> = supabaseBrowserClient as SupabaseClient<Database>
+	client: SupabaseClient<Database>
 ): Promise<GameProgressType | null> {
 	// Optimized query: only select progress column (smaller payload)
 	// Make sure user_id column has a database index for faster queries
@@ -98,26 +97,6 @@ export async function getGameProgress(
 }
 
 /**
- * Get game progress by record ID
- * @param {number} id - The game progress record ID
- * @returns {Promise<GameProgressType|null>} The game progress record or null if not found
- */
-export async function getGameProgressById(id: number): Promise<GameProgressType | null> {
-	const { data, error } = await supabaseBrowserClient
-		.from('game_progress')
-		.select('*')
-		.eq('id', id)
-		.single();
-
-	if (error) {
-		console.error('Error fetching game progress by ID:', error);
-		return null;
-	}
-
-	return data?.progress as GameProgressType | null;
-}
-
-/**
  * Update game progress for a user
  * @param {string} userId - The user ID to update progress for
  * @param {GameProgressType} progress - The updated game progress object
@@ -127,7 +106,7 @@ export async function getGameProgressById(id: number): Promise<GameProgressType 
 export async function updateGameProgress(
 	userId: string,
 	progress: GameProgressType,
-	client: SupabaseClient<Database> = supabaseBrowserClient as SupabaseClient<Database>
+	client: SupabaseClient<Database>
 ): Promise<GameProgressType | null> {
 	const { data, error } = await client
 		.from('game_progress')
@@ -159,7 +138,7 @@ export async function updateLevelProgress(
 	userId: string,
 	levelNumber: number,
 	attributes: LevelProgressType,
-	client: SupabaseClient<Database> = supabaseBrowserClient as SupabaseClient<Database>
+	client: SupabaseClient<Database>
 ): Promise<GameProgressType | null> {
 	// Get current progress
 	const currentProgress = await getGameProgress(userId, client);
@@ -198,7 +177,7 @@ export async function updateLevelProgress(
 export async function setPlayedLevel(
 	userId: string,
 	levelNumber: number,
-	client: SupabaseClient<Database> = supabaseBrowserClient as SupabaseClient<Database>
+	client: SupabaseClient<Database>
 ): Promise<boolean | 'already-played'> {
 	// Get current progress
 	const currentProgress = await getGameProgress(userId, client);
@@ -244,7 +223,7 @@ export async function setPlayedLevel(
 export async function setLastPlayedLevel(
 	userId: string,
 	levelNumber: number,
-	client: SupabaseClient<Database> = supabaseBrowserClient as SupabaseClient<Database>
+	client: SupabaseClient<Database>
 ): Promise<boolean> {
 	// Get current progress
 	const currentProgress = await getGameProgress(userId, client);
@@ -290,7 +269,7 @@ export async function setLastPlayedLevel(
 export async function getLevelProgress(
 	userId: string,
 	levelNumber: number,
-	client: SupabaseClient<Database> = supabaseBrowserClient as SupabaseClient<Database>
+	client: SupabaseClient<Database>
 ): Promise<LevelProgressType | null> {
 	// Get the full game progress
 	const gameProgress = await getGameProgress(userId, client);
@@ -315,7 +294,7 @@ export async function getLevelProgress(
  */
 export async function getLastPlayedLevel(
 	userId: string,
-	client: SupabaseClient<Database> = supabaseBrowserClient as SupabaseClient<Database>
+	client: SupabaseClient<Database>
 ): Promise<number | null> {
 	// Get the full game progress
 	const gameProgress = await getGameProgress(userId, client);
@@ -347,7 +326,7 @@ export async function getLastPlayedLevel(
 export async function unlockLevel(
 	userId: string,
 	levelNumber: number,
-	client: SupabaseClient<Database> = supabaseBrowserClient as SupabaseClient<Database>
+	client: SupabaseClient<Database>
 ): Promise<boolean> {
 	const nextLevelKey = `level${levelNumber}` as keyof GameProgressType['levels'];
 
@@ -387,7 +366,7 @@ export async function unlockLevel(
  * @returns {Promise<{session: Session; user: User} | {session: null; user: null}>} Session and user if authenticated, or null values if not
  */
 export async function safeGetSession(
-	client: SupabaseClient<Database> = supabaseBrowserClient as SupabaseClient<Database>
+	client: SupabaseClient<Database>
 ): Promise<{ session: Session; user: User } | { session: null; user: null }> {
 	const {
 		data: { session }
