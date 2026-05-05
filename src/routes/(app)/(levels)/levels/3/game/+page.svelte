@@ -73,7 +73,7 @@
 		{
 			onComplete: () => {
 				levelCompleting = true;
-				currentVideoSrc = '/assets/level4/8.mp4';
+				currentVideoSrc = '/assets/level3/8.mp4';
 				videoEnded = false;
 			}
 		}
@@ -159,7 +159,6 @@
 					class="relative aspect-video w-full max-w-6xl overflow-hidden rounded-lg border-2 border-foreground bg-transparent landscape:h-auto landscape:max-h-[calc(100vh-2rem)]"
 				>
 					<VideoPlayer
-						bind:this={videoPlayerRef}
 						videoSrc={answers[currentAnswerIndex].videoSrc}
 						bind:videoEnded
 						bind:autoplayPrevented

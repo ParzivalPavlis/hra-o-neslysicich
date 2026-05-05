@@ -44,7 +44,7 @@
 			id: 'menu',
 			worldX: 600,
 			label: 'Vstávání',
-			imageSrc: '/assets/level10/encounter1.png',
+			imageSrc: '/assets/level7/encounter1.png',
 			event: {
 				title: 'Vstávání',
 				lines: [

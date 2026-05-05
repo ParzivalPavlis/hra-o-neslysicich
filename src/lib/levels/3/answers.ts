@@ -3,7 +3,7 @@ import type { AnswerType } from '$types/answer';
 export const answers: AnswerType[] = [
 	{
 		id: 1,
-		videoSrc: '/assets/level4/1.mp4',
+		videoSrc: '/assets/level3/1.mp4',
 		options: [
 			{
 				id: 'a',
@@ -29,7 +29,7 @@ export const answers: AnswerType[] = [
 	},
 	{
 		id: 2,
-		videoSrc: '/assets/level4/2.mp4',
+		videoSrc: '/assets/level3/2.mp4',
 		options: [
 			{
 				id: 'a',
@@ -55,7 +55,7 @@ export const answers: AnswerType[] = [
 	},
 	{
 		id: 3,
-		videoSrc: '/assets/level4/3.mp4',
+		videoSrc: '/assets/level3/3.mp4',
 		options: [
 			{
 				id: 'a',
@@ -81,7 +81,7 @@ export const answers: AnswerType[] = [
 	},
 	{
 		id: 4,
-		videoSrc: '/assets/level4/4.mp4',
+		videoSrc: '/assets/level3/4.mp4',
 		options: [
 			{
 				id: 'a',
@@ -107,7 +107,7 @@ export const answers: AnswerType[] = [
 	},
 	{
 		id: 5,
-		videoSrc: '/assets/level4/5.mp4',
+		videoSrc: '/assets/level3/5.mp4',
 		options: [
 			{
 				id: 'a',
@@ -133,7 +133,7 @@ export const answers: AnswerType[] = [
 	},
 	{
 		id: 6,
-		videoSrc: '/assets/level4/6.mp4',
+		videoSrc: '/assets/level3/6.mp4',
 		options: [
 			{
 				id: 'a',
@@ -159,7 +159,7 @@ export const answers: AnswerType[] = [
 	},
 	{
 		id: 7,
-		videoSrc: '/assets/level4/7.mp4',
+		videoSrc: '/assets/level3/7.mp4',
 		options: [
 			{
 				id: 'a',

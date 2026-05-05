@@ -3,7 +3,7 @@ import type { AnswerType } from '$types/answer';
 export const answers: AnswerType[] = [
 	{
 		id: 1,
-		videoSrc: '/assets/level7/chodit.mp4',
+		videoSrc: '/assets/level5/chodit.mp4',
 		options: [
 			{
 				id: 'a',
@@ -29,7 +29,7 @@ export const answers: AnswerType[] = [
 	},
 	{
 		id: 2,
-		videoSrc: '/assets/level7/co.mp4',
+		videoSrc: '/assets/level5/co.mp4',
 		options: [
 			{
 				id: 'a',
@@ -55,7 +55,7 @@ export const answers: AnswerType[] = [
 	},
 	{
 		id: 3,
-		videoSrc: '/assets/level7/dekuji.mp4',
+		videoSrc: '/assets/level5/dekuji.mp4',
 		options: [
 			{
 				id: 'a',
@@ -81,7 +81,7 @@ export const answers: AnswerType[] = [
 	},
 	{
 		id: 4,
-		videoSrc: '/assets/level7/delat.mp4',
+		videoSrc: '/assets/level5/delat.mp4',
 		options: [
 			{
 				id: 'a',
@@ -107,7 +107,7 @@ export const answers: AnswerType[] = [
 	},
 	{
 		id: 5,
-		videoSrc: '/assets/level7/dneska.mp4',
+		videoSrc: '/assets/level5/dneska.mp4',
 		options: [
 			{
 				id: 'a',
@@ -133,7 +133,7 @@ export const answers: AnswerType[] = [
 	},
 	{
 		id: 6,
-		videoSrc: '/assets/level7/dobre_rano.mp4',
+		videoSrc: '/assets/level5/dobre_rano.mp4',
 		options: [
 			{
 				id: 'a',
@@ -159,7 +159,7 @@ export const answers: AnswerType[] = [
 	},
 	{
 		id: 7,
-		videoSrc: '/assets/level7/dobry_den.mp4',
+		videoSrc: '/assets/level5/dobry_den.mp4',
 		options: [
 			{
 				id: 'a',
@@ -185,7 +185,7 @@ export const answers: AnswerType[] = [
 	},
 	{
 		id: 8,
-		videoSrc: '/assets/level7/jak_se_mas.mp4',
+		videoSrc: '/assets/level5/jak_se_mas.mp4',
 		options: [
 			{
 				id: 'a',
@@ -211,7 +211,7 @@ export const answers: AnswerType[] = [
 	},
 	{
 		id: 9,
-		videoSrc: '/assets/level7/kde_je.mp4',
+		videoSrc: '/assets/level5/kde_je.mp4',
 		options: [
 			{
 				id: 'a',
@@ -237,7 +237,7 @@ export const answers: AnswerType[] = [
 	},
 	{
 		id: 10,
-		videoSrc: '/assets/level7/lekar.mp4',
+		videoSrc: '/assets/level5/lekar.mp4',
 		options: [
 			{
 				id: 'a',
@@ -263,7 +263,7 @@ export const answers: AnswerType[] = [
 	},
 	{
 		id: 11,
-		videoSrc: '/assets/level7/metro.mp4',
+		videoSrc: '/assets/level5/metro.mp4',
 		options: [
 			{
 				id: 'a',
@@ -289,7 +289,7 @@ export const answers: AnswerType[] = [
 	},
 	{
 		id: 12,
-		videoSrc: '/assets/level7/michane_vejce.mp4',
+		videoSrc: '/assets/level5/michane_vejce.mp4',
 		options: [
 			{
 				id: 'a',
@@ -315,7 +315,7 @@ export const answers: AnswerType[] = [
 	},
 	{
 		id: 13,
-		videoSrc: '/assets/level7/nashledanou.mp4',
+		videoSrc: '/assets/level5/nashledanou.mp4',
 		options: [
 			{
 				id: 'a',
@@ -341,7 +341,7 @@ export const answers: AnswerType[] = [
 	},
 	{
 		id: 14,
-		videoSrc: '/assets/level7/necitim_se_dobre.mp4',
+		videoSrc: '/assets/level5/necitim_se_dobre.mp4',
 		options: [
 			{
 				id: 'a',
@@ -367,7 +367,7 @@ export const answers: AnswerType[] = [
 	},
 	{
 		id: 15,
-		videoSrc: '/assets/level7/snídaně.mp4',
+		videoSrc: '/assets/level5/snídaně.mp4',
 		options: [
 			{
 				id: 'a',
@@ -393,7 +393,7 @@ export const answers: AnswerType[] = [
 	},
 	{
 		id: 16,
-		videoSrc: '/assets/level7/spolu.mp4',
+		videoSrc: '/assets/level5/spolu.mp4',
 		options: [
 			{
 				id: 'a',
@@ -419,7 +419,7 @@ export const answers: AnswerType[] = [
 	},
 	{
 		id: 17,
-		videoSrc: '/assets/level7/za_rohem.mp4',
+		videoSrc: '/assets/level5/za_rohem.mp4',
 		options: [
 			{
 				id: 'a',
@@ -445,7 +445,7 @@ export const answers: AnswerType[] = [
 	},
 	{
 		id: 18,
-		videoSrc: '/assets/level7/ztratit.mp4',
+		videoSrc: '/assets/level5/ztratit.mp4',
 		options: [
 			{
 				id: 'a',

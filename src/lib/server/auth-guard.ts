@@ -1,16 +1,10 @@
 import { redirect, type Handle } from '@sveltejs/kit';
 import { safeGetSession } from './services';
 
-const PUBLIC_ROUTES = [
-	'/login',
-	'/register',
-	'/forgot-password',
-	'/reset-password',
-	'/api/v1/auth'
-] as const;
+const PUBLIC_ROUTES = ['/(auth)', '/api/v1/auth'] as const;
 
-const isPublicRoute = (pathname: string): boolean => {
-	return PUBLIC_ROUTES.some((route) => pathname === route || pathname.startsWith(route + '/'));
+const isPublicRoute = (routeId: string | null): boolean => {
+	return PUBLIC_ROUTES.some((route) => routeId?.startsWith(route));
 };
 
 export const authGuard: Handle = async ({ event, resolve }) => {
@@ -19,7 +13,7 @@ export const authGuard: Handle = async ({ event, resolve }) => {
 	event.locals.session = session;
 	event.locals.user = user;
 
-	const isPublic = isPublicRoute(event.url.pathname);
+	const isPublic = isPublicRoute(event.route.id);
 
 	// Redirect unauthenticated users to login for protected routes
 	if (!isPublic && !session) {

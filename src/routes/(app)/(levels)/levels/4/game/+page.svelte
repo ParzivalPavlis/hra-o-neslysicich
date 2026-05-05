@@ -139,7 +139,7 @@
 		{
 			onComplete: () => {
 				levelCompleting = true;
-				currentVideoSrc = '/assets/level5/normal/9.mp4';
+				currentVideoSrc = '/assets/level4/normal/9.mp4';
 				videoEnded = false;
 			}
 		}
