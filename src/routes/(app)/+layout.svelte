@@ -21,12 +21,11 @@
 		'/levels/4/game',
 		'/levels/5/game',
 		'/levels/5/learn',
-		'/levels/6/game',
-		'/levels/7/game'
+		'/levels/6/game'
 	] as const;
 
 	// Pages that should be portrait-only
-	const PORTRAIT_ONLY = ['/levels/7/encounters'] as const;
+	const PORTRAIT_ONLY = [] as const;
 
 	function shouldBeLandscapeOnly(pathname: string): boolean {
 		return LANDSCAPE_ONLY.some((p) => pathname.includes(p));

@@ -1,5 +1,5 @@
 import type { LevelButtonType } from '$types/levelButton';
-import { Hand, PersonStanding, Speech, Eye } from '@lucide/svelte';
+import { Hand, Speech, Eye } from '@lucide/svelte';
 
 export const levels: LevelButtonType[] = [
 	{
@@ -50,11 +50,4 @@ export const levels: LevelButtonType[] = [
 		href: '/levels/6/intro',
 		trails: 5
 	},
-	{
-		icon: PersonStanding,
-		stars: 0,
-		locked: true,
-		description: 'Kliknutím znovu pro spuštění',
-		href: '/levels/7/intro'
-	}
 ];
