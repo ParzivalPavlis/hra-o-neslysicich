@@ -27,8 +27,7 @@
 		{ level: 3, src: '/assets/levelMap/manDoctor.png' },
 		{ level: 4, src: '/assets/levelMap/manBank.png' },
 		{ level: 5, src: '/assets/levelMap/womanLearning.png' },
-		{ level: 6, src: '/assets/levelMap/peopleSigning.png' },
-		{ level: 7, src: '/assets/levelMap/manWalking.png' }
+		{ level: 6, src: '/assets/levelMap/peopleSigning.png' }
 	];
 
 	const levelsWithProgress = $derived(
