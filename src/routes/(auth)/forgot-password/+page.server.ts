@@ -16,18 +16,19 @@ export const actions: Actions = {
 			url
 		} = event;
 
+		// Extract email from form submission
 		const formData = await request.formData();
 		const email = formData.get('email') as string;
 
 		const errors: FormErrorsType = {};
 
-		// Email validation
+		// Validate email format
 		const validEmail = /^[\w\-.+]+@([\w-]+\.)+[\w-]{2,}$/.test(email);
 		if (!validEmail) {
 			errors.email = 'Prosím zadejte platnou e-mailovou adresu';
 		}
 
-		// Return early if validation errors
+		// Return validation errors if any exist
 		if (Object.keys(errors).length > 0) {
 			return fail(400, {
 				errors,
@@ -35,13 +36,13 @@ export const actions: Actions = {
 			} as FormResponseType);
 		}
 
-		// Send password reset email
+		// Send password reset email with redirect link
 		const { error } = await supabase.auth.resetPasswordForEmail(email, {
 			redirectTo: `${url.origin}/reset-password`
 		});
 
+		// Don't reveal whether the email exists for security reasons
 		if (error) {
-			// Don't reveal whether the email exists for security reasons
 			return fail(400, {
 				success: false,
 				email,

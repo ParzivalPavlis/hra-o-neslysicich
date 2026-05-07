@@ -9,25 +9,27 @@ export const load: PageServerLoad = async ({ locals }) => {
 };
 
 export const actions: Actions = {
+	// Email and password login
 	email: async (event) => {
 		const {
 			request,
 			locals: { supabase }
 		} = event;
 
+		// Extract email and password from form submission
 		const formData = await request.formData();
 		const email = formData.get('email') as string;
 		const password = formData.get('password') as string;
 
 		const errors: FormErrorsType = {};
 
-		// Email validation
+		// Validate email format
 		const validEmail = /^[\w\-.+]+@([\w-]+\.)+[\w-]{2,}$/.test(email);
 		if (!validEmail) {
 			errors.email = 'Prosím zadejte platnou e-mailovou adresu';
 		}
 
-		// Return early if validation errors
+		// Return validation errors if any exist
 		if (Object.keys(errors).length > 0) {
 			return fail(400, {
 				errors,
@@ -35,12 +37,13 @@ export const actions: Actions = {
 			} as FormResponseType);
 		}
 
-		// Sign In logic
+		// Authenticate user with Supabase
 		const { error } = await supabase.auth.signInWithPassword({
 			email,
 			password
 		});
 
+		// Return error if authentication failed
 		if (error) {
 			return fail(401, {
 				success: false,
@@ -49,14 +52,17 @@ export const actions: Actions = {
 			} as FormResponseType);
 		}
 
+		// Redirect to levels on successful login
 		redirect(303, '/levels');
 	},
+	// Google OAuth login
 	google: async (event) => {
 		const {
 			locals: { supabase },
 			url
 		} = event;
 
+		// Initiate Google OAuth flow
 		const { data, error } = await supabase.auth.signInWithOAuth({
 			provider: 'google',
 			options: {
@@ -66,6 +72,7 @@ export const actions: Actions = {
 
 		console.log('Google Sign-In data:', data);
 
+		// Return error if OAuth initialization failed
 		if (error) {
 			return fail(400, {
 				success: false,
@@ -73,6 +80,7 @@ export const actions: Actions = {
 			} as FormResponseType);
 		}
 
+		// Redirect to Google login URL
 		if (data.url) {
 			redirect(303, data.url);
 		}

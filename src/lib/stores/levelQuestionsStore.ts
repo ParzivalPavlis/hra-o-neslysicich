@@ -8,6 +8,7 @@ const DEFAULT_STATE: LevelQuestionsState = {
 	answers: []
 };
 
+// Creates a persisted session store for a questions-type level
 export function createLevelQuestionsStore(levelNumber: number) {
 	const store = persisted<LevelQuestionsState>(
 		`level${levelNumber}-questions-state`,
@@ -15,14 +16,17 @@ export function createLevelQuestionsStore(levelNumber: number) {
 		{ storage: 'session' }
 	);
 
+	// Resets store and sets the active question IDs
 	function initialize(questionIds: number[]) {
 		store.set({ ...DEFAULT_STATE, questionIds });
 	}
 
+	// Sets the current question index
 	function updateCurrentQuestion(index: number) {
 		store.update((s) => ({ ...s, currentQuestionIndex: index }));
 	}
 
+	// Appends a new answer record
 	function addAnswer(questionId: number, selectedOptionId: string, isCorrect: boolean) {
 		store.update((s) => ({
 			...s,
@@ -30,14 +34,17 @@ export function createLevelQuestionsStore(levelNumber: number) {
 		}));
 	}
 
+	// Marks the level as completed
 	function markCompleted() {
 		store.update((s) => ({ ...s, completed: true }));
 	}
 
+	// Resets store to default state
 	function clear() {
 		store.set({ ...DEFAULT_STATE });
 	}
 
+	// Removes the persisted entry from sessionStorage
 	function remove() {
 		sessionStorage.removeItem(`level${levelNumber}-questions-state`);
 	}

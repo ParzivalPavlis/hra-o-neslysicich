@@ -10,12 +10,14 @@ export const load: PageServerLoad = async ({ locals }) => {
 };
 
 export const actions: Actions = {
+	// Email and password registration
 	email: async (event) => {
 		const {
 			request,
 			locals: { supabase }
 		} = event;
 
+		// Extract registration form data
 		const formData = await request.formData();
 		const email = formData.get('email') as string;
 		const password = formData.get('password') as string;
@@ -23,23 +25,23 @@ export const actions: Actions = {
 
 		const errors: FormErrorsType = {};
 
-		// Email validation
+		// Validate email format
 		const validEmail = /^[\w\-.+]+@([\w-]+\.)+[\w-]{2,}$/.test(email);
 		if (!validEmail) {
 			errors.email = 'Prosím zadejte platnou e-mailovou adresu';
 		}
 
-		// Password validation
+		// Validate password length (minimum 8 characters)
 		if (!password || password.length < 8) {
 			errors.password = 'Heslo musí mít alespoň 8 znaků';
 		}
 
-		// Password confirmation
+		// Verify passwords match
 		if (password !== confirmPassword) {
 			errors.confirmPassword = 'Hesla se neshodují';
 		}
 
-		// Return early if validation errors
+		// Return validation errors if any exist
 		if (Object.keys(errors).length > 0) {
 			return fail(400, {
 				errors,
@@ -47,7 +49,7 @@ export const actions: Actions = {
 			} as FormResponseType);
 		}
 
-		// Sign Up logic
+		// Register user with Supabase
 		const { data, error } = await supabase.auth.signUp({
 			email,
 			password,
@@ -56,8 +58,10 @@ export const actions: Actions = {
 			}
 		});
 
+		// Handle registration errors
 		if (error) {
 			let message = 'Registrace selhala. Prosím zkuste znovu.';
+			// Check if user already exists
 			if (
 				error.message?.toLowerCase().includes('already registered') ||
 				error.message?.toLowerCase().includes('already exists') ||
@@ -72,7 +76,7 @@ export const actions: Actions = {
 			} as FormResponseType);
 		}
 
-		// Initialize game progress for the new user
+		// Set up initial game progress for the new user
 		if (data.user?.id) {
 			await initializeGameProgress(data.user.id);
 		}
@@ -83,12 +87,14 @@ export const actions: Actions = {
 				'Účet vytvořen! Prosím zkontrolujte svůj e-mail pro ověření účtu, nebo se můžete přihlásit hned.'
 		} as FormResponseType;
 	},
+	// Google OAuth registration
 	google: async (event) => {
 		const {
 			locals: { supabase },
 			url
 		} = event;
 
+		// Initiate Google OAuth flow
 		const { data, error } = await supabase.auth.signInWithOAuth({
 			provider: 'google',
 			options: {
@@ -96,6 +102,7 @@ export const actions: Actions = {
 			}
 		});
 
+		// Return error if OAuth initialization failed
 		if (error) {
 			return fail(400, {
 				success: false,
@@ -103,6 +110,7 @@ export const actions: Actions = {
 			} as FormResponseType);
 		}
 
+		// Redirect to Google login URL
 		if (data.url) {
 			redirect(303, data.url);
 		}
