@@ -8,7 +8,6 @@ export interface LastPlayedState {
 	isPlaying: number | null;
 }
 
-// Store for persisting the last played level and first level with 3 stars
 export const lastPlayedStore = persisted<LastPlayedState>(
 	'last-played-level',
 	{
@@ -69,6 +68,7 @@ export function clearJustUnlockedLevel() {
 	}));
 }
 
+// Helper function to clear is playing
 export function clearIsPlaying() {
 	lastPlayedStore.update((state) => ({
 		...state,
@@ -86,6 +86,7 @@ export function clearAll() {
 	});
 }
 
+// Redirects to intro if the level is not currently being played
 export function checkIsPlaying(levelNumber: number) {
 	let isPlaying = false;
 	lastPlayedStore.subscribe((state) => {

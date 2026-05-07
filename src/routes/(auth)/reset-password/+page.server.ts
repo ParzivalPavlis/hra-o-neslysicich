@@ -5,7 +5,9 @@ import type { FormErrorsType, FormResponseType } from '$types/form';
 export const load: PageServerLoad = async ({ locals, url }) => {
 	const code = url.searchParams.get('code');
 
+	// Redirect authenticated users to home
 	if (!locals.session || !locals.user) {
+		// If no code provided and not authenticated, redirect to forgot-password
 		if (!code) {
 			redirect(303, '/forgot-password');
 		}
@@ -21,6 +23,7 @@ export const actions: Actions = {
 		const { locals } = event;
 		const { supabase } = locals;
 
+		// Extract recovery code and new password from form
 		const formData = await event.request.formData();
 		const code = formData.get('code') as string;
 		const password = formData.get('password') as string;
@@ -28,27 +31,28 @@ export const actions: Actions = {
 
 		const errors: FormErrorsType = {};
 
-		// Password validation
+		// Validate password length (minimum 8 characters)
 		if (!password || password.length < 8) {
 			errors.password = 'Heslo musí mít alespoň 8 znaků';
 		}
 
-		// Password confirmation
+		// Verify passwords match
 		if (password !== confirmPassword) {
 			errors.confirmPassword = 'Hesla se neshodují';
 		}
 
-		// Return early if validation errors
+		// Return validation errors if any exist
 		if (Object.keys(errors).length > 0) {
 			return fail(400, {
 				errors
 			} as FormResponseType);
 		}
 
-		// Exchange the recovery code for a session to authenticate the user
+		// Exchange recovery code for an authenticated session
 		const { data: sessionData, error: sessionError } =
 			await supabase.auth.exchangeCodeForSession(code);
 
+		// Return error if code exchange failed
 		if (sessionError || !sessionData.session) {
 			return fail(400, {
 				success: false,
@@ -56,7 +60,7 @@ export const actions: Actions = {
 			} as FormResponseType);
 		}
 
-		// Update password
+		// Update user password in Supabase
 		const { error } = await supabase.auth.updateUser({ password });
 
 		if (error) {
@@ -66,7 +70,7 @@ export const actions: Actions = {
 			} as FormResponseType);
 		}
 
-		// Log out the user after password reset
+		// Sign out user after successful password reset
 		await supabase.auth.signOut();
 
 		return {

@@ -5,37 +5,6 @@ import type { Database } from '$types/supabase';
 import type { SupabaseClient } from '@supabase/supabase-js';
 
 /**
- * Get a user from auth.users by email
- * @param {string} email - The email address to search for
- * @returns {Promise<User|null>} The user object or null if not found
- */
-export async function getUserByEmail(email: string): Promise<User | null> {
-	const { data, error } = await supabaseAdminClient.auth.admin.listUsers();
-
-	if (error) {
-		console.error('Error fetching user by email:', error);
-		return null;
-	}
-
-	return data.users.find((user) => user.email === email) || null;
-}
-
-/**
- * List all users from auth.users
- * @returns {Promise<User[]>} Array of all user objects
- */
-export async function listAllUsers(): Promise<User[]> {
-	const { data, error } = await supabaseAdminClient.auth.admin.listUsers();
-
-	if (error) {
-		console.error('Error listing users:', error);
-		return [];
-	}
-
-	return data.users;
-}
-
-/**
  * Initialize game progress for a new user
  * @param {string} userId - The user ID to create progress for
  * @returns {Promise<GameProgressType|null>} The created game progress record or null if failed
@@ -48,8 +17,7 @@ export async function initializeGameProgress(userId: string): Promise<GameProgre
 			level3: { stars: 0, locked: false },
 			level4: { stars: 0, locked: false },
 			level5: { stars: 0, locked: false },
-			level6: { stars: 0, locked: true },
-			level7: { stars: 0, locked: true }
+			level6: { stars: 0, locked: true }
 		}
 	};
 

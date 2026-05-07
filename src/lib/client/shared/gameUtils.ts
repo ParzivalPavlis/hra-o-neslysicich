@@ -11,6 +11,11 @@ type AnswerWithOptions = {
 	options: { id: string; correct: boolean }[];
 };
 
+/**
+ * Creates a click handler for answer selections in the game.
+ * Manages feedback display, answer tracking, life management, and level progression.
+ * Transitions to the next question or level overview.
+ */
 export function createAnswerClickHandler(
 	levelStore: VideoGameLevelActions,
 	levelNumber: number,
@@ -66,7 +71,10 @@ export function createAnswerClickHandler(
 	};
 }
 
-// Fisher-Yates shuffle
+/**
+ * Shuffles an array using the Fisher-Yates algorithm.
+ * Returns a new shuffled array without modifying the original.
+ */
 export function shuffleArray<T>(array: T[]): T[] {
 	const shuffled = [...array];
 	for (let i = shuffled.length - 1; i > 0; i--) {
@@ -76,10 +84,17 @@ export function shuffleArray<T>(array: T[]): T[] {
 	return shuffled;
 }
 
+/**
+ * Checks if the application is running on localhost.
+ */
 export function isLocalhost() {
 	return typeof window !== 'undefined' && window.location.hostname === 'localhost';
 }
 
+/**
+ * Detects device type and screen orientation.
+ * Returns whether the device is mobile and if the screen is in portrait mode.
+ */
 export function getOrientationInfo() {
 	const userAgent = navigator.userAgent.toLowerCase();
 	const isMobile = /android|webos|iphone|ipad|ipod|blackberry|iemobile|opera mini/.test(userAgent);

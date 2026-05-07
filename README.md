@@ -4,11 +4,11 @@
 
 ## About the Project
 
-Deafio is designed to help users learn and understand deaf perspectives through gamified learning experiences. Players progress through 8 levels, each with themed questions and conversations, earning stars based on their performance.
+Deafio is designed to help users learn and understand deaf perspectives through gamified learning experiences. Players progress through 6 levels, each with themed questions and conversations, earning stars based on their performance.
 
 ### Features
 
-- 🎮 **Multi-level gameplay** - 8 progressive levels with increasing difficulty
+- 🎮 **Multi-level gameplay** - 6 progressive levels with increasing difficulty
 - 👥 **Character interactions** - Animated characters guide players through conversations
 - 🎯 **Quiz system** - Interactive multiple-choice questions with immediate feedback
 - 💾 **Progress tracking** - User accounts with password reset and authentication
@@ -50,7 +50,8 @@ npm install
 
 ```
 PUBLIC_SUPABASE_URL=your_supabase_url
-PUBLIC_SUPABASE_ANON_KEY=your_anon_key
+PUBLIC_SUPABASE_PUBLISHABLE_KEY=your_publishable_key
+SUPABASE_SECRET_KEY=your_secret_key
 ```
 
 ### Development
@@ -60,7 +61,6 @@ Start the development server:
 ```sh
 npm run dev
 
-# or with auto-open browser
 npm run dev -- --open
 ```
 
@@ -80,26 +80,6 @@ Preview the production build:
 npm run preview
 ```
 
-## Project Structure
-
-```
-src/
-├── routes/              # SvelteKit routes and pages
-│   ├── (app)/          # Main app routes
-│   ├── (auth)/         # Authentication pages (login, register, reset-password)
-│   └── api/            # API endpoints
-├── components/          # Reusable Svelte components
-│   ├── layouts/        # Page layout components
-│   ├── tutorials/      # Tutorial components
-│   └── ui/             # UI components (buttons, inputs, etc.)
-├── lib/
-│   ├── levels/         # Level definitions and questions
-│   ├── stores/         # Svelte stores for state management
-│   ├── types/          # TypeScript type definitions
-│   └── utils.ts        # Utility functions
-└── static/             # Static assets (images, icons)
-```
-
 ## Available Scripts
 
 - `npm run dev` - Start development server
@@ -107,16 +87,4 @@ src/
 - `npm run preview` - Preview production build
 - `npm run lint` - Run ESLint
 - `npm run format` - Format code with Prettier
-- `npm run generate-types` - Generate types from Supabase schema
-
-## Contributing
-
-Contributions are welcome! Please follow the project's code style and ensure all tests pass before submitting a pull request.
-
-## License
-
-[Add your license here]
-
-## Support
-
-For issues or questions, please open an issue on the project repository.
+- `npm run typegen` - Generate types from Supabase schema
