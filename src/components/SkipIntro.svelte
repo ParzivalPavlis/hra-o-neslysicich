@@ -10,7 +10,12 @@
 
 	let { levelNumber, skipTo, onContinue }: Props = $props();
 
-	let showButtons = $state(true);
+	let showButtons = $state(false);
+
+	$effect(() => {
+		const timer = setTimeout(() => (showButtons = true), 200);
+		return () => clearTimeout(timer);
+	});
 
 	function skipToGame() {
 		goto(`/levels/${levelNumber}/${skipTo}`);
@@ -23,10 +28,14 @@
 </script>
 
 {#if showButtons}
-	<div class="pointer-events-none fixed inset-0 z-50 flex items-center justify-center gap-4">
+	<div
+		class="pointer-events-auto fixed inset-0 z-50 flex items-center justify-center gap-4"
+		onclick={continueNormally}
+		role="presentation"
+	>
 		<div class="flex flex-col gap-10">
-			<GameButton class="pointer-events-auto" onclick={skipToGame}>Přeskočit intro</GameButton>
-			<GameButton class="pointer-events-auto" onclick={continueNormally}>Pokračovat</GameButton>
+			<GameButton onclick={skipToGame}>Přeskočit intro</GameButton>
+			<GameButton onclick={continueNormally}>Pokračovat</GameButton>
 		</div>
 	</div>
 {/if}
