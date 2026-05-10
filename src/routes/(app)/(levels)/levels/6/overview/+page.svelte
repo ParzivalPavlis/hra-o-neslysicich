@@ -32,6 +32,7 @@
 	};
 
 	function handleRetry() {
+		level6.initialize();
 		goto(`/levels/${CURRENT_LEVEL_NUMBER}/game`);
 	}
 

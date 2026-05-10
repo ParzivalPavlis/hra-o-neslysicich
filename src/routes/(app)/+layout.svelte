@@ -5,11 +5,13 @@
 	import { onMount } from 'svelte';
 	import { fly } from 'svelte/transition';
 	import { colors } from '$lib/client/shared/colors';
+	import PortraitOrientationWarning from '$components/PortraitOrientationWarning.svelte';
 
 	let { children } = $props();
 
 	let levelNumber: number | null = $state(null);
 	let isMobile = $state(false);
+	let isPortrait = $state(true);
 	let mobileMenuOpen = $state(false);
 	let currentLevel = $derived.by(() => {
 		return levelNumber !== null && levels[levelNumber - 1] ? levels[levelNumber - 1] : null;
@@ -24,42 +26,17 @@
 		'/levels/6/game'
 	] as const;
 
-	// Pages that should be portrait-only
-	const PORTRAIT_ONLY = [] as const;
-
 	function shouldBeLandscapeOnly(pathname: string): boolean {
 		return LANDSCAPE_ONLY.some((p) => pathname.includes(p));
 	}
 
-	function shouldBePortraitOnly(pathname: string): boolean {
-		return PORTRAIT_ONLY.some((p) => pathname.includes(p));
-	}
-
 	let isLandscapePage = $derived(shouldBeLandscapeOnly(page.url.pathname));
-	let isPortraitPage = $derived(shouldBePortraitOnly(page.url.pathname));
+	let isPortraitPage = $derived(!isLandscapePage);
 
 	function checkIsMobile() {
 		const userAgent = navigator.userAgent.toLowerCase();
 		isMobile = /android|webos|iphone|ipad|ipod|blackberry|iemobile|opera mini/.test(userAgent);
-	}
-
-	type OrientationLockType = OrientationType | 'landscape' | 'portrait' | 'natural' | 'any';
-	type LockableOrientation = ScreenOrientation & {
-		lock?: (orientation: OrientationLockType) => Promise<void>;
-	};
-
-	function lockOrientation(type: OrientationLockType) {
-		(screen.orientation as LockableOrientation).lock?.(type).catch(() => {
-			console.log(`Could not lock orientation to ${type}`);
-		});
-	}
-
-	function lockPortraitOrientation() {
-		lockOrientation('portrait');
-	}
-
-	function lockLandscapeOrientation() {
-		lockOrientation('landscape');
+		isPortrait = window.innerHeight > window.innerWidth;
 	}
 
 	onMount(() => {
@@ -69,19 +46,18 @@
 	$effect(() => {
 		const match = page.url.pathname.match(/\/levels\/(\d+)/);
 		levelNumber = match ? parseInt(match[1]) : null;
-
-		if (isLandscapePage) {
-			lockLandscapeOrientation();
-		} else {
-			lockPortraitOrientation();
-		}
 	});
 </script>
 
 <svelte:window on:resize={checkIsMobile} />
 <div class="relative">
+	{#if isPortraitPage && isMobile && !isPortrait}
+		<div class="fixed inset-0 z-[9998] bg-background">
+			<PortraitOrientationWarning mode="portrait" />
+		</div>
+	{/if}
 	{@render children()}
-	{#if (!isLandscapePage && !isPortraitPage) || !isMobile}
+	{#if !isLandscapePage || !isMobile}
 		<nav
 			class="fixed right-0 bottom-0 left-0 z-100 mx-auto h-13 border-t-4 border-r-4 border-l-4 border-white {isMobile
 				? 'w-[96%]'
