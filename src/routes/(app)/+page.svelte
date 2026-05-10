@@ -19,7 +19,7 @@
 </svelte:head>
 
 <Particles className="fixed inset-0" />
-<div class="relative flex min-h-screen flex-col items-center gap-10 p-10">
+<div class="relative flex min-h-screen flex-col items-center gap-10 p-10 lg:mt-[20vh]">
 	<Logo />
 	<GameButton onclick={() => goto('/levels')} class="w-full max-w-100">Úrovně</GameButton>
 	<GameButton onclick={() => goto('/profile')} class="w-full max-w-100">Profil</GameButton>

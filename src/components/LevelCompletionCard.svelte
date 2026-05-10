@@ -46,7 +46,7 @@
 	});
 </script>
 
-<div class="relative flex w-full max-w-180 flex-col items-center gap-4">
+<div class="relative flex w-full max-w-180 flex-col items-center gap-4 lg:mt-[20vh]">
 	<div class="flex flex-col text-center">
 		<Heading variant={2}>{title}</Heading>
 	</div>
